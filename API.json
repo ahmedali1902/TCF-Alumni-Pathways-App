@@ -1,0 +1,363 @@
+[
+    {
+        "method": "GET",
+        "path": "/api/v1/health",
+        "description": "Health check endpoint",
+        "protected": true,
+        "response": {
+            "version": "String",
+            "lscpu": "String",
+            "free": "String"
+        }
+    },
+    {
+        "method": "POST",
+        "path": "/api/v1/feedback",
+        "description": "Create feedback",
+        "protected": false,
+        "request": {
+            "name": "String | Null",
+            "email": "String | Null",
+            "age": "Integer | Null",
+            "reasonType": "Integer",
+            "reasonText": "String",
+            "overallExperience": "Integer",
+            "isTCFAlumni": "Boolean",
+            "matricRollNumber": "String | Null",
+            "whatsappNumber": "String | Null",
+            "additionRequest": "String | Null",
+            "qualityOfServiceFeedback": "String",
+            "easeOfUseFeedback": "String",
+            "customerSupportFeedback": "String",
+            "deviceId": "String"
+        }
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/feedback",
+        "description": "Get feedback",
+        "protected": true,
+        "response": [
+            {
+                "id": "ObjectId",
+                "name": "String | Null",
+                "email": "String | Null",
+                "age": "Integer | Null",
+                "reasonType": "Integer",
+                "reasonText": "String",
+                "overallExperience": "Integer",
+                "isTCFAlumni": "Boolean",
+                "matricRollNumber": "String | Null",
+                "whatsappNumber": "String | Null",
+                "additionRequest": "String | Null",
+                "qualityOfServiceFeedback": "String",
+                "easeOfUseFeedback": "String",
+                "customerSupportFeedback": "String",
+                "createdAt": "Datetime",
+                "updatedAt": "Datetime",
+                "createdBy": "ObjectId",
+                "updatedBy": "ObjectId",
+                "isDeleted": "Boolean"
+            }
+        ]
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/feedback/:id",
+        "description": "Get feedback by id",
+        "protected": true,
+        "response": {
+            "id": "ObjectId",
+            "name": "String | Null",
+            "email": "String | Null",
+            "age": "Integer | Null",
+            "reasonType": "Integer",
+            "reasonText": "String",
+            "overallExperience": "Integer",
+            "isTCFAlumni": "Boolean",
+            "matricRollNumber": "String | Null",
+            "whatsappNumber": "String | Null",
+            "additionRequest": "String | Null",
+            "qualityOfServiceFeedback": "String",
+            "easeOfUseFeedback": "String",
+            "customerSupportFeedback": "String",
+            "createdAt": "Datetime",
+            "updatedAt": "Datetime",
+            "createdBy": "ObjectId",
+            "updatedBy": "ObjectId",
+            "isDeleted": "Boolean"
+        }
+    },
+    {
+        "method": "PUT",
+        "path": "/api/v1/feedback/:id",
+        "description": "Update feedback",
+        "protected": true,
+        "request": {
+            "name": "String | Null",
+            "email": "String | Null",
+            "age": "Integer | Null",
+            "reasonType": "Integer",
+            "reasonText": "String",
+            "overallExperience": "Integer",
+            "isTCFAlumni": "Boolean",
+            "matricRollNumber": "String | Null",
+            "whatsappNumber": "String | Null",
+            "additionRequest": "String | Null",
+            "qualityOfServiceFeedback": "String",
+            "easeOfUseFeedback": "String",
+            "customerSupportFeedback": "String"
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "/api/v1/feedback/:id",
+        "description": "Delete feedback",
+        "protected": true
+    },
+    {
+        "method": "POST",
+        "path": "/api/v1/notification",
+        "description": "Create notification",
+        "protected": true,
+        "request": {
+            "title": "String",
+            "message": "String"
+        }
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/notification",
+        "description": "Get notification",
+        "protected": false,
+        "response": [
+            {
+                "id": "ObjectId",
+                "title": "String",
+                "message": "String",
+                "createdAt": "Datetime",
+                "updatedAt": "Datetime",
+                "createdBy": "ObjectId",
+                "updatedBy": "ObjectId",
+                "isDeleted": "Boolean"
+            }
+        ]
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/notification/:id",
+        "description": "Get notification by id",
+        "protected": false,
+        "response": {
+            "id": "ObjectId",
+            "title": "String",
+            "message": "String",
+            "createdAt": "Datetime",
+            "updatedAt": "Datetime",
+            "createdBy": "ObjectId",
+            "updatedBy": "ObjectId",
+            "isDeleted": "Boolean"
+        }
+    },
+    {
+        "method": "PUT",
+        "path": "/api/v1/notification/:id",
+        "description": "Update notification",
+        "protected": true,
+        "request": {
+            "title": "String",
+            "message": "String"
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "/api/v1/notification/:id",
+        "description": "Delete notification",
+        "protected": true
+    },
+    {
+        "method": "POST",
+        "path": "/api/v1/institute",
+        "description": "Create institute",
+        "protected": true,
+        "request": {
+            "code": "String",
+            "name": "String",
+            "managingAuthority": "Integer",
+            "latitude": "Float",
+            "longitude": "Float",
+            "description": "String",
+            "faculties": [
+                {
+                    "name": "String",
+                    "performance": "Integer",
+                    "gender": "Integer",
+                    "admissionCriteriaPercentage": "Float"
+                }
+            ],
+            "ratings": []
+        }
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/institute",
+        "query": {
+            "distance": "Float",
+            "performance": "Integer",
+            "gender": "Integer",
+            "admissionCriteriaPercentage": "Float"
+        },
+        "description": "Get institute",
+        "protected": false,
+        "response": [
+            {
+                "id": "ObjectId",
+                "code": "String",
+                "name": "String",
+                "managingAuthority": "Integer",
+                "latitude": "Float",
+                "longitude": "Float",
+                "description": "String",
+                "faculties": [
+                    {
+                        "id": "ObjectId",
+                        "name": "String",
+                        "performance": "Integer",
+                        "gender": "Integer",
+                        "admissionCriteriaPercentage": "Float"
+                    }
+                ],
+                "createdAt": "Datetime",
+                "updatedAt": "Datetime",
+                "createdBy": "ObjectId",
+                "updatedBy": "ObjectId",
+                "isDeleted": "Boolean"
+            }
+        ]
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/institute/:id",
+        "description": "Get institute by id",
+        "protected": false,
+        "response": {
+            "id": "ObjectId",
+            "code": "String",
+            "name": "String",
+            "managingAuthority": "Integer",
+            "latitude": "Float",
+            "longitude": "Float",
+            "description": "String",
+            "faculties": [
+                {
+                    "id": "ObjectId",
+                    "name": "String",
+                    "performance": "Integer",
+                    "gender": "Integer",
+                    "admissionCriteriaPercentage": "Float"
+                }
+            ],
+            "ratings": [
+                {
+                    "id": "ObjectId",
+                    "rating": "Integer",
+                    "createdAt": "Datetime",
+                    "updatedAt": "Datetime",
+                    "createdBy": "ObjectId",
+                    "updatedBy": "ObjectId",
+                    "isDeleted": "Boolean"
+                }
+            ],
+            "createdAt": "Datetime",
+            "updatedAt": "Datetime",
+            "createdBy": "ObjectId",
+            "updatedBy": "ObjectId",
+            "isDeleted": "Boolean"
+        }
+    },
+    {
+        "method": "PUT",
+        "path": "/api/v1/institute/:id",
+        "description": "Update institute",
+        "protected": true,
+        "request": {
+            "code": "String",
+            "name": "String",
+            "managingAuthority": "Integer",
+            "latitude": "Float",
+            "longitude": "Float",
+            "description": "String",
+            "faculties": [
+                {
+                    "id": "ObjectId",
+                    "name": "String",
+                    "performance": "Integer",
+                    "gender": "Integer",
+                    "admissionCriteriaPercentage": "Float"
+                }
+            ]
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "/api/v1/institute/:id",
+        "description": "Delete institute",
+        "protected": true
+    },
+    {
+        "method": "POST",
+        "path": "/api/v1/institute/:id/rating",
+        "description": "Create institute rating",
+        "protected": true,
+        "request": {
+            "rating": "Integer"
+        }
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/institute/:id/rating",
+        "description": "Get institute rating",
+        "protected": false,
+        "response": [
+            {
+                "id": "ObjectId",
+                "rating": "Integer",
+                "createdAt": "Datetime",
+                "updatedAt": "Datetime",
+                "createdBy": "ObjectId",
+                "updatedBy": "ObjectId",
+                "isDeleted": "Boolean"
+            }
+        ]
+    },
+    {
+        "method": "GET",
+        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "description": "Get institute rating by id",
+        "protected": false,
+        "response": {
+            "id": "ObjectId",
+            "rating": "Integer",
+            "createdAt": "Datetime",
+            "updatedAt": "Datetime",
+            "createdBy": "ObjectId",
+            "updatedBy": "ObjectId",
+            "isDeleted": "Boolean"
+        }
+    },
+    {
+        "method": "PUT",
+        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "description": "Update institute rating",
+        "protected": true,
+        "request": {
+            "rating": "Integer"
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "description": "Delete institute rating",
+        "protected": true
+    }
+]

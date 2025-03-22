@@ -1,0 +1,86 @@
+{
+    "User": {
+        "id": "ObjectId",
+        "lastOnline": "Datetime",
+        "deviceId": "String | Null",
+        "email": "String | Null",
+        "password": "String | Null",
+        "name": "String | Null",
+        "role": "Integer",
+        // To be reviewed
+        "deviceInfo": "String | Null",
+        "ipAddress": "String",
+        "location": "String | Null",
+        // End of review
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime"
+    },
+    "AppFeedback": {
+        "id": "ObjectId",
+        "name": "String | Null",
+        "email": "String | Null",
+        "age": "Integer | Null",
+        "reasonType": "Integer",
+        "reasonText": "String",
+        "experienceRating": "Integer",
+        "isTCFAlumni": "Boolean",
+        "whatsappNumber": "String | Null",
+        "feedback": "String",
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime",
+        "createdBy": "ObjectId",
+        "updatedBy": "ObjectId",
+        "isDeleted": "Boolean"
+    },
+    "RequestForInstituteAddDel": {
+        "id": "ObjectId",
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime",
+        "createdBy": "ObjectId",
+        "updatedBy": "ObjectId",
+        "isDeleted": "Boolean"
+    },
+    "Notification": {
+        "id": "ObjectId",
+        "title": "String",
+        "message": "String",
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime",
+        "createdBy": "ObjectId",
+        "updatedBy": "ObjectId",
+        "isDeleted": "Boolean"
+    },
+    "Institute": {
+        "id": "ObjectId",
+        "code": "String",
+        "name": "String",
+        "managingAuthority": "Integer",
+        "latitude": "Float",
+        "longitude": "Float",
+        "description": "String",
+        "faculties": "InstituteFaculty[]",
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime",
+        "createdBy": "ObjectId",
+        "updatedBy": "ObjectId",
+        "isDeleted": "Boolean"
+    },
+    "InstituteFaculty": {
+        "id": "ObjectId",
+        "name": "String",
+        "performanceAverageResult": "Float",
+        "performanceAdmissionCriteria": "Float",
+        "performanceUserRating": "Float",
+        "ratings": "InstituteRating[]",
+        "gender": "Integer"
+    },
+    "InstituteRating": {
+        "id": "ObjectId",
+        "rating": "Integer",
+        "createdAt": "Datetime",
+        "updatedAt": "Datetime",
+        "createdBy": "ObjectId",
+        "updatedBy": "ObjectId",
+        "isDeleted": "Boolean"
+    }
+}

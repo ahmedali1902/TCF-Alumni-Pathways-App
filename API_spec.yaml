@@ -1,0 +1,253 @@
+openapi: 3.0.0
+info:
+  title: TCF Alumni Pathways App
+  version: 1.0.0
+  description: API endpoints for the app and admin panel
+
+servers:
+  - url: https://example.com/api/v1
+
+paths:
+  /health:
+    get:
+      summary: System health check
+      description: Fetches the system details
+      tags:
+        - System
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                  lscpu:
+                    type: string
+                  free:
+                    type: string
+
+  /feedback:
+    post:
+      summary: Create feedback
+      description: Allows users to submit feedback.
+      tags:
+        - Feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                email:
+                  type: string
+                  nullable: true
+                age:
+                  type: integer
+                  nullable: true
+                reasonType:
+                  type: integer
+                reasonText:
+                  type: string
+                overallExperience:
+                  type: integer
+                isTCFAlumni:
+                  type: boolean
+                matricRollNumber:
+                  type: string
+                  nullable: true
+                whatsappNumber:
+                  type: string
+                  nullable: true
+                additionRequest:
+                  type: string
+                  nullable: true
+                qualityOfServiceFeedback:
+                  type: string
+                easeOfUseFeedback:
+                  type: string
+                customerSupportFeedback:
+                  type: string
+                deviceId:
+                  type: string
+      responses:
+        "201":
+          description: Feedback created successfully
+
+    get:
+      summary: Get all feedbacks
+      description: Fetches a list of feedback entries.
+      tags:
+        - Feedback
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppFeedback"
+
+  /feedback/{id}:
+    get:
+      summary: Get feedback by ID
+      description: Retrieves feedback details for a specific ID.
+      tags:
+        - Feedback
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppFeedback"
+
+    put:
+      summary: Update feedback by ID
+      description: Updates an existing feedback entry.
+      tags:
+        - Feedback
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                email:
+                  type: string
+                  nullable: true
+                age:
+                  type: integer
+                  nullable: true
+                reasonType:
+                  type: integer
+                reasonText:
+                  type: string
+                overallExperience:
+                  type: integer
+                isTCFAlumni:
+                  type: boolean
+                matricRollNumber:
+                  type: string
+                  nullable: true
+                whatsappNumber:
+                  type: string
+                  nullable: true
+                additionRequest:
+                  type: string
+                  nullable: true
+                qualityOfServiceFeedback:
+                  type: string
+                easeOfUseFeedback:
+                  type: string
+                customerSupportFeedback:
+                  type: string
+      responses:
+        "200":
+          description: Feedback updated successfully
+
+    delete:
+      summary: Delete feedback by ID
+      description: Deletes a feedback entry.
+      tags:
+        - Feedback
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Feedback deleted successfully
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AppFeedback:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+        reasonType:
+          type: integer
+        reasonText:
+          type: string
+        overallExperience:
+          type: integer
+        isTCFAlumni:
+          type: boolean
+        matricRollNumber:
+          type: string
+          nullable: true
+        whatsappNumber:
+          type: string
+          nullable: true
+        additionRequest:
+          type: string
+          nullable: true
+        qualityOfServiceFeedback:
+          type: string
+        easeOfUseFeedback:
+          type: string
+        customerSupportFeedback:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        updatedBy:
+          type: string
+        isDeleted:
+          type: boolean
