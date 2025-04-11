@@ -1,0 +1,562 @@
+import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/constants/colors.dart';
+import '../../../widgets/card.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final String deviceId = const Uuid().v4();
+
+  final List<Map<String, dynamic>> _settingsOptions = [
+    {'title': 'Search Settings', 'icon': LucideIcons.search},
+    {'title': 'Privacy Policy', 'icon': LucideIcons.shield},
+    {'title': 'Institue Add Request', 'icon': LucideIcons.messageSquare},
+    {'title': 'About', 'icon': LucideIcons.info},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Settings",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: TAppColors.primary.withOpacity(0.2),
+                    child: Icon(
+                      LucideIcons.smartphone,
+                      size: 40,
+                      color: TAppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Device ID:",
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  ),
+                  Text(
+                    deviceId,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              Column(
+                children:
+                    _settingsOptions.map((option) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: TCard(
+                          height: 70,
+                          leftIcon: CircleAvatar(
+                            backgroundColor: TAppColors.primary.withOpacity(
+                              0.2,
+                            ),
+                            child: Icon(
+                              option['icon'],
+                              color: TAppColors.primary,
+                            ),
+                          ),
+                          textWidget: SizedBox(
+                            height: 50,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  option['title'],
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  switch (option['title']) {
+                                    case 'Search Settings':
+                                      return const SearchSettingsScreen();
+                                    case 'Privacy Policy':
+                                      return const PrivacyPolicyScreen();
+                                    case 'App Feedback':
+                                      return const FeedbackScreen();
+                                    case 'About':
+                                      return const AboutScreen();
+                                    default:
+                                      return const Scaffold(
+                                        body: Center(
+                                          child: Text('Hello World'),
+                                        ),
+                                      );
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SearchSettingsScreen extends StatefulWidget {
+  const SearchSettingsScreen({super.key});
+
+  @override
+  State<SearchSettingsScreen> createState() => _SearchSettingsScreenState();
+}
+
+class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
+  int _distance = 10;
+  double _minRating = 3.0;
+  String? _selectedGender;
+  int _admissionCriteria = 50;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _distance = prefs.getInt('search_distance') ?? 10;
+      _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
+      _selectedGender = prefs.getString('search_gender');
+      _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('search_distance', _distance);
+    await prefs.setDouble('search_min_rating', _minRating);
+    if (_selectedGender != null) {
+      await prefs.setString('search_gender', _selectedGender!);
+    }
+    await prefs.setInt('search_admission_criteria', _admissionCriteria);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Settings saved successfully')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "Search Settings",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            _buildDistanceSlider(),
+            const SizedBox(height: 20),
+            _buildRatingSlider(),
+            const SizedBox(height: 20),
+            _buildGenderDropdown(),
+            const SizedBox(height: 20),
+            _buildAdmissionCriteriaSlider(),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _saveSettings,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TAppColors.primary,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                'Save Settings',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDistanceSlider() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Distance: $_distance km',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Slider(
+          value: _distance.toDouble(),
+          min: 1,
+          max: 40,
+          divisions: 20,
+          label: '$_distance km',
+          onChanged: (value) => setState(() => _distance = value.round()),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRatingSlider() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Minimum Rating: ${_minRating.toStringAsFixed(1)}',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Slider(
+          value: _minRating,
+          min: 1,
+          max: 5,
+          divisions: 8,
+          label: _minRating.toStringAsFixed(1),
+          onChanged: (value) => setState(() => _minRating = value),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Gender Preference',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        DropdownButtonFormField<String>(
+          value: _selectedGender,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 10,
+            ),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'Male', child: Text('Male')),
+            DropdownMenuItem(value: 'Female', child: Text('Female')),
+            DropdownMenuItem(value: 'Any', child: Text('Any')),
+          ],
+          onChanged: (value) => setState(() => _selectedGender = value),
+          hint: const Text('Select gender'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdmissionCriteriaSlider() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Minimum Admission Criteria: $_admissionCriteria%',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Slider(
+          value: _admissionCriteria.toDouble(),
+          min: 1,
+          max: 100,
+          divisions: 99,
+          label: '$_admissionCriteria%',
+          onChanged:
+              (value) => setState(() => _admissionCriteria = value.round()),
+        ),
+      ],
+    );
+  }
+}
+
+class PrivacyPolicyScreen extends StatelessWidget {
+  const PrivacyPolicyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "Privacy Policy",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Data Collection and Usage',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'We collect the following data to provide and improve our service:',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 10),
+            _buildPolicyItem(
+              'Location Data',
+              'We collect your location data to provide location-based services and improve search results.',
+            ),
+            _buildPolicyItem(
+              'Educational Data',
+              'Information about your educational background is used to provide personalized recommendations.',
+            ),
+            _buildPolicyItem(
+              'Usage Data',
+              'We collect how you interact with our app to improve user experience and for marketing purposes.',
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'All data is stored securely on our servers and is used solely for educational and marketing purposes within our platform.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPolicyItem(String title, String description) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 5),
+          Text(description),
+        ],
+      ),
+    );
+  }
+}
+
+class FeedbackScreen extends StatefulWidget {
+  const FeedbackScreen({super.key});
+
+  @override
+  State<FeedbackScreen> createState() => _FeedbackScreenState();
+}
+
+class _FeedbackScreenState extends State<FeedbackScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _programController = TextEditingController();
+  final _locationController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _programController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "Institute Add Request",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Institute Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator:
+                    (value) =>
+                        value?.isEmpty ?? true
+                            ? 'Please enter institute name'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _programController,
+                decoration: InputDecoration(
+                  labelText: 'Program',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator:
+                    (value) =>
+                        value?.isEmpty ?? true
+                            ? 'Please enter program name'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _locationController,
+                decoration: InputDecoration(
+                  labelText: 'Location',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator:
+                    (value) =>
+                        value?.isEmpty ?? true ? 'Please enter location' : null,
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: _submitForm,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TAppColors.primary,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "About",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: TAppColors.primary.withOpacity(0.2),
+              child: Icon(
+                LucideIcons.smartphone,
+                size: 50,
+                color: TAppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'TCF Alumni Pathways App',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+            Text('v1.0.0', style: Theme.of(context).textTheme.bodyLarge),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Text(
+                'Developed with ❤️ by ABC',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

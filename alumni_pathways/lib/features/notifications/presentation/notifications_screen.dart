@@ -17,7 +17,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       '_id': '65a1b2c3d4e5f6g7h8i9j0k',
       'title':
           'Students, please check updated process to apply for the scholarship',
-      'time': '2025-04-01T09:07:00Z', // UTC time string
+      'time': '2025-04-11T02:07:00Z', // UTC time string
     },
     {
       '_id': '75b2c3d4e5f6g7h8i9j0k1l',

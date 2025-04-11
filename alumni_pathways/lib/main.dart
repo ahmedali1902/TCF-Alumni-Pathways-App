@@ -1,9 +1,22 @@
 import 'package:alumni_pathways/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'config/theme.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
-  runApp(AlumniPathways());
+  // Load environment variables
+  // and initialize Mapbox
+  WidgetsFlutterBinding.ensureInitialized();
+  setupMapbox().then((_) {
+    runApp(const AlumniPathways());
+  });
+  //runApp(AlumniPathways());
+}
+
+Future<void> setupMapbox() async {
+  await dotenv.load(fileName: ".env");
+  MapboxOptions.setAccessToken(dotenv.env['MAPBOX_ACCESS_TOKEN']!);
 }
 
 class AlumniPathways extends StatelessWidget {

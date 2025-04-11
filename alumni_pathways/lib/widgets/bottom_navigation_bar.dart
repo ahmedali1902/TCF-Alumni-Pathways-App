@@ -1,3 +1,4 @@
+import 'package:alumni_pathways/features/settings/presentation/settings_screen.dart';
 import 'package:flutter/material.dart';
 import '../features/favorites/presentation/favorites_screen.dart';
 import '../features/home/presentation/home_screen.dart';
@@ -18,10 +19,10 @@ class _TBottomNavigationBarState extends State<TBottomNavigationBar> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeScreen(key: ValueKey('Home1')),
+      const HomeScreen(key: ValueKey('Home')),
       const NotificationsScreen(key: ValueKey('Notifications')),
       const FavoritesScreen(key: ValueKey('Favorites')),
-      const HomeScreen(key: ValueKey('Home3')),
+      const SettingsScreen(key: ValueKey('Settings')),
     ];
   }
 
