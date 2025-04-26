@@ -7,19 +7,12 @@
         "password": "String | Null",
         "name": "String | Null",
         "role": "Integer",
-        // To be reviewed
-        "deviceInfo": "String | Null",
-        "ipAddress": "String",
-        "location": "String | Null",
-        // End of review
         "createdAt": "Datetime",
         "updatedAt": "Datetime"
     },
     "AppFeedback": {
         "id": "ObjectId",
         "name": "String | Null",
-        "email": "String | Null",
-        "age": "Integer | Null",
         "reasonType": "Integer",
         "reasonText": "String",
         "experienceRating": "Integer",
@@ -32,8 +25,10 @@
         "updatedBy": "ObjectId",
         "isDeleted": "Boolean"
     },
-    "RequestForInstituteAddDel": {
+    "RequestForInstituteAdd": {
         "id": "ObjectId",
+        "name": "String",
+        "request": "String",
         "createdAt": "Datetime",
         "updatedAt": "Datetime",
         "createdBy": "ObjectId",
@@ -54,11 +49,12 @@
         "id": "ObjectId",
         "code": "String",
         "name": "String",
-        "managingAuthority": "Integer",
+        "managingAuthority": "Integer", // Public, Private
         "latitude": "Float",
         "longitude": "Float",
         "description": "String",
         "faculties": "InstituteFaculty[]",
+        "userRating": "Avg[InstituteRating[]]",
         "createdAt": "Datetime",
         "updatedAt": "Datetime",
         "createdBy": "ObjectId",
@@ -71,7 +67,7 @@
         "performanceAverageResult": "Float",
         "performanceAdmissionCriteria": "Float",
         "performanceUserRating": "Float",
-        "ratings": "InstituteRating[]",
+        "TCFrating": "Float",
         "gender": "Integer"
     },
     "InstituteRating": {

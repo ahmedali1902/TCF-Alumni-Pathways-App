@@ -1,0 +1,22 @@
+Change settings labels:
+
+	Minimum Admission Criteria
+	Institute Admission Criteria (Matric Percentage)
+
+	Minimum Rating
+	Institute Rating
+
+	Distance
+	??
+
+Where should the actual search be conducted?
+Where to apply (To Implement, Search user)
+
+Flow query:
+  After going through Matric option. There should be 3 options
+  1) How to apply for college (resource list)
+  2) how to avail TCF Scholarships (TCF specific resources)
+  3) Where to apply for college (Search list)
+
+  Intermediate/College option
+  1) How to apply for university (resource list)

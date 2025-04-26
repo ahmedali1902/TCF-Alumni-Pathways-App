@@ -1,7 +1,7 @@
 [
     {
         "method": "GET",
-        "path": "/api/v1/health",
+        "path": "/api/health",
         "description": "Health check endpoint",
         "protected": true,
         "response": {
@@ -12,7 +12,7 @@
     },
     {
         "method": "POST",
-        "path": "/api/v1/feedback",
+        "path": "/api/feedback",
         "description": "Create feedback",
         "protected": false,
         "request": {
@@ -34,7 +34,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/feedback",
+        "path": "/api/feedback",
         "description": "Get feedback",
         "protected": true,
         "response": [
@@ -63,7 +63,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/feedback/:id",
+        "path": "/api/feedback/:id",
         "description": "Get feedback by id",
         "protected": true,
         "response": {
@@ -90,7 +90,7 @@
     },
     {
         "method": "PUT",
-        "path": "/api/v1/feedback/:id",
+        "path": "/api/feedback/:id",
         "description": "Update feedback",
         "protected": true,
         "request": {
@@ -111,13 +111,13 @@
     },
     {
         "method": "DELETE",
-        "path": "/api/v1/feedback/:id",
+        "path": "/api/feedback/:id",
         "description": "Delete feedback",
         "protected": true
     },
     {
         "method": "POST",
-        "path": "/api/v1/notification",
+        "path": "/api/notification",
         "description": "Create notification",
         "protected": true,
         "request": {
@@ -127,7 +127,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/notification",
+        "path": "/api/notification",
         "description": "Get notification",
         "protected": false,
         "response": [
@@ -145,7 +145,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/notification/:id",
+        "path": "/api/notification/:id",
         "description": "Get notification by id",
         "protected": false,
         "response": {
@@ -161,7 +161,7 @@
     },
     {
         "method": "PUT",
-        "path": "/api/v1/notification/:id",
+        "path": "/api/notification/:id",
         "description": "Update notification",
         "protected": true,
         "request": {
@@ -171,13 +171,13 @@
     },
     {
         "method": "DELETE",
-        "path": "/api/v1/notification/:id",
+        "path": "/api/notification/:id",
         "description": "Delete notification",
         "protected": true
     },
     {
         "method": "POST",
-        "path": "/api/v1/institute",
+        "path": "/api/institute",
         "description": "Create institute",
         "protected": true,
         "request": {
@@ -200,7 +200,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/institute",
+        "path": "/api/institute",
         "query": {
             "distance": "Float",
             "performance": "Integer",
@@ -237,7 +237,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/institute/:id",
+        "path": "/api/institute/:id",
         "description": "Get institute by id",
         "protected": false,
         "response": {
@@ -277,7 +277,7 @@
     },
     {
         "method": "PUT",
-        "path": "/api/v1/institute/:id",
+        "path": "/api/institute/:id",
         "description": "Update institute",
         "protected": true,
         "request": {
@@ -300,13 +300,13 @@
     },
     {
         "method": "DELETE",
-        "path": "/api/v1/institute/:id",
+        "path": "/api/institute/:id",
         "description": "Delete institute",
         "protected": true
     },
     {
         "method": "POST",
-        "path": "/api/v1/institute/:id/rating",
+        "path": "/api/institute/:id/rating",
         "description": "Create institute rating",
         "protected": true,
         "request": {
@@ -315,7 +315,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/institute/:id/rating",
+        "path": "/api/institute/:id/rating",
         "description": "Get institute rating",
         "protected": false,
         "response": [
@@ -332,7 +332,7 @@
     },
     {
         "method": "GET",
-        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "path": "/api/institute/:id/rating/:ratingId",
         "description": "Get institute rating by id",
         "protected": false,
         "response": {
@@ -347,7 +347,7 @@
     },
     {
         "method": "PUT",
-        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "path": "/api/institute/:id/rating/:ratingId",
         "description": "Update institute rating",
         "protected": true,
         "request": {
@@ -356,7 +356,7 @@
     },
     {
         "method": "DELETE",
-        "path": "/api/v1/institute/:id/rating/:ratingId",
+        "path": "/api/institute/:id/rating/:ratingId",
         "description": "Delete institute rating",
         "protected": true
     }
