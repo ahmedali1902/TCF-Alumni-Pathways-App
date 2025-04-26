@@ -1,22 +1,19 @@
+import logging
 from flask import Flask
-from flask_cors import CORS
-from app.utils.db import init_db
-# from app.routes import register_routes
-import os
+from .config import config_by_name
+from .extensions import mongo, jwt, cors
 
-def create_app():
+# Initialize logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+def create_app(env_name):
+    # Initialize application
     app = Flask(__name__)
-
-    # Load configuration
-    app.config.from_pyfile('config.py')
-
-    # Initialize database
-    init_db(app)
-
-    # Enable CORS
-    CORS(app)
-
-    # Register routes
-    # register_routes(app)
-
+    app.config.from_object(config_by_name[env_name])
+    # Initialize extensions
+    cors.init_app(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    jwt.init_app(app)
+    mongo.init_app(app)
+    logger.info(f"Flask app created and configured with environment: {env_name}")
     return app
