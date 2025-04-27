@@ -29,5 +29,9 @@ def create_jwt(identity, role, email=None, device_id=None):
             "device_id": device_id,
             "email": None
         }
-        # non expiring token for user
         return create_access_token(identity=identity, additional_claims=claims, expires_delta=None)
+
+def check_if_admin(jwt_claims):
+    if jwt_claims['role'] == UserRole.ADMIN:
+        return True
+    return False

@@ -7,12 +7,10 @@ class PydanticObjectId(ObjectId):
 
     @classmethod
     def validate(cls, v):
-        return PydanticObjectId(v)
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
 
     @classmethod
-    def __get_pydantic_json_schema__(cls, field_schema: dict):
-        field_schema.update(
-            type="string",
-            examples=["5eb7cf5a86d9755df3a6c593", "5eb7cfb05e32e07750a1756a"],
-        )
-        return field_schema
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")

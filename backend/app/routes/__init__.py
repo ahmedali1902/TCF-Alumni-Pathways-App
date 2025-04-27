@@ -1,4 +1,3 @@
-
 from app.routes.auth_routes import auth_bp
 
 def register_routes(bp):

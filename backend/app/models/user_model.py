@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic.v1 import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime, timezone
 from enum import IntEnum
@@ -16,24 +16,15 @@ class UserModel(BaseModel):
     device_id: Optional[str] = Field(None, min_length=1, max_length=50)
     role: UserRole = Field(default=UserRole.USER)
     last_login: Optional[datetime] = None
+    is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    @model_validator(mode="after")
-    def validate_user_fields(self) -> 'UserModel':
-        if self.role in {UserRole.ADMIN}:
-            if not self.email or not self.password_hash:
-                raise ValueError("Email and password are required for Admin users.")
-        elif self.role == UserRole.USER:
-            if not self.device_id:
-                raise ValueError("Device ID is required for normal User.")
-        return self
-
     def to_json(self):
-        return self.model_dump_json(exclude_none=True)
+        return self.json(by_alias=True, exclude_none=True)
 
     def to_bson(self):
-        data = self.model_dump(by_alias=True, exclude_none=True)
+        data = self.dict(by_alias=True, exclude_none=True)
         if data.get("_id") is None:
             data.pop("_id", None)
         return data

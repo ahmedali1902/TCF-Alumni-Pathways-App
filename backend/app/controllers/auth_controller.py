@@ -1,8 +1,9 @@
 import os
 import logging
+from datetime import datetime, timezone
 from flask import request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required, verify_jwt_in_request
-from flask_jwt_extended.exceptions import ExpiredSignatureError, NoAuthorizationError, InvalidHeaderError
+from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
 from ..extensions import mongo
 from ..models.user_model import UserModel, UserRole
 from ..helpers.auth_helper import hash_password, check_password, create_jwt
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 
-def create_admin():
+def register_admin():
     try:
         data = request.get_json()
         email = data.get("email")
@@ -21,15 +22,15 @@ def create_admin():
         admin_secret = data.get("admin_secret")
 
         if admin_secret != ADMIN_SECRET:
-            logger.warning("Invalid admin secret attempt.")
-            return format_response(False, "Invalid admin secret", None), 401
+            logger.warning("Missing or invalid admin secret attempt.")
+            return format_response(False, "Missing or invalid admin secret", None), 401
 
         if not email or not name or not password:
             return format_response(False, "Email, name, and password are required", None), 400
 
         user_collection = mongo.db.User
-        if user_collection.find_one({"email": email}):
-            return format_response(False, "Admin already exists", None), 400
+        if user_collection.find_one({"email": email, "is_deleted": False}):
+            return format_response(False, f"Admin with email \"{email}\" already exists", None), 400
 
         user = UserModel(
             email=email,
@@ -39,11 +40,11 @@ def create_admin():
         )
 
         user_collection.insert_one(user.to_bson())
-        logger.info(f"Admin created: {email}")
-        return format_response(True, "Admin created successfully", None), 201
+        logger.info(f"Admin registered: {user.email}")
+        return format_response(True, "Admin registered successfully", None), 201
 
     except Exception as e:
-        logger.exception("Error creating admin")
+        logger.exception("Error registering admin")
         return format_response(False, str(e), None), 500
 
 def login_admin():
@@ -56,22 +57,25 @@ def login_admin():
             return format_response(False, "Email and password are required", None), 400
 
         user_collection = mongo.db.User
-        user_data = user_collection.find_one({"email": email})
+        user_data = user_collection.find_one({"email": email, "is_deleted": False})
 
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             return format_response(False, "Admin not found", None), 404
+        
+        user = UserModel(**user_data)
 
-        if not check_password(password, user_data["password_hash"]):
-            logger.warning(f"Invalid password for admin: {email}")
+        if not check_password(password, user.password_hash):
+            logger.warning(f"Invalid password for admin: {user.email}")
             return format_response(False, "Invalid password", None), 401
 
-        token = create_jwt(str(user_data["_id"]), UserRole.ADMIN, email=email)
+        user.update(last_login=datetime.now(timezone.utc))
 
-        logger.info(f"Admin logged in: {email}")
-        return format_response(True, "Admin logged in successfully", {
-            "token": token,
-            "user_id": str(user_data["_id"])
-        }), 200
+        token = create_jwt(user.id, UserRole.ADMIN, email=user.email)
+
+        user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
+
+        logger.info(f"Admin logged in: {user.email}")
+        return format_response(True, "Admin logged in successfully", {"token": token, "user_id": user.id}), 200
 
     except Exception as e:
         logger.exception("Error logging admin")
@@ -93,21 +97,21 @@ def update_admin_password():
 
         user_id = get_jwt_identity()
         user_collection = mongo.db.User
-        user_data = user_collection.find_one({"_id": mongo.db.ObjectId(user_id)})
+        user_data = user_collection.find_one({"_id": user_id, "is_deleted": False})
 
         if not user_data:
             return format_response(False, "User not found", None), 404
+        
+        user = UserModel(**user_data)
 
-        if not check_password(old_password, user_data["password_hash"]):
+        if not check_password(old_password, user.password_hash):
             return format_response(False, "Old password is incorrect", None), 401
 
-        new_password_hash = hash_password(new_password)
-        user_collection.update_one(
-            {"_id": user_data["_id"]},
-            {"$set": {"password_hash": new_password_hash}}
-        )
+        user.update(password_hash=hash_password(new_password))
 
-        logger.info(f"Password updated for user: {user_id}")
+        user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
+
+        logger.info(f"Password updated for user: {user.id}")
         return format_response(True, "Password updated successfully", None), 200
 
     except Exception as e:
@@ -125,22 +129,21 @@ def reset_admin_password():
             return format_response(False, "Email, new password, and admin secret are required", None), 400
 
         if admin_secret != ADMIN_SECRET:
-            logger.warning("Invalid reset password secret attempt.")
-            return format_response(False, "Invalid admin secret", None), 401
+            logger.warning("Missing or invalid admin secret.")
+            return format_response(False, "Missing or invalid admin secret", None), 401
 
         user_collection = mongo.db.User
-        user_data = user_collection.find_one({"email": email})
+        user_data = user_collection.find_one({"email": email, "is_deleted": False})
 
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             return format_response(False, "Admin not found", None), 404
 
-        new_password_hash = hash_password(new_password)
-        user_collection.update_one(
-            {"_id": user_data["_id"]},
-            {"$set": {"password_hash": new_password_hash}}
-        )
+        user = UserModel(**user_data)
+        user.update(password_hash=hash_password(new_password))
 
-        logger.info(f"Password reset for admin: {email}")
+        user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
+
+        logger.info(f"Password reset for admin: {user.email}")
         return format_response(True, "Password reset successfully", None), 200
 
     except Exception as e:
@@ -163,9 +166,7 @@ def refresh_admin_token():
         new_token = create_jwt(user_id, UserRole.ADMIN, email=email)
 
         logger.info(f"Admin token refreshed for user: {email}")
-        return format_response(True, "Token refreshed successfully", {
-            "token": new_token
-        }), 200
+        return format_response(True, "Token refreshed successfully", {"token": new_token}), 200
 
     except Exception as e:
         logger.exception("Error refreshing token")
@@ -185,17 +186,13 @@ def verify_token():
             "role": claims.get("role")
         }), 200
 
-    except (ExpiredSignatureError, NoAuthorizationError, InvalidHeaderError) as e:
+    except (NoAuthorizationError, InvalidHeaderError) as e:
         logger.warning("Token expired or invalid during verify.")
-        return format_response(False, "Token expired or invalid", {
-            "logout": True
-        }), 401
+        return format_response(False, "Token expired or invalid", {"logout": True}), 401
 
     except Exception as e:
         logger.exception("Unexpected error during token verification.")
-        return format_response(False, str(e), {
-            "logout": True
-        }), 401
+        return format_response(False, str(e), {"logout": True}), 401
 
 def register_user():
     try:
@@ -206,24 +203,24 @@ def register_user():
             return format_response(False, "Device ID is required", None), 400
 
         user_collection = mongo.db.User
-        existing = user_collection.find_one({"device_id": device_id})
+        existing = user_collection.find_one({"device_id": device_id, "is_deleted": False})
 
         if existing:
-            return format_response(False, "User already exists", None), 400
+            user = UserModel(**existing)
+            user.update(last_login=datetime.now(timezone.utc))
+            user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
+            token = create_jwt(user.id, UserRole.USER, device_id=device_id)
 
-        user = UserModel(
-            device_id=device_id,
-            role=UserRole.USER
-        )
+            logger.info(f"User already exists: {device_id}")
+            return format_response(True, "User already exists", {"token": token, "user_id": user.id}), 200
 
-        inserted = user_collection.insert_one(user.to_bson())
-        token = create_jwt(str(inserted.inserted_id), UserRole.USER, device_id=device_id)
+        user = UserModel(device_id=device_id, role=UserRole.USER)
+        user_collection.insert_one(user.to_bson())
 
-        logger.info(f"User registered: {device_id}")
-        return format_response(True, "User registered successfully", {
-            "token": token,
-            "user_id": str(inserted.inserted_id)
-        }), 201
+        token = create_jwt(user.id, UserRole.USER, device_id=user.device_id)
+
+        logger.info(f"User registered: {user.device_id}")
+        return format_response(True, "User registered successfully", {"token": token, "user_id": user.id}), 201
 
     except Exception as e:
         logger.exception("Error registering user")
@@ -238,18 +235,19 @@ def login_user():
             return format_response(False, "Device ID is required", None), 400
 
         user_collection = mongo.db.User
-        user_data = user_collection.find_one({"device_id": device_id})
+        user_data = user_collection.find_one({"device_id": device_id, "is_deleted": False})
 
         if not user_data:
             return format_response(False, "User not found", None), 404
 
-        token = create_jwt(str(user_data["_id"]), UserRole.USER, device_id=device_id)
+        user = UserModel(**user_data)
+        user.update(last_login=datetime.now(timezone.utc))
+        token = create_jwt(user.id, UserRole.USER, device_id=user.device_id)
 
-        logger.info(f"User logged in: {device_id}")
-        return format_response(True, "User logged in successfully", {
-            "token": token,
-            "user_id": str(user_data["_id"])
-        }), 200
+        user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
+
+        logger.info(f"User logged in: {user.device_id}")
+        return format_response(True, "User logged in successfully", {"token": token, "user_id": user.id}), 200
 
     except Exception as e:
         logger.exception("Error logging user")
