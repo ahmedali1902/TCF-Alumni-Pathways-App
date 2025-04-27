@@ -70,12 +70,12 @@ def login_admin():
 
         user.update(last_login=datetime.now(timezone.utc))
 
-        token = create_jwt(user.id, UserRole.ADMIN, email=user.email)
+        token = create_jwt(str(user.id), UserRole.ADMIN, email=user.email)
 
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 
         logger.info(f"Admin logged in: {user.email}")
-        return format_response(True, "Admin logged in successfully", {"token": token, "user_id": user.id}), 200
+        return format_response(True, "Admin logged in successfully", {"token": token, "user_id": str(user.id)}), 200
 
     except Exception as e:
         logger.exception("Error logging admin")
@@ -111,7 +111,7 @@ def update_admin_password():
 
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 
-        logger.info(f"Password updated for user: {user.id}")
+        logger.info(f"Password updated for user: {str(user.id)}")
         return format_response(True, "Password updated successfully", None), 200
 
     except Exception as e:
@@ -209,18 +209,16 @@ def register_user():
             user = UserModel(**existing)
             user.update(last_login=datetime.now(timezone.utc))
             user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
-            token = create_jwt(user.id, UserRole.USER, device_id=device_id)
-
+            token = create_jwt(str(user.id), UserRole.USER, device_id=device_id)
             logger.info(f"User already exists: {device_id}")
-            return format_response(True, "User already exists", {"token": token, "user_id": user.id}), 200
+            return format_response(True, "User already exists", {"token": token, "user_id": str(user.id)}), 200
 
         user = UserModel(device_id=device_id, role=UserRole.USER)
-        user_collection.insert_one(user.to_bson())
-
-        token = create_jwt(user.id, UserRole.USER, device_id=user.device_id)
+        inserted_user = user_collection.insert_one(user.to_bson())
+        token = create_jwt(str(inserted_user.inserted_id), UserRole.USER, device_id=user.device_id)
 
         logger.info(f"User registered: {user.device_id}")
-        return format_response(True, "User registered successfully", {"token": token, "user_id": user.id}), 201
+        return format_response(True, "User registered successfully", {"token": token, "user_id": str(inserted_user.inserted_id)}), 201
 
     except Exception as e:
         logger.exception("Error registering user")
@@ -242,12 +240,12 @@ def login_user():
 
         user = UserModel(**user_data)
         user.update(last_login=datetime.now(timezone.utc))
-        token = create_jwt(user.id, UserRole.USER, device_id=user.device_id)
+        token = create_jwt(str(user.id), UserRole.USER, device_id=user.device_id)
 
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 
         logger.info(f"User logged in: {user.device_id}")
-        return format_response(True, "User logged in successfully", {"token": token, "user_id": user.id}), 200
+        return format_response(True, "User logged in successfully", {"token": token, "user_id": str(user.id)}), 200
 
     except Exception as e:
         logger.exception("Error logging user")
