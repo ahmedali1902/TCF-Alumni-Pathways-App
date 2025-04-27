@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr, Field, model_validator
-from .objectid import PydanticObjectId
 from typing import Optional
 from datetime import datetime, timezone
 from enum import IntEnum
+from .objectid import PydanticObjectId
 
 class UserRole(IntEnum):
     ADMIN = 1
