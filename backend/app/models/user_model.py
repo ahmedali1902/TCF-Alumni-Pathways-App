@@ -1,3 +1,4 @@
+from fastapi.encoders import jsonable_encoder
 from pydantic.v1 import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime, timezone
@@ -21,7 +22,7 @@ class UserModel(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     def to_json(self):
-        return self.json(by_alias=True, exclude_none=True)
+        return jsonable_encoder(self, by_alias=True, exclude_none=True)
 
     def to_bson(self):
         data = self.dict(by_alias=True, exclude_none=True)
