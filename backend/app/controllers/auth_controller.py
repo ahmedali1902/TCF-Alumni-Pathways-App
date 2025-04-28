@@ -3,7 +3,8 @@ import logging
 from datetime import datetime, timezone
 from flask import request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required, verify_jwt_in_request
-from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError
+from jwt.exceptions import InvalidTokenError
+from flask_jwt_extended.exceptions import JWTDecodeError
 from ..extensions import mongo
 from ..models.user_model import UserModel, UserRole
 from ..helpers.auth_helper import hash_password, check_password, create_jwt
@@ -44,8 +45,8 @@ def register_admin():
         return format_response(True, "Admin registered successfully", None), 201
 
     except Exception as e:
-        logger.exception("Error registering admin")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error registering admin: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 def login_admin():
     try:
@@ -78,8 +79,8 @@ def login_admin():
         return format_response(True, "Admin logged in successfully", {"token": token, "user_id": str(user.id)}), 200
 
     except Exception as e:
-        logger.exception("Error logging admin")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error logging in admin: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 @jwt_required()
 def update_admin_password():
@@ -115,8 +116,8 @@ def update_admin_password():
         return format_response(True, "Password updated successfully", None), 200
 
     except Exception as e:
-        logger.exception("Error updating password")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error updating password: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 def reset_admin_password():
     try:
@@ -147,8 +148,8 @@ def reset_admin_password():
         return format_response(True, "Password reset successfully", None), 200
 
     except Exception as e:
-        logger.exception("Error resetting password")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error resetting admin password: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 @jwt_required()
 def refresh_admin_token():
@@ -169,8 +170,8 @@ def refresh_admin_token():
         return format_response(True, "Token refreshed successfully", {"token": new_token}), 200
 
     except Exception as e:
-        logger.exception("Error refreshing token")
-        return format_response(False, str(e), None), 401
+        logger.exception(f"Error refreshing admin token: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 @jwt_required()
 def verify_token():
@@ -186,13 +187,13 @@ def verify_token():
             "role": claims.get("role")
         }), 200
 
-    except (NoAuthorizationError, InvalidHeaderError) as e:
+    except (InvalidTokenError, JWTDecodeError) as e:
         logger.warning("Token expired or invalid during verify.")
-        return format_response(False, "Token expired or invalid", {"logout": True}), 401
+        return format_response(False, "Token has expired or is invalid", {"logout": True}), 401
 
     except Exception as e:
-        logger.exception("Unexpected error during token verification.")
-        return format_response(False, str(e), {"logout": True}), 401
+        logger.exception(f"Error verifying token: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 def register_user():
     try:
@@ -221,8 +222,8 @@ def register_user():
         return format_response(True, "User registered successfully", {"token": token, "user_id": str(inserted_user.inserted_id)}), 201
 
     except Exception as e:
-        logger.exception("Error registering user")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error registering user: {e}")
+        return format_response(False, "Internal server error", None), 500
 
 def login_user():
     try:
@@ -248,5 +249,5 @@ def login_user():
         return format_response(True, "User logged in successfully", {"token": token, "user_id": str(user.id)}), 200
 
     except Exception as e:
-        logger.exception("Error logging user")
-        return format_response(False, str(e), None), 500
+        logger.exception(f"Error logging in user: {e}")
+        return format_response(False, "Internal server error", None), 500

@@ -84,7 +84,7 @@ def get_institutes():
 
     except Exception as e:
         logger.exception(f"Error fetching institutes: {e}")
-        return format_response(False, f"Internal server error {e}"), 500
+        return format_response(False, f"Internal server error"), 500
 
 def get_institute_by_id(institute_id):
     try:
@@ -122,4 +122,4 @@ def get_institute_by_id(institute_id):
 
     except Exception as e:
         logger.exception(f"Error fetching institute by ID: {e}")
-        return format_response(False, f"Internal server error {e}"), 500
+        return format_response(False, f"Internal server error"), 500
