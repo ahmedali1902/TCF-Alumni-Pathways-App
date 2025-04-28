@@ -3,8 +3,6 @@ import logging
 from datetime import datetime, timezone
 from flask import request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required, verify_jwt_in_request
-from jwt.exceptions import InvalidTokenError
-from flask_jwt_extended.exceptions import JWTDecodeError
 from ..extensions import mongo
 from ..models.user_model import UserModel, UserRole
 from ..helpers.auth_helper import hash_password, check_password, create_jwt
@@ -171,28 +169,6 @@ def refresh_admin_token():
 
     except Exception as e:
         logger.exception(f"Error refreshing admin token: {e}")
-        return format_response(False, "Internal server error", None), 500
-
-@jwt_required()
-def verify_token():
-    try:
-        verify_jwt_in_request()
-        claims = get_jwt()
-
-        logger.info(f"Token verified for user ID: {claims.get('sub')}")
-        return format_response(True, "Token is valid", {
-            "user_id": claims.get("sub"),
-            "email": claims.get("email"),
-            "device_id": claims.get("device_id"),
-            "role": claims.get("role")
-        }), 200
-
-    except (InvalidTokenError, JWTDecodeError) as e:
-        logger.warning("Token expired or invalid during verify.")
-        return format_response(False, "Token has expired or is invalid", {"logout": True}), 401
-
-    except Exception as e:
-        logger.exception(f"Error verifying token: {e}")
         return format_response(False, "Internal server error", None), 500
 
 def login_user():

@@ -11,6 +11,4 @@ auth_bp.route('/admin/update-password', methods=['POST'])(auth_controller.update
 auth_bp.route('/admin/refresh-token', methods=['POST'])(auth_controller.refresh_admin_token)
 
 # Normal User Routes
-auth_bp.route('/register', methods=['POST'])(auth_controller.register_user)
 auth_bp.route('/login', methods=['POST'])(auth_controller.login_user)
-auth_bp.route('/verify-token', methods=['POST'])(auth_controller.verify_token)
