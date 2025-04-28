@@ -1,6 +1,7 @@
 annotated-types==0.7.0
 anyio==4.9.0
 bcrypt==4.3.0
+black==25.1.0
 blinker==1.9.0
 click==8.1.8
 colorama==0.4.6
@@ -13,10 +14,15 @@ flask-cors==5.0.1
 Flask-JWT-Extended==4.7.1
 Flask-PyMongo==3.0.1
 idna==3.10
+isort==6.0.1
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
+mypy_extensions==1.1.0
+packaging==25.0
+pathspec==0.12.1
 pip==25.1
+platformdirs==4.3.7
 pydantic==2.11.3
 pydantic_core==2.33.1
 PyJWT==2.10.1
