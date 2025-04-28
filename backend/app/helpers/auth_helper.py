@@ -1,9 +1,11 @@
 import os
 from datetime import timedelta
+
+from dotenv import load_dotenv
+from flask_jwt_extended import create_access_token
+
 from ..extensions import bcrypt
 from ..models.user_model import UserRole
-from flask_jwt_extended import create_access_token
-from dotenv import load_dotenv
 
 load_dotenv()
 JWT_ADMIN_EXPIRATION_DAYS = int(os.getenv("JWT_ADMIN_EXPIRATION_DAYS", 7))

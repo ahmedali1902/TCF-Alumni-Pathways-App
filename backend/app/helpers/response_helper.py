@@ -1,5 +1,6 @@
 from flask import jsonify
 
+
 def format_response(success: bool, message: str, data: dict = None):
     response = {
         "success": success,

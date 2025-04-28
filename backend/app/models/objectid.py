@@ -1,6 +1,7 @@
 from bson import ObjectId
 from fastapi.encoders import ENCODERS_BY_TYPE
 
+
 class PydanticObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):

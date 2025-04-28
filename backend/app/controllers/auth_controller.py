@@ -1,12 +1,19 @@
-import os
 import logging
+import os
 from datetime import datetime, timezone
+
 from flask import request
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required, verify_jwt_in_request
+from flask_jwt_extended import (
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    verify_jwt_in_request,
+)
+
 from ..extensions import mongo
-from ..models.user_model import UserModel, UserRole
-from ..helpers.auth_helper import hash_password, check_password, create_jwt
+from ..helpers.auth_helper import check_password, create_jwt, hash_password
 from ..helpers.response_helper import format_response
+from ..models.user_model import UserModel, UserRole
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,18 @@
-import math
-from bson import ObjectId
 import logging
+import math
 from datetime import datetime, timezone
+
+from bson import ObjectId
 from flask import request
+
 from ..extensions import mongo
-from ..models.institute_model import InstituteModel, InstituteFacultyModel, InstituteUserRatingModel
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
+from ..models.institute_model import (
+    InstituteFacultyModel,
+    InstituteModel,
+    InstituteUserRatingModel,
+)
 
 logger = logging.getLogger(__name__)
 

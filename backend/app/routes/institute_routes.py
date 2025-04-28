@@ -1,4 +1,5 @@
 from flask import Blueprint
+
 from ..controllers import institute_controller
 
 institute_bp = Blueprint('institute', __name__, url_prefix='/institute')

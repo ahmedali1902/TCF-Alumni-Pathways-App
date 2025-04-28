@@ -1,8 +1,10 @@
+import logging
+
 from flask import Flask
+
 from .config import config_by_name
 from .extensions import bcrypt, cors, jwt, mongo
 from .routes import register_routes
-import logging
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

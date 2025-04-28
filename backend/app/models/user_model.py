@@ -1,9 +1,12 @@
-from fastapi.encoders import jsonable_encoder
-from pydantic.v1 import BaseModel, EmailStr, Field
-from typing import Optional
 from datetime import datetime, timezone
 from enum import IntEnum
+from typing import Optional
+
+from fastapi.encoders import jsonable_encoder
+from pydantic.v1 import BaseModel, EmailStr, Field
+
 from .objectid import PydanticObjectId
+
 
 class UserRole(IntEnum):
     ADMIN = 1
