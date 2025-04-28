@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 ADMIN_SECRET = os.getenv("ADMIN_SECRET")
 
+
 def register_admin():
     try:
         data = request.get_json()
@@ -32,17 +33,25 @@ def register_admin():
             return format_response(False, "Missing or invalid admin secret", None), 401
 
         if not email or not name or not password:
-            return format_response(False, "Email, name, and password are required", None), 400
+            return (
+                format_response(False, "Email, name, and password are required", None),
+                400,
+            )
 
         user_collection = mongo.db.User
         if user_collection.find_one({"email": email, "is_deleted": False}):
-            return format_response(False, f"Admin with email \"{email}\" already exists", None), 400
+            return (
+                format_response(
+                    False, f'Admin with email "{email}" already exists', None
+                ),
+                400,
+            )
 
         user = UserModel(
             email=email,
             name=name,
             password_hash=hash_password(password),
-            role=UserRole.ADMIN
+            role=UserRole.ADMIN,
         )
 
         user_collection.insert_one(user.to_bson())
@@ -52,6 +61,7 @@ def register_admin():
     except Exception as e:
         logger.exception(f"Error registering admin: {e}")
         return format_response(False, "Internal server error", None), 500
+
 
 def login_admin():
     try:
@@ -67,7 +77,7 @@ def login_admin():
 
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             return format_response(False, "Admin not found", None), 404
-        
+
         user = UserModel(**user_data)
 
         if not check_password(password, user.password_hash):
@@ -81,11 +91,19 @@ def login_admin():
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 
         logger.info(f"Admin logged in: {user.email}")
-        return format_response(True, "Admin logged in successfully", {"token": token, "user_id": str(user.id)}), 200
+        return (
+            format_response(
+                True,
+                "Admin logged in successfully",
+                {"token": token, "user_id": str(user.id)},
+            ),
+            200,
+        )
 
     except Exception as e:
         logger.exception(f"Error logging in admin: {e}")
         return format_response(False, "Internal server error", None), 500
+
 
 @jwt_required()
 def update_admin_password():
@@ -107,7 +125,7 @@ def update_admin_password():
 
         if not user_data:
             return format_response(False, "User not found", None), 404
-        
+
         user = UserModel(**user_data)
 
         if not check_password(old_password, user.password_hash):
@@ -124,6 +142,7 @@ def update_admin_password():
         logger.exception(f"Error updating password: {e}")
         return format_response(False, "Internal server error", None), 500
 
+
 def reset_admin_password():
     try:
         data = request.get_json()
@@ -132,7 +151,12 @@ def reset_admin_password():
         admin_secret = data.get("admin_secret")
 
         if not email or not new_password or not admin_secret:
-            return format_response(False, "Email, new password, and admin secret are required", None), 400
+            return (
+                format_response(
+                    False, "Email, new password, and admin secret are required", None
+                ),
+                400,
+            )
 
         if admin_secret != ADMIN_SECRET:
             logger.warning("Missing or invalid admin secret.")
@@ -156,6 +180,7 @@ def reset_admin_password():
         logger.exception(f"Error resetting admin password: {e}")
         return format_response(False, "Internal server error", None), 500
 
+
 @jwt_required()
 def refresh_admin_token():
     try:
@@ -172,11 +197,15 @@ def refresh_admin_token():
         new_token = create_jwt(user_id, UserRole.ADMIN, email=email)
 
         logger.info(f"Admin token refreshed for user: {email}")
-        return format_response(True, "Token refreshed successfully", {"token": new_token}), 200
+        return (
+            format_response(True, "Token refreshed successfully", {"token": new_token}),
+            200,
+        )
 
     except Exception as e:
         logger.exception(f"Error refreshing admin token: {e}")
         return format_response(False, "Internal server error", None), 500
+
 
 def login_user():
     try:
@@ -187,7 +216,9 @@ def login_user():
             return format_response(False, "Device ID is required", None), 400
 
         user_collection = mongo.db.User
-        existing = user_collection.find_one({"device_id": device_id, "is_deleted": False})
+        existing = user_collection.find_one(
+            {"device_id": device_id, "is_deleted": False}
+        )
 
         if existing:
             user = UserModel(**existing)
@@ -195,14 +226,30 @@ def login_user():
             user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
             token = create_jwt(str(user.id), UserRole.USER, device_id=device_id)
             logger.info(f"Existing user logged in : {device_id}")
-            return format_response(True, "Existing user logged in successfully", {"token": token, "user_id": str(user.id)}), 200
+            return (
+                format_response(
+                    True,
+                    "Existing user logged in successfully",
+                    {"token": token, "user_id": str(user.id)},
+                ),
+                200,
+            )
 
         user = UserModel(device_id=device_id, role=UserRole.USER)
         inserted_user = user_collection.insert_one(user.to_bson())
-        token = create_jwt(str(inserted_user.inserted_id), UserRole.USER, device_id=user.device_id)
+        token = create_jwt(
+            str(inserted_user.inserted_id), UserRole.USER, device_id=user.device_id
+        )
 
         logger.info(f"User logged in: {user.device_id}")
-        return format_response(True, "User logged in successfully", {"token": token, "user_id": str(inserted_user.inserted_id)}), 201
+        return (
+            format_response(
+                True,
+                "User logged in successfully",
+                {"token": token, "user_id": str(inserted_user.inserted_id)},
+            ),
+            201,
+        )
 
     except Exception as e:
         logger.exception(f"Error logging in user: {e}")

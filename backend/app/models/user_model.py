@@ -12,6 +12,7 @@ class UserRole(IntEnum):
     ADMIN = 1
     USER = 2
 
+
 class UserModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
     email: Optional[EmailStr] = None

@@ -17,5 +17,6 @@ class PydanticObjectId(ObjectId):
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
 
+
 ENCODERS_BY_TYPE[PydanticObjectId] = str
 ENCODERS_BY_TYPE[ObjectId] = str

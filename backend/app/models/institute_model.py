@@ -13,16 +13,19 @@ class ManagingAuthority(IntEnum):
     PUBLIC = 1
     PRIVATE = 2
 
+
 class Gender(IntEnum):
     MALE_ONLY = 1
     FEMALE_ONLY = 2
     COEDUCATION = 3
+
 
 class InstituteUserRatingModel(BaseModel):
     id: PydanticObjectId = Field(default_factory=ObjectId)
     rating: float = Field(None, ge=0, le=5)
     is_deleted: bool = Field(default=False)
     rated_by: PydanticObjectId = None
+
 
 class InstituteFacultyModel(BaseModel):
     id: PydanticObjectId = Field(default_factory=ObjectId)
@@ -31,9 +34,11 @@ class InstituteFacultyModel(BaseModel):
     gender: Gender = Field(default=Gender.COEDUCATION)
     is_deleted: bool = Field(default=False)
 
+
 class GeoPointModel(BaseModel):
     type: str = Field(default="Point", const=True)
     coordinates: list[float] = Field(..., min_items=2, max_items=2)
+
 
 class InstituteModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
