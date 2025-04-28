@@ -25,7 +25,6 @@ class InstituteFacultyModel(BaseModel):
     id: PydanticObjectId = Field(default_factory=ObjectId)
     name: str = Field(None, min_length=1, max_length=50)
     average_result_percentage_required: Optional[float] = Field(None, ge=0, le=100)
-    tcf_rating: float = Field(0.0, ge=0, le=5)
     gender: Gender = Field(default=Gender.COEDUCATION)
     is_deleted: bool = Field(default=False)
 
@@ -41,6 +40,7 @@ class InstituteModel(BaseModel):
     description: Optional[str] = Field("", min_length=1, max_length=500)
     faculties: list[InstituteFacultyModel] = Field(default_factory=list)
     user_ratings: list[InstituteUserRatingModel] = Field(default_factory=list)
+    tcf_rating: float = Field(0.0, ge=0, le=5)
     is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
