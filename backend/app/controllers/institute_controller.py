@@ -14,10 +14,9 @@ def get_institutes():
     try:
         page = int(request.args.get('page', 1))
         limit = int(request.args.get('limit', 10))
-        data = request.get_json()
-        user_longitude = data.get('longitude')
-        user_latitude = data.get('latitude')
-        distance_radius = data.get('distance_radius', 10000)
+        distance_radius = int(request.args.get('distance_radius', 10000))
+        user_longitude = request.args.get('longitude')
+        user_latitude = request.args.get('latitude')
         
         if user_longitude is None or user_latitude is None:
             return format_response(False, "User location is required"), 400
