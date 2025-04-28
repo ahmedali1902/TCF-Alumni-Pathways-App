@@ -195,7 +195,7 @@ def verify_token():
         logger.exception(f"Error verifying token: {e}")
         return format_response(False, "Internal server error", None), 500
 
-def register_user():
+def login_user():
     try:
         data = request.get_json()
         device_id = data.get("device_id")
@@ -211,42 +211,15 @@ def register_user():
             user.update(last_login=datetime.now(timezone.utc))
             user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
             token = create_jwt(str(user.id), UserRole.USER, device_id=device_id)
-            logger.info(f"User already exists: {device_id}")
-            return format_response(True, "User already exists", {"token": token, "user_id": str(user.id)}), 200
+            logger.info(f"Existing user logged in : {device_id}")
+            return format_response(True, "Existing user logged in successfully", {"token": token, "user_id": str(user.id)}), 200
 
         user = UserModel(device_id=device_id, role=UserRole.USER)
         inserted_user = user_collection.insert_one(user.to_bson())
         token = create_jwt(str(inserted_user.inserted_id), UserRole.USER, device_id=user.device_id)
 
-        logger.info(f"User registered: {user.device_id}")
-        return format_response(True, "User registered successfully", {"token": token, "user_id": str(inserted_user.inserted_id)}), 201
-
-    except Exception as e:
-        logger.exception(f"Error registering user: {e}")
-        return format_response(False, "Internal server error", None), 500
-
-def login_user():
-    try:
-        data = request.get_json()
-        device_id = data.get("device_id")
-
-        if not device_id:
-            return format_response(False, "Device ID is required", None), 400
-
-        user_collection = mongo.db.User
-        user_data = user_collection.find_one({"device_id": device_id, "is_deleted": False})
-
-        if not user_data:
-            return format_response(False, "User not found", None), 404
-
-        user = UserModel(**user_data)
-        user.update(last_login=datetime.now(timezone.utc))
-        token = create_jwt(str(user.id), UserRole.USER, device_id=user.device_id)
-
-        user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
-
         logger.info(f"User logged in: {user.device_id}")
-        return format_response(True, "User logged in successfully", {"token": token, "user_id": str(user.id)}), 200
+        return format_response(True, "User logged in successfully", {"token": token, "user_id": str(inserted_user.inserted_id)}), 201
 
     except Exception as e:
         logger.exception(f"Error logging in user: {e}")
