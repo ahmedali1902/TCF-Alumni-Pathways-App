@@ -73,7 +73,7 @@ def get_institutes():
             },
         ]
 
-        result = list(mongo.db.institutes.aggregate(pipeline))
+        result = list(mongo.db.TestInstitute.aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             institutes = result[0]["paginatedResults"]
@@ -118,7 +118,7 @@ def get_institute_by_id(institute_id):
             },
         ]
 
-        result = list(mongo.db.institutes.aggregate(pipeline))
+        result = list(mongo.db.TestInstitute.aggregate(pipeline))
         if not result:
             return format_response(False, "Institute not found"), 404
 
