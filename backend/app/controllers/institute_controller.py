@@ -129,3 +129,57 @@ def get_institute_by_id(institute_id):
     except Exception as e:
         logger.exception(f"Error fetching institute by ID: {e}")
         return format_response(False, f"Internal server error"), 500
+
+
+@jwt_required()
+def rate_institute(institute_id):
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+        user_id = ObjectId(user_id)
+
+        data = request.get_json()
+        rating = data.get("rating")
+        if rating is None or not (1 <= rating <= 5):
+            return format_response(False, "Rating must be between 1 and 5"), 400
+
+        institute_collection = mongo.db.TestInstitute
+
+        institute = institute_collection.find_one(
+            {"_id": ObjectId(institute_id), "is_deleted": False}
+        )
+        if not institute:
+            return format_response(False, "Institute not found"), 404
+
+        institute = InstituteModel(**institute)
+
+        user_ratings = institute.user_ratings
+        if not user_ratings:
+            user_ratings = []
+
+        for user_rating in user_ratings:
+            if user_rating.rated_by == user_id:
+                user_rating.rating = rating
+                break
+        else:
+            user_ratings.append(
+                InstituteUserRatingModel(rating=rating, rated_by=user_id)
+            )
+        institute.update(
+            user_ratings=user_ratings,
+            average_user_rating=sum(user_rating.rating for user_rating in user_ratings)
+            / len(user_ratings),
+            updated_at=datetime.now(timezone.utc),
+            updated_by=user_id,
+        )
+
+        institute_collection.update_one(
+            {"_id": institute.id}, {"$set": institute.to_bson()}
+        )
+        logger.info(f"Institute rated successfully: {institute.name}")
+        return format_response(True, "Institute rated successfully"), 200
+
+    except Exception as e:
+        logger.exception(f"Error rating institute: {e}")
+        return format_response(False, "Internal server error"), 500
