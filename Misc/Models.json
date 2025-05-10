@@ -47,14 +47,13 @@
     },
     "Institute": {
         "id": "ObjectId",
-        "code": "String",
         "name": "String",
         "managingAuthority": "Integer", // Public, Private
         "latitude": "Float",
         "longitude": "Float",
         "description": "String",
         "faculties": "InstituteFaculty[]",
-        "userRating": "Avg[InstituteRating[]]",
+        "userRating": "Float",
         "createdAt": "Datetime",
         "updatedAt": "Datetime",
         "createdBy": "ObjectId",
@@ -64,15 +63,14 @@
     "InstituteFaculty": {
         "id": "ObjectId",
         "name": "String",
-        "performanceAverageResult": "Float",
-        "performanceAdmissionCriteria": "Float",
-        "performanceUserRating": "Float",
+        "averageResultPercentageRequired": "Float",
         "TCFrating": "Float",
         "gender": "Integer"
     },
-    "InstituteRating": {
+    "InstituteUserRating": {
         "id": "ObjectId",
         "rating": "Integer",
+        "instituteId": "ObjectId",
         "createdAt": "Datetime",
         "updatedAt": "Datetime",
         "createdBy": "ObjectId",
