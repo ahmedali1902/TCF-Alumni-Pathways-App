@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from bson import ObjectId
 from flask import request
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
@@ -17,6 +18,7 @@ from ..models.institute_model import (
 logger = logging.getLogger(__name__)
 
 
+@jwt_required()
 def get_institutes():
     try:
         page = int(request.args.get("page", 1))
@@ -96,6 +98,7 @@ def get_institutes():
         return format_response(False, f"Internal server error"), 500
 
 
+@jwt_required()
 def get_institute_by_id(institute_id):
     try:
         if not institute_id:
