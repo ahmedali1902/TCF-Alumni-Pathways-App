@@ -141,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         // First Option (Conditional text based on selection)
         _buildEducationCard(
-          title: "How to apply?",
+          title:
+              _selectedEducation == StudentEducation.matric
+                  ? "How to apply for college?"
+                  : "How to apply for university?",
           icon: LucideIcons.helpCircle,
           color1: TAppColors.primary,
           color2: TAppColors.primary.withOpacity(0.7),
@@ -166,13 +169,35 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 15),
 
-        // Second Option ("Where to apply?")
+        // Second Option ("How to avail TCF Scholarship?")
+        _buildEducationCard(
+          title: "How to avail TCF Scholarship?",
+          icon: LucideIcons.graduationCap,
+          color1: TAppColors.primary,
+          color2: TAppColors.primary.withOpacity(0.7),
+          theme: theme,
+          onTap: () {
+            // Handle "Where to apply?" action
+          },
+        ),
+        const SizedBox(height: 15),
+        // "Or" Line (Light Gray)
+        const Text(
+          "--- or ---",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 15),
+        // Third Option ("Where to apply?")
         _buildEducationCard(
           title:
               _selectedEducation == StudentEducation.matric
-                  ? "How to avail TCF Scholarship?"
-                  : "Where to apply?",
-          icon: LucideIcons.graduationCap,
+                  ? "Where to apply for college?"
+                  : "Where to apply for university?",
+          icon: LucideIcons.mapPin,
           color1: TAppColors.primary,
           color2: TAppColors.primary.withOpacity(0.7),
           theme: theme,

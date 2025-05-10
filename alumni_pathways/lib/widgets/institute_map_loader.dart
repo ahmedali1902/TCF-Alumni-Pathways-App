@@ -50,108 +50,135 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
         title: Text(
           institute['name'] ?? 'Institute Details',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             fontFamily: 'Inter',
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Map Section
-          SizedBox(
-            height: 400,
-            child: MapWidget(
-              styleUri: getStyleForTheme(context),
-              onMapCreated: _onMapCreated,
-              cameraOptions: CameraOptions(center: location, zoom: 14.0),
-            ),
+          // Background Map
+          MapWidget(
+            styleUri: getStyleForTheme(context),
+            onMapCreated: _onMapCreated,
+            cameraOptions: CameraOptions(center: location, zoom: 14.0),
           ),
-          // Details Section
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Institute Name and Rating
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+
+          // Foreground Draggable Bottom Sheet
+          DraggableScrollableSheet(
+            initialChildSize: 0.35, // how much visible initially (0.0 to 1.0)
+            minChildSize: 0.2, // minimum height
+            maxChildSize: 0.85, // maximum height
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  controller: scrollController, // Important to link scroll
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          institute['name'] ?? '',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(
-                            color: TAppColors.primary,
-                            fontWeight: FontWeight.bold,
+                      // Small grab handle
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      _buildRatingStars(_calculateAverageRating(institute)),
+
+                      // Rest of your details (just copy from your original Column)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              institute['name'] ?? '',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineSmall?.copyWith(
+                                color: TAppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _buildRatingStars(_calculateAverageRating(institute)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _getManagingAuthority(institute['managingAuthority']),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Text(
+                        'Description',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        institute['description'] ?? 'No description available',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 20),
+
+                      TCard(
+                        height: 80,
+                        leftIcon: CircleAvatar(
+                          backgroundColor: TAppColors.primary.withOpacity(0.2),
+                          child: const Icon(
+                            LucideIcons.mapPin,
+                            color: TAppColors.primary,
+                            size: 20,
+                          ),
+                        ),
+                        textWidget: const Text(
+                          'Open in Google Maps',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        onTap:
+                            () => _openGoogleMaps(
+                              institute['latitude'],
+                              institute['longitude'],
+                            ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      Text(
+                        'Faculties',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._buildFacultyCards(institute['faculties'] ?? []),
                     ],
                   ),
-                  const SizedBox(height: 8),
-
-                  // Managing Authority
-                  Text(
-                    _getManagingAuthority(institute['managingAuthority']),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Description
-                  Text(
-                    'Description',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    institute['description'] ?? 'No description available',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Google Maps Button
-                  TCard(
-                    height: 80,
-                    leftIcon: CircleAvatar(
-                      backgroundColor: TAppColors.primary.withOpacity(0.2),
-                      child: const Icon(
-                        LucideIcons.mapPin,
-                        color: TAppColors.primary,
-                        size: 20,
-                      ),
-                    ),
-                    textWidget: const Text(
-                      'Open in Google Maps',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onTap:
-                        () => _openGoogleMaps(
-                          institute['latitude'],
-                          institute['longitude'],
-                        ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Faculties Section
-                  Text(
-                    'Faculties',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ..._buildFacultyCards(institute['faculties'] ?? []),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

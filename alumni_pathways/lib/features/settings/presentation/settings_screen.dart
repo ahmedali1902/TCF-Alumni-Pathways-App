@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/colors.dart';
 import '../../../widgets/card.dart';
+import 'package:flutter/gestures.dart'; // Important for gesture recognizer
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -107,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       return const SearchSettingsScreen();
                                     case 'Privacy Policy':
                                       return const PrivacyPolicyScreen();
-                                    case 'App Feedback':
+                                    case 'Institue Add Request':
                                       return const FeedbackScreen();
                                     case 'About':
                                       return const AboutScreen();
@@ -158,7 +160,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
     setState(() {
       _distance = prefs.getInt('search_distance') ?? 10;
       _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
-      _selectedGender = prefs.getString('search_gender');
+      _selectedGender = prefs.getString('search_gender') ?? '1';
       _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
     });
   }
@@ -227,7 +229,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Distance: $_distance km',
+          'Max distance from me: $_distance km',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         Slider(
@@ -237,6 +239,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
           divisions: 20,
           label: '$_distance km',
           onChanged: (value) => setState(() => _distance = value.round()),
+          activeColor: TAppColors.primary,
         ),
       ],
     );
@@ -247,7 +250,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Minimum Rating: ${_minRating.toStringAsFixed(1)}',
+          'Institute Minimum Rating: ${_minRating.toStringAsFixed(1)}',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         Slider(
@@ -257,6 +260,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
           divisions: 8,
           label: _minRating.toStringAsFixed(1),
           onChanged: (value) => setState(() => _minRating = value),
+          activeColor: TAppColors.primary,
         ),
       ],
     );
@@ -273,16 +277,47 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
         DropdownButtonFormField<String>(
           value: _selectedGender,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 15,
               vertical: 10,
             ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: TAppColors.primary,
+              ), // Active border color
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: TAppColors.primary,
+              ), // Enabled border color
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: TAppColors.primary,
+                width: 2,
+              ), // Focused border color
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Colors.red,
+              ), // Error border color
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Colors.red,
+                width: 2,
+              ), // Focused error border
+            ),
           ),
           items: const [
-            DropdownMenuItem(value: 'Male', child: Text('Male')),
-            DropdownMenuItem(value: 'Female', child: Text('Female')),
-            DropdownMenuItem(value: 'Any', child: Text('Any')),
+            DropdownMenuItem(value: '1', child: Text('Male Only')),
+            DropdownMenuItem(value: '2', child: Text('Female Only')),
+            DropdownMenuItem(value: '3', child: Text('Coeducation')),
           ],
           onChanged: (value) => setState(() => _selectedGender = value),
           hint: const Text('Select gender'),
@@ -296,7 +331,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Minimum Admission Criteria: $_admissionCriteria%',
+          'SSC/HSC Percentage: $_admissionCriteria%',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         Slider(
@@ -307,6 +342,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
           label: '$_admissionCriteria%',
           onChanged:
               (value) => setState(() => _admissionCriteria = value.round()),
+          activeColor: TAppColors.primary,
         ),
       ],
     );
@@ -413,6 +449,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Institute request submitted successfully'),
+        ),
+      );
     }
   }
 
@@ -421,7 +462,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          icon: const Icon(LucideIcons.chevronLeft),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
@@ -438,13 +479,48 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // align labels left
             children: [
+              const Text(
+                'Institute Name',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Institute Name',
+                  hintText: 'Enter institute name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Active border color
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Enabled border color
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                      width: 2,
+                    ), // Focused border color
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                    ), // Error border color
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ), // Focused error border
                   ),
                 ),
                 validator:
@@ -454,12 +530,47 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             : null,
               ),
               const SizedBox(height: 20),
+
+              const Text(
+                'Program',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _programController,
                 decoration: InputDecoration(
-                  labelText: 'Program',
+                  hintText: 'Enter program name',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Active border color
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Enabled border color
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                      width: 2,
+                    ), // Focused border color
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                    ), // Error border color
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ), // Focused error border
                   ),
                 ),
                 validator:
@@ -469,12 +580,47 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             : null,
               ),
               const SizedBox(height: 20),
+
+              const Text(
+                'Location',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
-                  labelText: 'Location',
+                  hintText: 'Enter location',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Active border color
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Enabled border color
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                      width: 2,
+                    ), // Focused border color
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                    ), // Error border color
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ), // Focused error border
                   ),
                 ),
                 validator:
@@ -509,7 +655,7 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          icon: const Icon(LucideIcons.chevronLeft),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
@@ -544,14 +690,61 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text('v1.0.0', style: Theme.of(context).textTheme.bodyLarge),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'This app is built to help TCF students find their career pathway, the institutes they can apply using TCF scholarship, and to stay updated with real-time notifications.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: Text(
-                'Developed with ❤️ by ABC',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  children: [
+                    const TextSpan(text: 'Developed with ❤️ by '),
+                    TextSpan(
+                      text: 'Ahsan',
+                      style: TextStyle(
+                        color: TAppColors.primary,
+                        decoration: TextDecoration.underline,
+                        decorationColor:
+                            TAppColors
+                                .primary, // underline color same as text color
+                      ),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(Uri.parse('https://ahsan.tech'));
+                            },
+                    ),
+                    const TextSpan(text: ' & '),
+                    TextSpan(
+                      text: 'Ahmed',
+                      style: TextStyle(
+                        color: TAppColors.primary,
+                        decoration: TextDecoration.underline,
+                        decorationColor:
+                            TAppColors
+                                .primary, // underline color same as text color
+                      ),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(
+                                Uri.parse('https://github.com/ahmedali1902'),
+                              );
+                            },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
