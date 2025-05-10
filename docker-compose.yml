@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./backend/
+    ports:
+      - "5000:5000"
+    env_file: backend/.env
+    networks:
+      - tcf-alumni-pathways-network
+  frontend:
+    build:
+      context: ./frontend/
+    ports:
+      - "80:80"
+    env_file: frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - tcf-alumni-pathways-network
+
+networks:
+  tcf-alumni-pathways-network:
+    driver: bridge

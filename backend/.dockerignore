@@ -1,0 +1,10 @@
+venvvenv/
+.env
+
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+.gitignore
+pyproject.toml
