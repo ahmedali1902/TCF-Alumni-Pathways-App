@@ -7,6 +7,7 @@ from .extensions import bcrypt, cors, jwt, mongo
 from .routes import register_routes
 
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('pymongo').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
