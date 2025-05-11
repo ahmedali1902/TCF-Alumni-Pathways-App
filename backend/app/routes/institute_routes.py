@@ -11,3 +11,4 @@ institute_bp.route("/<string:institute_id>", methods=["GET"])(
 institute_bp.route("/<string:institute_id>/rating", methods=["POST"])(
     institute_controller.rate_institute
 )
+institute_bp.route("", methods=["POST"])(institute_controller.create_institute)

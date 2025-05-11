@@ -4,12 +4,13 @@ from datetime import datetime, timezone
 
 from bson import ObjectId
 from flask import request
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
 from ..models.institute_model import (
+    GeoPointModel,
     InstituteFacultyModel,
     InstituteModel,
     InstituteUserRatingModel,
@@ -73,7 +74,7 @@ def get_institutes():
             },
         ]
 
-        result = list(mongo.db.TestInstitute.aggregate(pipeline))
+        result = list(mongo.db.Institute.aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             institutes = result[0]["paginatedResults"]
@@ -118,7 +119,7 @@ def get_institute_by_id(institute_id):
             },
         ]
 
-        result = list(mongo.db.TestInstitute.aggregate(pipeline))
+        result = list(mongo.db.Institute.aggregate(pipeline))
         if not result:
             return format_response(False, "Institute not found"), 404
 
@@ -144,7 +145,7 @@ def rate_institute(institute_id):
         if rating is None or not (1 <= rating <= 5):
             return format_response(False, "Rating must be between 1 and 5"), 400
 
-        institute_collection = mongo.db.TestInstitute
+        institute_collection = mongo.db.Institute
 
         institute = institute_collection.find_one(
             {"_id": ObjectId(institute_id), "is_deleted": False}
@@ -182,4 +183,48 @@ def rate_institute(institute_id):
 
     except Exception as e:
         logger.exception(f"Error rating institute: {e}")
+        return format_response(False, "Internal server error"), 500
+    
+@jwt_required()
+def add_institute():
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+        user_id = ObjectId(user_id)
+        jwt_claims = get_jwt()
+        if not check_if_admin(jwt_claims):
+            return format_response(False, "Permission denied"), 403
+
+        data = request.get_json()
+        if not data:
+            return format_response(False, "Request body is required"), 400
+        
+        faculty_data = data.get("faculties", [])
+        faculties = []
+        for faculty in faculty_data:
+            faculties.append(InstituteFacultyModel(**faculty))
+
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
+        coordinates = [longitude, latitude]
+        location = GeoPointModel(coordinates=coordinates)
+
+        institute = InstituteModel(
+            name=data.get("name"),
+            managing_authority=data.get("managing_authority"),
+            location=location,
+            description=data.get("description", ""),
+            faculties=faculties,
+            tcf_rating=data.get("tcf_rating", 0.0),
+            created_by=user_id,
+            updated_by=user_id,
+        )
+
+        mongo.db.Institute.insert_one(institute.to_bson())
+        logger.info(f"Institute added successfully: {institute.name}")
+        return format_response(True, "Institute added successfully"), 201
+
+    except Exception as e:
+        logger.exception(f"Error adding institute: {e}")
         return format_response(False, "Internal server error"), 500
