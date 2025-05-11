@@ -1,0 +1,556 @@
+CODE,Institute Name,Managing Authority,Latitude,Longitude,Institure Type,Description,Gender,Faculty,Tier
+KQ2172,ADAMJEE GOVT. SCIENCE COLLEGE KARACHI,Government,24.8818483,67.0362703,College,https://maps.app.goo.gl/NYfipTsmjFGCYgEy8,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2194,D.J SINDH GOVT SCIENCE COLLEGE,Government,24.8535173,67.014471,College,https://maps.app.goo.gl/DwcT93z1eesiNRFz7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2195,GOVT COLLEGE FOR MEN NAZIMABAD,Government,24.9095625,67.0294876,College,https://maps.app.goo.gl/HUL5K8Re7eLd5ZAWA,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2202,"GOVT. DEGREE COLLEGE MALIR CANTT, KARACHI",Government,24.9439194,66.976809,College,https://maps.app.goo.gl/CoADCR5Lx36a91QP6,CO-Education,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2155,GOVT .DEHLI INTER SCIENCE COLLEGE,Government,24.9129766,67.0575161,College,https://maps.app.goo.gl/wd8oCP1wbP9a86bU6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2181,PAKISTAN SHIPOWNERS' GOVT COLLEGE KARACHI,Government,24.9489872,67.0375902,College,https://maps.app.goo.gl/KgdVv7tEUVA9hU6E9,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2178,GOVT JINNAH COLLEGE,Government,24.9242896,67.0265369,College,https://maps.app.goo.gl/25ScqMfJHByL1XnKA,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2196,"GOVT. SUPERIOR SCIENCE COLLEGE, KARACHI",Government,24.8843406,67.1452558,College,https://maps.app.goo.gl/PWBqrmcYDo1AWdjh7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2248,GOVT. DEGREE BOYS COLLEGE GULISTAN E JOHAR MORNING,Government,24.9361355,67.1319323,College,https://maps.app.goo.gl/ryA7Yd3A5GKx4iUd7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2183,S.M GOVT SCIENCE COLLEGE,Government,24.8514426,67.0022297,College,https://maps.app.goo.gl/L44hetjvks1NP4h88,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2197,GOVT. DEGREE SCIENCE COMMERCE COLLEGE LANDHI KORANGI 06,Government,24.8252746,67.172056,College,https://maps.app.goo.gl/fohtjv2Qm38y9M6d6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2184,GOVT.PECHS EDUCATION FOUNDATION SCIENCE COLLEGE,Government,24.8815625,67.0544876,College,https://maps.app.goo.gl/i4z6fkYNZcMpSbJA8,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2175,HAJI ABDULLAH HAROON GOVT. DEGREE COLLEGE,Government,24.8567857,66.9890642,College,https://maps.app.goo.gl/YUrjAdYBLSpbsGVJ9,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES",T1
+KQ2180,GOVT. NATIONAL COLLEGE ( MORNING),Government,24.8847812,67.0576756,College,https://maps.app.goo.gl/RkhYkpXk6RYLhFoM8,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2204,GOVT DEGREE COLLEGE FOR BOYS AND GIRLS BLOCK-07,Government,24.9129029,67.0856847,College,https://maps.app.goo.gl/6hz9LK2YexKjWWAB9,CO-Education,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2173,AISHA BAWANI GOVT COLLEGE MORNING,Government,24.8575526,67.0542345,College,https://maps.app.goo.gl/48riUC5w1u9K93Be6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2174,GOVT.CITY COLLEGE MUSA COLONY MORNING,Government,24.9220069,67.0448258,College,https://maps.app.goo.gl/DFGJRvefWzXthbS89,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2261,GOVT. DEGREE COLLEGE RAZZAKABAD KARACHI,Government,24.8708816,67.2876287,College,https://maps.app.goo.gl/b96QDokCKTqLDuoQ9,CO-Education,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2146,"GOVT. DEGREE BOYS COLLEGE, KORANGI 2 KARACHI",Government,24.8328532,67.1260805,College,https://maps.app.goo.gl/2bHCX6B6h9EWYpLp9,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2154,SIRAJUDULLAH GOVT. DEGREE COLLEGE,Government,24.9152559,67.048312,College,https://maps.app.goo.gl/ReeJkU8W8bRt1f266,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T2
+KQ2242,GOVT. DEGREE BOYS COLLEGE KMC STORE NISHTER ROAD,Government,24.8639913,67.0088566,College,https://maps.app.goo.gl/hxQvwDQ83XYHCBcg6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T2
+KQ2231,GOVT. DEGREE BOYS COLLEGE METROVILLE SITE,Government,24.921346,66.9963462,College,https://maps.app.goo.gl/sy2cxukE55AUci9i6,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2168,GOVT. DEGREE BOYS COLLEGE BUFFER ZONE,Government,24.9571874,67.0640666,College,https://maps.app.goo.gl/KoqEdLthkJUZbBw88,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T2
+KQ2260,GOVT INTER BOYS COLLEGE LANDHI,Government,24.8408141,67.1801288,College,https://maps.app.goo.gl/Q46a9o6dx5VS2zrL8,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T2
+KQ2151,"GOVT, JAMIA MILLIA DEGREE COLLEGE ( MORNING)",Government,24.8727089,67.1740713,College,https://maps.app.goo.gl/cSvXQvt33RrDR3AF7,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , ",T2
+KQ2256,GOVT. DEGREE BOYS COLLEGE GULZAR E HIJRI,Government,24.945749,67.1011596,College,https://maps.app.goo.gl/R6wHZMwNpGm4ZFu77,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T2
+KQ2201,GOVT DEGREE SCIENCE AND COMMERCE COLLEGE ORANGI TOWN,Government,24.9352624,67.0148558,College,https://maps.app.goo.gl/wsfzJVv4zZnURioC8,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T3 and Below
+KQ2241,"SHAHEED ZULFIQAR ALI BHUTTO GOVERNMENT DEGREE BOYS COLLEGE, SECTOR 16-E GULSHAN E BEHAR, ORANGI TOWN, KARACHI",Government,24.9700829,66.9930954,College,https://maps.app.goo.gl/DiZVJgqS9KJrytcWA,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2200,GOVT. DEGREE SCIENCE COLLEGE LIAQUATABAD,Government,24.9000659,67.0549171,College,https://maps.app.goo.gl/AcbzTfuAqMNNhXDSA,Male,"PRE–MEDICAL , PRE–ENGINEERING",T3 and Below
+KQ2144,"GOVT. DEGREE BOYS COLLEGE 7D-II NORTH KARACHI, NORTH NAZIMABAD TOWN KARACHI",Government,24.9841839,67.0561477,College,https://maps.app.goo.gl/2E7AAmXnj8wJtLuh7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2150,ALLAMA IQBAL GOVT BOYS SCIENCE COLLEGE MORNING,Government,24.9059582,67.1859207,College,https://maps.app.goo.gl/HNH7Lx3wPFxH7cBw7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T3 and Below
+KQ2257,GOVT. DEGREE BOYS COLLEGE JUNGLE SHAH,Government,24.8294466,66.9798444,College,https://maps.app.goo.gl/Wv2FacccRCVJPzpp8,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2198,GOVT. DEGREE SCIENCE AND COMMERCE COLLEGE LYARI,Government,24.8787137,67.0022585,College,https://maps.app.goo.gl/GKEAXrmx6kjCwA7e9,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2338,"GOVT. DEGREE BOYS COLLEGE, 11-A, NORTH KARACHI, KARACHI",Government,24.9841839,67.0561477,College,https://maps.app.goo.gl/Fu1wPeYEFVdCvu4m8,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T3 and Below
+KQ2252,GOVT. DEGREE BOYS COLLEGE BALDIA TOWN,Government,24.9258544,66.9634379,College,https://maps.app.goo.gl/gv4pMWV9eaUEB9F68,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2189,GOVT DEGREE BOYS COLLEGE ASIFABAD,Government,24.9015816,67.0104328,College,https://maps.app.goo.gl/j23UYokoLS57XkmQA,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2177,ISLAMIA GOVT. SCIENCE COLLEGE,Government,24.9408104,66.9701672,College,https://maps.app.goo.gl/5HRFfFuyyTofx2Hf7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T3 and Below
+KQ2156,NABI BAGH Z.M GOVT INTER SCIENCE COLLEGE,Government,24.8608762,67.0187945,College,https://maps.app.goo.gl/mdRoMmZSqL56MY5M7,Male,"PRE–MEDICAL , PRE–ENGINEERING",T3 and Below
+KQ2199,GOVT. DEGREE SCIENCE COLLEGE MALIR KARACHI,Government,24.9111693,67.1938245,College,https://maps.app.goo.gl/EquxYvEbCBtaHxvK6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2203,"GOVT. DEGREE BOYS GIRLS COLLEGE OF SCIENCE , ARTS COMMERCE MURAD MEMON MALIR , KARACHI",Government,24.9165833,67.2479089,College,https://maps.app.goo.gl/mxTeSdkcXvVjJimr6,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2258,"GOVT. DEGREE BOYS COLLEGE 5-L NEW KARACHI, KARACHI.",Government,24.9865166,67.0671557,College,https://maps.app.goo.gl/9a9uCfaK8ufgm6hE9,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2249,GOVT. DEGREE BOYS COLLEGE QUAIDABAD,Government,24.8575662,67.2451996,College,https://maps.app.goo.gl/w5eYZmTKmxs4JFuE9,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2275,NUSRAT BHUTTO GOVT. BOYS COLLEGE LYARI KARACHI,Government,24.8624683,66.9870792,College,https://maps.app.goo.gl/e7BqAZcsNvzdJ7Xp7,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2267,GOVT DEGREE COLLEGE SHAMSPEER BABA BHIT KARACHI,Government,24.8182549,66.6586178,College,https://maps.app.goo.gl/Zvac2gSTKE7PqHMz6,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2747,GOVT DEGREE BOYS COLLEGE 100 QUARTERS KARACHI,Government,24.8139147,67.150531,College,https://maps.app.goo.gl/j6y1QS8Cf1K3uoCY6,Male,"PRE–MEDICAL , PRE–ENGINEERING",T3 and Below
+KQ2339,"GOVERNMENT DEGREE BOYS COLLEGE, SECTOR 9-E, BALDIA TOWN, KARACHI",Government,24.9373722,66.9343251,College,https://maps.app.goo.gl/LQRkob7Cj8EBgHut6,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES",T3 and Below
+KQ2668,"GOVERNMENT DEGREE COLLEGE SACHAL GOTH, GHAZI GOTH KARACHI",Government,24.9612009,67.1452809,College,https://maps.app.goo.gl/dQ6qWniPUzaKBGav9,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T3 and Below
+KQ2743,GOVT DEGREE COLLEGE SHEESHA GALI KARACHI.,Government,24.8953972,67.0890771,College,https://maps.app.goo.gl/CrZ4sPg3F9VjSjreA,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T3 and Below
+KQ2265,GOVT. DEGREE BOYS COLLEGE SURJANI TOWN,Government,25.0142611,67.0712657,College,https://maps.app.goo.gl/MFuQGPweFzgpvCfE6,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2266,GOVT DEGREE BOYS COLLEGE KONKAR VILLAGE,Government,24.9820364,67.1068635,College,https://maps.app.goo.gl/J9W7qFcvABw532GeA,CO-Education,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2270,GOVT. DEGREE BOYS COLLEGE MANGOPIR,Government,24.9920927,67.0370561,College,https://maps.app.goo.gl/rj6smbuhkXiKUvqp9,Male,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T3 and Below
+KQ2278,GOVT. DEGREE BOYS COLLEGE IBRAHIM HYDERI,Government,24.7975952,67.1368141,College,https://maps.app.goo.gl/3oRFrwRCX1gVHh1V8,Male,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2304,"GOVT DEGREE BOYS COLLEGE, MUZAFFARABAD LANDHI, KARACHI",Government,24.8466403,67.0668728,College,https://maps.app.goo.gl/ao4DbBeYBAaWAAjz5,Male,"PRE–MEDICAL , PRE–ENGINEERING",T3 and Below
+KQ2207,BAMM PECHS GOVT COLLEGE FOR WOMEN,Government,24.8629077,67.059529,College,https://maps.app.goo.gl/seJWwC3QX7Va98PHA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2160,SIR SYED GOVT. GIRLS COLLEGE,Government,24.9022606,67.023688,College,https://maps.app.goo.gl/VMp8g6ijDLwM8KpN7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2217,KHURSHEED GOVT. GIRLS DEGREE COLLEGE,Government,24.8827715,67.1458096,College,https://maps.app.goo.gl/DrPoJyt2fELHde7bA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T1
+KQ2161,GOVT. DEGREE COLLEGE FOR WOMEN BLOCK M,Government,24.9439421,67.0566359,College,https://maps.app.goo.gl/EAYFFCHJN8vrvYRr8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2208,GOVT COLLEGE FOR WOMEN SHAHRAH E LIAQUAT,Government,24.858272,67.0154717,College,https://maps.app.goo.gl/35t4ap8kMxFYgWf69,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2228,"GOVT. DEGREE BOYS AND GIRLS COLLEGE STADIUM ROAD, KARACHI",Government,24.8982619,67.1032336,College,https://maps.app.goo.gl/7xG9HemBAB3E5LvM7,CO-Education,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , ",T1
+KQ2225,ST. LAWRANCE'S GOVT. GIRLS DEGREE COLLEGE,Government,24.8611394,67.0357891,College,https://maps.app.goo.gl/KJgC7cMpYTp1n8TVA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , ",T1
+KQ2218,KHATOON E PAKISTAN GOVT COLLEGE FOR WOMEN,Government,24.8901133,67.0701102,College,https://maps.app.goo.gl/eoTStcHRrpRoJkmT9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T1
+KQ2212,GOVT. COLLEGE FOR WOMEN KORANGI 06,Government,24.821157,67.1674565,College,https://maps.app.goo.gl/4QzgwGQNV9K8Tk79A,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2157,GOVT. COLLEGE FOR WOMEN NAZIMABAD,Government,24.9024014,67.0267041,College,https://maps.app.goo.gl/YZ4xfmP9sPmHouRN9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2226,GOVT. COLLEGE FOR WOMEN KORANGI 04,Government,24.8275028,67.1541355,College,https://maps.app.goo.gl/7Z5x4o1Hg9aBEAPCA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2259,SHAHEED E MILLAT GOVT.DEGREE COLLEGE FOR WOMEN,Government,24.9186511,67.0693529,College,https://maps.app.goo.gl/uBaCCGaGg883AcgN8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2247,GOVT. DEGREE GIRLS COLLEGE BLOCK 13 GULISTAN E JOHAR,Government,24.9106759,67.1311899,College,https://maps.app.goo.gl/7LbqugpkBgxyRYVp7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2340,"GOVERNMENT GIRLS DEGREE COLLEGE, BLOCK-N, NORTH NAZIMABAD KARACHI",Government,24.9491357,67.0503954,College,https://maps.app.goo.gl/jVamGjNF7XiotsQ19,Female,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE , COMMERCE",T1
+KQ2165,GOVT. GIRLS DEGREE COLLEGE ZAM ZAMA (GIZRI)I,Government,24.8158368,67.0371932,College,https://maps.app.goo.gl/5NukZ749apm71ASr7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2250,"GOVT.GIRLS DEGREE COLLEGE KORANGI 2,1/2 KARACHI",Government,24.8211625,67.1475551,College,https://maps.app.goo.gl/e8aha8k6MkvvhDis8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2255,GOVT. DEGREE GIRLS COLLEGE SHAIKH ZAID CENTER,Government,24.9369225,67.1310196,College,https://maps.app.goo.gl/wPFyxKkKQaCsmP2q7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2162,"GOVT. INTER GIRLS SCIENCE ARTS /COMMERCE COLLEGE 15/C, ORANGI TOWN",Government,24.9479121,66.9969309,College,https://maps.app.goo.gl/ycZskomonLNmosZF8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2238,GOVT. DEGREE GIRLS COLLEGE BLOCK 12 GULISTAN-E- JAUHAR SAFOORA GOTH,Government,24.9166887,67.1311151,College,https://maps.app.goo.gl/EGf6NVcNk2qbxgHX7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2262,GOVT. DEGREE GIRLS COLLEGE SEC. 11-I NORTH KARACHI,Government,24.9773125,67.0658626,College,https://maps.app.goo.gl/3TGKGpKFvs9mBALy9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2224,S.M.B FATIMA JINNAH GOVT. GIRLS DEGREE COLLEGE,Government,24.8753417,67.0172239,College,https://maps.app.goo.gl/qwUXnAREiYxQBVzW8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS",T1
+KQ2239,GOVT. DEGREE GIRLS COLLEGE BUFFER ZONE SECTOR 15-A,Government,24.9631883,67.0715649,College,https://maps.app.goo.gl/z8Gd89oZhdcBcHTN9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T1
+KQ2276,SHAHEED MOHTARMA BENAZIR BHUTTO GOVT. DEGREE GIRLS COLLEGE LYARI,Government,24.8448689,67.0704137,College,https://maps.app.goo.gl/FJFMTJfcUv9Gyfqw8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2246,GOVT. GIRLS COLLEGE ORANGI TOWN 7/C,Government,24.9465348,67.0084392,College,https://maps.app.goo.gl/cbfTitwEPEfd1APn7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2145,GOVT. DEGREE SCIENCE AND COMMERCE COLLEGE FOR WOMEN F.B AREA BLOCK-16 KARACHI,Government,24.9370227,67.0776246,College,https://maps.app.goo.gl/k34RwsZnsjwdzYreA,Female,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T1
+KQ2192,GOVT. DEGREE GIRLS COLLEGE AL NOOR,Government,24.947883,67.0712973,College,https://maps.app.goo.gl/iqAQynKUxfAcSVgu9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2244,GOVT. DEGREE GIRLS COLLEGE GREEN BELT MEHMOODABAD,Government,24.8548408,67.0690201,College,https://maps.app.goo.gl/6JnxiYDVozfBahxc6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2263,GOVT.GIRLS ARTS AND COMMERCE COLLEGE C-1 AREA,Government,24.8949574,67.1882599,College,https://maps.app.goo.gl/aQigTJzqBX9zvYZF7,Female,"PRE–MEDICAL, HUMANITIES, COMMERCE",T1
+KQ2251,GOVT GIRLS COLLEGE LANDHI -22 37/C,Government,24.8405625,67.1922376,College,https://maps.app.goo.gl/7cDoBWdLWVsQ7jRRA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2236,GOVERNMENT COLLEGE FOR WOMEN SHAHRAH-E- LIAQUAT (CAMPUS-II) AT PUNJABI CLUB,Government,24.858272,67.0180466,College,https://maps.app.goo.gl/35t4ap8kMxFYgWf69,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2305,"GOVT. GIRLS SCIENCE AND ARTS DEGREE COLLEGE, BATH ISLAND (HIJRAT COLONY), KARACHI",Government,24.8395215,67.0210163,College,https://maps.app.goo.gl/AURE8N4XKQYquoF3A,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , ",T1
+KQ2233,SHAHEED MOHTARMA BENAZIR BHUTTO GOVT. DEGREE GIRLS COLLEGE AZAM BASTI,Government,24.8448689,67.0704137,College,https://maps.app.goo.gl/FJFMTJfcUv9Gyfqw8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2210,GOVT GIRLS COLLEGE PIB COLONY,Government,24.8938124,67.0464416,College,https://maps.app.goo.gl/7KTs1U1yGFptC7fe6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2159,GOVT. KARACHI COLLEGE FOR WOMEN,Government,24.858272,67.0154717,College,https://maps.app.goo.gl/35t4ap8kMxFYgWf69,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2227,GOvt.DEGREE GIRLS COLLEGE BALDIA TOWN,Government,24.9220625,66.9632376,College,https://maps.app.goo.gl/Jnzf735eMYjC2AxaA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T1
+KQ2215,ABDULLAH GOVT. COLLEGE FOR WOMEN,Government,24.929441,67.0234254,College,https://maps.app.goo.gl/BtCSQbaPgxc3scN78,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2211,GOVT COLLEGE FOR WOMEN SAUDABAD,Government,24.8998078,67.197746,College,https://maps.app.goo.gl/92XYENVX64KW77Yx8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T1
+KQ2280,SHAHEED FLYING OFFICER MARIUM MUKHTIAR GOVERNMENT GIRLS DEGREE COLLEGE LIAQUATABAD KARACHI IN PREMISES OF APWA SCHOOL MARYUM MUKHTIAR GOVT. DEGREE GIRLS COLLEGE LIAQUATABAD,Government,24.9017467,67.0419696,College,https://maps.app.goo.gl/P7tDbWAhdq9jceba9,Female,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T1
+KQ2273,BIBI ASIFA GOVT. DEGREE GIRLS COLLEGE,Government,24.829219,67.2285906,College,https://maps.app.goo.gl/niw45DC7PfpaLpc36,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2169,GOVT. DEGREE GIRLS COLLEGE SECTOR 11-B NORTH KARACHI,Government,24.9783139,67.0543359,College,https://maps.app.goo.gl/okEXDfNZhFgfDD8RA,Female,"PRE–MEDICAL , PRE–ENGINEERING, COMMERCE",T1
+KQ2302,GOVT. DEGREE GIRLS COLLEGE SHARAFI GOTH KARACHI,Government,24.8530698,67.1629174,College,https://maps.app.goo.gl/RvTZrzPQZKGRaJUH9,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2179,LIAQUAT GOVT. GIRLS COLLEGE MALIR MORNING,Government,24.8925746,67.1862201,College,https://maps.app.goo.gl/87fejqYNubSh98Bd8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T2
+KQ2234,GOVT. DEGREE GIRLS COLLEGE QASBA COLONY,Government,24.9426914,67.0247394,College,https://maps.app.goo.gl/PkuLKbJ3XFkr6A1Z7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T2
+KQ2223,RIAZ GOVT GIRLS COLLEGE KARACHI,Government,24.9082219,67.0476175,College,https://maps.app.goo.gl/g6pYWAFLJVQgjRvLA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2245,GOVT. DEGREE GIRLS COLLEGE METROVILLE SITE,Government,24.9187687,66.9947844,College,https://maps.app.goo.gl/ZiVnF9ZH2ZmPY65q7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T2
+KQ2237,GOVT. DEGREE GIRLS COLLEGE SURJANI TOWN KARACHI,Government,25.040071,67.0576326,College,https://maps.app.goo.gl/LE1LJ1fDs1NDKMr18,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2269,GOVT DEGREE GIRLS SCIENCE COLLEGE NO 5 SHAH FAISAL COLONY,Government,24.8750199,67.1132979,College,https://maps.app.goo.gl/MST9BCkrAn3ugCYS6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2271,GOVT. DEGREE GIRLS COLLEGE IBRAHIM HYDRI,Government,24.7925625,67.1357376,College,https://maps.app.goo.gl/rMFj4VzY3y1NqtTV7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2277,GOVT. DEGREE GIRLS COLLEGE GULZAR E HIJRI SCHEME - 33,Government,24.9427279,67.0959057,College,https://maps.app.goo.gl/n3ngFTiBEtj5zqDz6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T2
+KQ2158,APWA GOVT.COLLEGE FOR WOMEN,Government,24.9023221,67.0366043,College,https://maps.app.goo.gl/p5WMa2SgutjSrpKRA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T2
+KQ2264,"GOVT. DEGREE GIRLS COLLEGE, LINES AREA",Government,24.8641705,67.0327367,College,https://maps.app.goo.gl/P9XgMvukxvmfan3a9,Female,"PRE–MEDICAL , PRE–ENGINEERING, COMPUTER SCIENCE ",T2
+KQ2341,"GOVERNMENT GIRLS DEGREE COLLEGE, GULSHAN-E- HADEED, KARACHI",Government,24.8707259,67.3556097,College,https://maps.app.goo.gl/TfYNHshxuPY7MdtUA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2279,"GOVT. GIRLS DEGREE COLLEGE SHAHNAWAZ SHAR GOTH, GULSHAN E IQBAL, KARACHI",Government,24.957354,67.1370978,College,https://maps.app.goo.gl/SnstnMFQuPuYRT8V7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2167,ALLAMA IQBAL GOVT GIRLS COLLEGE,Government,24.8801875,67.1499375,College,https://maps.app.goo.gl/wTCN8p38sGctXR3C6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2229,GOVT. DEGREE GIRLS COLLEGE SECTOR 11-1/2,Government,24.9577598,66.976871,College,https://maps.app.goo.gl/yEnQyNXJ3kX8WUd36,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T2
+KQ2240,JAN MOHAMMAD BROHI GOVT. DEGREE GIRLS COLLEGE,Government,25.0108614,67.1262378,College,https://maps.app.goo.gl/C4XXcxiB5VY6Thyu7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2214,GOVT INTER GIRLS COLLEGE LYARI,Government,24.8592069,66.9931091,College,https://maps.app.goo.gl/8TYEz2KfgsuALbav5,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2243,"GOVT. DEGREE GIRLS COLLEGE, PAK COLONY ASIFABAD,WEST, KARACHI",Government,24.8980186,67.0111271,College,https://maps.app.goo.gl/rMqRRh47PLtEpuJYA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES",T3 and Below
+KQ2268,GOVERNMENT DEGREE GIRLS COLLEGE BLOCK K,Government,24.951318,67.049857,College,https://maps.app.goo.gl/KeWuQ9rNYgzKZtR8A,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMMERCE",T3 and Below
+KQ2213,GOVT COLLEGE FOR WOMEN 11-F NEW KARACHI,Government,24.9804375,67.0768626,College,https://maps.app.goo.gl/6DNzynsgJE2y5gWEA,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES, COMPUTER SCIENCE , COMMERCE",T3 and Below
+KQ2303,"GOVERNMENT DEGREE COLLEGE KAMAL KHAN JOKHIO, GADAP TOWN, KARACHI",Government,24.9946732,67.1316769,College,https://maps.app.goo.gl/tJijW88vJdak154A9,Female,"PRE–MEDICAL, HUMANITIES",T3 and Below
+KQ2239,GOVT. DEGREE GIRLS COLLEGE BUFFER ZONE SECTOR 15- A,Government,24.9586965,67.0622408,College,https://maps.app.goo.gl/3w6GFGgUkdMUodFo7,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T1
+KQ2232,DUKHTAR E MASHRIQ GOVT. DEGREE GIRLS COLLEGE,Government,24.8849155,67.0466692,College,https://maps.app.goo.gl/6aK196nHF6CAyG8o8,Female,"PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS, COMMERCE",T3 and Below
+KQ2243,"GOVT. DEGREE GIRLS COLLEGE, PAK COLONY ASIFABAD, WEST, KARACHI",Government,24.8980186,67.0111271,College,https://maps.app.goo.gl/y26tHDojTSEwiUyd8,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES",T3 and Below
+KQ2190,"LIAQUAT GOVT. DEGREE BOYS COLLEGE NO.2, (EVENING) MALIR KARACHI",Government,24.8926978,67.1863427,College,https://maps.app.goo.gl/hicYinngezFPVsU2A,Male,"HUMANITIES, COMPUTER SCIENCE , COMMERCE",T1
+KQ2171,"GOVT, JAMIA MILLIA DEGREE COLLEGE ( EVENING)",Government,24.8727089,67.1740713,College,https://maps.app.goo.gl/cSvXQvt33RrDR3AF7,Male,"COMPUTER SCIENCE , COMMERCE",T2
+KQ2147,"GOVT. COLLEGE OF PHYSICAL EDUCATION, KARACHI",Government,24.937328,67.1311268,College,https://maps.app.goo.gl/BKgXAE2rSpdwUGwA7,CO-Education,COMPUTER SCIENCE,T3 and Below
+KQ2152,PREMIER GOVT COLLEGE ( MORNING),Government,24.9359257,67.0484462,College,https://maps.app.goo.gl/vTD7UwkBUenGTgvo8,Male,COMMERCE,T2
+KQ2186,S.M. GOVT ARTS AND COMMERCE COLLEGE EVENING,Government,24.8536917,67.0135421,College,https://maps.app.goo.gl/6NFj6PGcnYbbuehR9,Male,"HUMANITIES, COMMERCE",T2
+KQ2163,ALLAMA IQBAL GOVT DEGREE BOYS ARTS AND COMMERCE COLLEGE NO.02,Government,24.9059582,67.1859207,College,https://maps.app.goo.gl/HNH7Lx3wPFxH7cBw7,Male,"HUMANITIES, COMMERCE",T2
+KQ2153,QUAID E MILLAT GOVT. DEGREE COLLEGE EVENING,Government,24.9000658,67.0526211,College,https://maps.app.goo.gl/vcgrpGko9BBaz57a6,Male,"HUMANITIES, COMMERCE",T2
+KQ2182,S.M. GOVT. ARTS AND COMMERCE COLLEGE MORNING,Government,24.8536917,67.0135421,College,https://maps.app.goo.gl/6NFj6PGcnYbbuehR9,Male,"HUMANITIES, COMMERCE",T2
+KQ2206,"GOVT. SUPERIOR COMMERCE COLLEGE, EVENING",Government,24.8843406,67.1452558,College,https://maps.app.goo.gl/CkTNnwVS7NsZYR6ZA,Male,COMMERCE,T2
+KQ2148,GOVT. COLLEGE OF COMMERCE AND ECONIMICS NO.1,Government,24.8475794,67.0205448,College,https://maps.app.goo.gl/zaY2oNNBhUPTbCWu6,CO-Education,COMMERCE,T2
+KQ2230,GOVT DEGREE BOYS COLLEGE GULISTAN-E-JOHAR (EVENING) KARACHI,Government,24.9363683,67.129739,College,https://maps.app.goo.gl/MAr4W5acvb1qBG2Y8,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2185,"GOVT. CITY COLLEGE, NO.2",Government,24.8917289,66.9874699,College,https://maps.app.goo.gl/gJ8W8ViFPYSiN3h47,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2191,HAJI ABDULLAH HAROON GOVT. DEGREE COLLEGE EVENING,Government,24.8567857,66.9890642,College,https://maps.app.goo.gl/swpRuR4LmLpNXSD18,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2143,"GOVT. DEGREE ARTS AND COMMERCE COLLEGE, MALIR (EVENING) KARACHI",Government,24.9084504,67.1766,College,https://maps.app.goo.gl/BCNHEAkGDZg1yMLi6,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2166,SIRAJUDULLAH GOVT. DEGREE COLLEGE EVENING,Government,24.9152559,67.048312,College,https://maps.app.goo.gl/ReeJkU8W8bRt1f266,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2164,PREMIER GOVT COLLEGE ( EVENING),Government,24.9365321,67.0484216,College,https://maps.app.goo.gl/WbeiQ7bkWL6ncL6W7,Male,COMMERCE,T3 and Below
+KQ2193,AISHA BAWANI GOVT COLLEGE EVENING,Government,24.8575526,67.0542345,College,https://maps.app.goo.gl/48riUC5w1u9K93Be6,Male,COMMERCE,T3 and Below
+KQ2748,"GOVT DEGREE BOYS COLLEGE SURJANI, sector 4 /C TOWN KARACHI",Government,25.014261,67.0689697,College,https://maps.app.goo.gl/kiCivhjjN2GarSHLA,Male,COMMERCE,T3 and Below
+KQ2187,GOVT. NATIONAL COLLEGE ( EVENING),Government,24.8847812,67.0576756,College,https://maps.app.goo.gl/uKQzZm859B5Lvz4B7,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2205,GOVT. COLLEGE OF COMMERCE AND ECONOMICS NO 2,Government,24.8475794,67.0205448,College,https://maps.app.goo.gl/zaY2oNNBhUPTbCWu6,Male,COMMERCE,T3 and Below
+KQ2176,GOVT. ISLAMIA ARTS AND COMMERCE COLLEGE ( MORNING),Government,24.9631875,67.0737532,College,https://maps.app.goo.gl/Zo7XVPTe8KmrAzF38,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2142,GOVT. DEGREE ARTS AND COMMERCE COLLEGE LANDHI EVENING,Government,24.8252746,67.172056,College,https://maps.app.goo.gl/fohtjv2Qm38y9M6d6,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2188,GOVT. ISLAMIA ARTS AND COMMERCE COLLEGE No.2,Government,24.9631875,67.0737532,College,https://maps.app.goo.gl/3s8c3bHdTbBeHkML8,Male,"HUMANITIES, COMMERCE",T3 and Below
+KQ2216,GOVT ISLAMIA COLLEGE FOR WOMEN LINES AREA,Government,24.8641558,67.0304031,College,https://maps.app.goo.gl/pKrv2B5DUmxt2HHK6,Female,"HUMANITIES , HOME ECONOMICS, COMMERCE",T2
+KQ2219,H.I OSMANIA GOVT.COLLEGE FOR WOMEN,Government,24.9007685,66.8722629,College,https://maps.app.goo.gl/SbWpdEbdYo7gRmwu6,Female,"HUMANITIES, COMMERCE",T2
+KQ2254,GOVT. GIRLS DEGREE COLLEGE (KMC PARK) LIAQUATABAD KARACHI,Government,24.9017467,67.0419696,College,https://maps.app.goo.gl/P7tDbWAhdq9jceba9,Female,"HUMANITIES, COMMERCE",T3 and Below
+KQ2170,PREMIER GOVT. GIRLS COLLEGE BLOCK H,Government,24.9359257,67.0484493,College,https://maps.app.goo.gl/f3P9K9P17ERf6FVY8,Female,COMMERCE,T3 and Below
+KQ2235,GOVT. DEGREE GIRLS COLLEGE SECTOR 11-C,Government,24.9399516,66.9215595,College,https://maps.app.goo.gl/jJegZYtruMK1tk9H7,Female,"HUMANITIES, COMMERCE",T3 and Below
+KQ2220,RAUNAQ E ISLAM GOVT COLLEGE FOR WOMEN,Government,24.8546141,66.9943607,College,https://maps.app.goo.gl/2hMBHpwo9Q5kcn7H8,Female,"HUMANITIES, COMMERCE",T3 and Below
+KQ2221,HRH AGHA KHAN GOVT. GIRLS COLLEGE ARTS COMMERCE PIB COLONY KARACHI,Government,24.8924757,67.0477276,College,https://maps.app.goo.gl/Wkcdhfis6ZnX6rLXA,Female,"HUMANITIES, COMMERCE",T3 and Below
+KQ2253,GOVT .DEGREE GIRLS COLLEGE INDUSTRIAL AREA LANDHI,Government,24.8446474,67.2209704,College,https://maps.app.goo.gl/mpWoukUp1VCp4kQA8,Female,"HUMANITIES, COMMERCE",T3 and Below
+KQ2277,GOVT. DEGREE GIRLS COLLEGE GULZAR E HIJRI SCHEME -33,Government,24.9427279,67.0959057,College,https://maps.app.goo.gl/n3ngFTiBEtj5zqDz6,Female,"PRE–MEDICAL , PRE–ENGINEERING , HUMANITIES , HOME ECONOMICS , COMPUTER SCIENCE , COMMERCE",T2
+KQ2222,NISHTER GOVT. COLLEGE F0R women 11-B,Government,24.9783139,67.0565246,College,https://maps.app.goo.gl/6kT8oDa8i2ZMx6pXA,Female,HUMANITIES,T3 and Below
+KQ2342,GOVERNMENT GIRLS DEGREE COLLEGE DARSANO CHANNO MALIR KARACHI,Government,24.9471572,67.3349932,College,https://maps.app.goo.gl/4zvvdWvh5t4SXQbD8,Female,HUMANITIES,T3 and Below
+KQ2209,RLAK GOVT COLLEGE OF HOME ECONOMICS,Government,24.8905625,67.0729876,College,https://maps.app.goo.gl/54FGWPN931iaZnaJA,Female,HOME ECONOMICS,T3 and Below
+KC001,Speak & Spell Coaching - Campus 1 ,Private,24.9268787,67.0724426,Coaching,https://maps.app.goo.gl/r3VH2Psu9TkzCxbs9,CO-Education,,T3 and Below
+KC002,Speak & Spell Coaching - Campus 2,Private,24.9218958,67.069704,Coaching,https://maps.app.goo.gl/ekWtXUSbm2ctn3Tr5,CO-Education,,T3 and Below
+KC003,Speak & Spell Coaching - Campus 3,Private,24.9394113,67.0739428,Coaching,https://maps.app.goo.gl/rwYTKVjHL1AdBNoG8,CO-Education,,T3 and Below
+KC004,J.E Academy,Private,24.88074,67.1728724,Coaching,https://maps.app.goo.gl/KMeUXU1mkbv4ZvB8A,CO-Education,,T3 and Below
+KC005,The Professors Academy Hub,Private,25.0294375,66.8840625,Coaching,https://maps.app.goo.gl/7wMkXGL5mBojWmyo8,CO-Education,,T3 and Below
+KC006,Maqsad Experience Centre,Private,24.9310852,67.1018302,Coaching,https://maps.app.goo.gl/PuWP3PEYniAoU3V78,CO-Education,,T3 and Below
+KC007,Academy of Excellence Kharadar Campus,Private,24.8527041,66.9949813,Coaching,https://maps.app.goo.gl/8qJvVtLJbxJRvhYd7,CO-Education,,T3 and Below
+KC008,Adamjee Coaching Center Shah Latif,Private,24.8529851,67.2588791,Coaching,https://maps.app.goo.gl/mFHmPmkgiqcm2bue6,CO-Education,,T3 and Below
+KC009,Faran Coaching Center Baldia Town,Private,24.9451426,66.9359455,Coaching,https://maps.app.goo.gl/CD5eHeTVPECi9cQ18,CO-Education,,T3 and Below
+KC011,Life Academy Hawksbay,Private,24.8931147,66.8947068,Coaching,https://maps.app.goo.gl/zzxCYMNMo3UHdQyC7,CO-Education,,T3 and Below
+KC012,Adamjee Coaching Center Gulshan-e-Maymar,Private,25.013846,67.1264658,Coaching,https://maps.app.goo.gl/rGUwT6VbXwm4nHKv7,CO-Education,,T3 and Below
+KC013,Adamjee Coaching Center Mosamiat Campus,Private,24.9380893,67.14626,Coaching,https://maps.app.goo.gl/pPC3mLNMZD4r1M8P9,CO-Education,,T3 and Below
+KC014,Adamjee Coaching Center Shah Faisal Colony,Private,24.8835767,67.1465099,Coaching,https://maps.app.goo.gl/sUyG9nDYkvU5HyQU6,CO-Education,,T3 and Below
+KC015,Adamjee Coaching Center Korangi,Private,24.8254799,67.1495225,Coaching,https://maps.app.goo.gl/Wk7kjAVkeU6cxCeX6,CO-Education,,T3 and Below
+KC016,Al-Riaz Academy Malir - 15 (Campus 1),Private,24.8823363,67.2039146,Coaching,https://maps.app.goo.gl/P2mPLG6D3r93C59Z6,CO-Education,,T3 and Below
+KC017,Al-Riaz Academy Malir - 15 (Campus 2),Private,24.860244,67.2319235,Coaching,https://maps.app.goo.gl/ZSKeScjrx5sYRfqM7,CO-Education,,T3 and Below
+KC018,JM Coaching Center,Private,25.0348647,67.0903318,Coaching,https://maps.app.goo.gl/G7i4cjGGXaR4ncSVA,CO-Education,,T3 and Below
+KV001,"Piston College, Baldia",Private,24.9173526,66.9634895,ACP,https://maps.app.goo.gl/fhii3HDqtt7WfJtRA,CO-Education,,
+KV001,"Crown Institute of Science & Technology, Dharki",Private,28.0479099,69.6791863,ACP,https://maps.app.goo.gl/v7MXH73GEpHVYVGA6,CO-Education,,
+KV001,"Sky Tech IT Institute, Ittehad Town",Private,24.9634375,66.9592376,ACP,https://maps.app.goo.gl/HLDkx8ykr8om9Lk28,CO-Education,,
+KV001,"The Hunar Foundation, Tariq Road",Private,24.8759355,67.0597165,ACP,https://maps.app.goo.gl/75LgYdiK7R3n4Tgv5,CO-Education,,
+KV001,"The Hunar Foundation, Ibrahim Hyderi Korangi, Near MiTE",Private,24.8175429,67.1446058,ACP,https://maps.app.goo.gl/iqsEvB7Cie7Rjw4L7,CO-Education,,
+KV001,"The Hunar Foundation, Korangi Industrial Area",Private,24.8123644,67.0863427,ACP,https://maps.app.goo.gl/1xgnxQ53exHmDsFS8,CO-Education,,
+KV001,"The Hunar Foundation, Rashidabad Hyderabad",Private,25.4596597,68.6707289,ACP,https://maps.app.goo.gl/BD2SEro36jj1trzZ6,CO-Education,,
+KV001,"The Hunar Foundation, Multan",Private,30.2213692,71.5381394,ACP,https://maps.app.goo.gl/TBXbfSsSekSj9YVD9,CO-Education,,
+KV001,"The Hunar Foundation, Bedian Lahore",Private,31.4319854,74.460756,ACP,https://maps.app.goo.gl/nVqf16GA7RPr6ojj9,CO-Education,,
+KV001,"The Hunar Foundation, Kharian",Private,31.4319854,74.460756,ACP,https://maps.app.goo.gl/nVqf16GA7RPr6ojj9,CO-Education,,
+KV001,Lady Dufferin Hospital (Cowasjee School of Midwifery),Private,24.8588153,67.0061857,ACP,https://maps.app.goo.gl/xjtv712awhC5sCWW9,CO-Education,,
+KV001,Memon Industrial & Technical Institute – MITI,Private,24.8343132,67.1611239,ACP,https://maps.app.goo.gl/ZXuPYJibETmvRyH1A,CO-Education,,
+KV001,Hussaini Blood Bank,Private,24.9545089,67.0409683,ACP,https://maps.app.goo.gl/mWHxF9M8wx4f7jrU6,CO-Education,,
+KV001,Circle Women,Private,31.5352097,74.3550781,ACP,https://maps.app.goo.gl/71eWe1iHqMKCDRio6,CO-Education,,
+KV001,"SZABIST ZABTech TTC, Hub Highway",Private,24.8445546,67.0224728,ACP,https://maps.app.goo.gl/CuDgfnK51XpMmYVw9,CO-Education,,
+KV001,Dr Farah Essa Academy,Private,24.8871611,66.9994499,ACP,https://maps.app.goo.gl/Xjc35WYEGxT4ZCUY9,CO-Education,,
+KV001,Sindh Institute of Urology & Transplantation (SIUT),Private,24.8606424,67.007613,ACP,https://maps.app.goo.gl/5YqgkLfVrt1GxoTr9,CO-Education,,
+KV001,Indus Hospital & Health Network,Private,24.8173888,67.10872,ACP,https://maps.app.goo.gl/4ZWdEdzmQuHUVVBCA,CO-Education,,
+KV001,Koohi Goth Hospital,Private,24.8653413,67.2319784,ACP,https://maps.app.goo.gl/HZMLuVKfbiugr44V6,CO-Education,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
