@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime, timezone
 
+import jwt
 from flask import request
 from flask_jwt_extended import (
     get_jwt,
@@ -9,6 +10,7 @@ from flask_jwt_extended import (
     jwt_required,
     verify_jwt_in_request,
 )
+from flask_jwt_extended.exceptions import JWTExtendedException
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_password, create_jwt, hash_password
@@ -182,28 +184,30 @@ def reset_admin_password():
 
 
 @jwt_required()
-def refresh_admin_token():
+def verify_admin_token():
     try:
         verify_jwt_in_request()
-        claims = get_jwt()
-
-        if claims.get("role") != UserRole.ADMIN:
-            logger.warning("Non-admin tried to refresh admin token.")
-            return format_response(False, "Unauthorized", None), 403
-
-        user_id = claims.get("sub")
-        email = claims.get("email")
-
-        new_token = create_jwt(user_id, UserRole.ADMIN, email=email)
-
-        logger.info(f"Admin token refreshed for user: {email}")
+        user_id = get_jwt_identity()
+        user_email = get_jwt()["email"]
         return (
-            format_response(True, "Token refreshed successfully", {"token": new_token}),
+            format_response(
+                True,
+                "Admin token verified successfully",
+                {"id": user_id, "email": user_email},
+            ),
             200,
         )
-
+    except jwt.ExpiredSignatureError:
+        logger.warning("Admin token has expired")
+        return format_response(False, "Token has expired", None), 401
+    except jwt.InvalidTokenError:
+        logger.warning("Invalid admin token")
+        return format_response(False, "Invalid token", None), 401
+    except JWTExtendedException as e:
+        logger.warning(f"JWT extended exception: {e}")
+        return format_response(False, str(e), None), 401
     except Exception as e:
-        logger.exception(f"Error refreshing admin token: {e}")
+        logger.exception(f"Error verifying admin token: {e}")
         return format_response(False, "Internal server error", None), 500
 
 
