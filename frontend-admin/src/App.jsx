@@ -1,12 +1,18 @@
-import './App.css'
+import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./App.scss";
+import { Routes, Route } from "react-router-dom";
+
+import Home from "./routes/Home";
+import Login from "./routes/Login";
 
 function App() {
     return (
-        <>
-            <h1>Hello World!</h1>
-            <div></div>
-        </>
-    )
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+        </Routes>
+    );
 }
 
 export default App
