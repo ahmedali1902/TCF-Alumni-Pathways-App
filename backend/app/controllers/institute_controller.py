@@ -274,7 +274,6 @@ def update_institute(institute_id):
             description=data.get("description", institute.description),
             faculties=faculties,
             tcf_rating=data.get("tcf_rating", institute.tcf_rating),
-            updated_at=datetime.now(timezone.utc),
             updated_by=user_id,
         )
 
