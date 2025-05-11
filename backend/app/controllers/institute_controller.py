@@ -184,7 +184,8 @@ def rate_institute(institute_id):
     except Exception as e:
         logger.exception(f"Error rating institute: {e}")
         return format_response(False, "Internal server error"), 500
-    
+
+
 @jwt_required()
 def add_institute():
     try:
@@ -199,7 +200,7 @@ def add_institute():
         data = request.get_json()
         if not data:
             return format_response(False, "Request body is required"), 400
-        
+
         faculty_data = data.get("faculties", [])
         faculties = []
         for faculty in faculty_data:
@@ -227,4 +228,98 @@ def add_institute():
 
     except Exception as e:
         logger.exception(f"Error adding institute: {e}")
+        return format_response(False, "Internal server error"), 500
+
+
+@jwt_required()
+def update_institute(institute_id):
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+        user_id = ObjectId(user_id)
+        jwt_claims = get_jwt()
+        if not check_if_admin(jwt_claims):
+            return format_response(False, "Permission denied"), 403
+
+        data = request.get_json()
+        if not data:
+            return format_response(False, "Request body is required"), 400
+
+        institute_collection = mongo.db.Institute
+        institute = institute_collection.find_one(
+            {"_id": ObjectId(institute_id), "is_deleted": False}
+        )
+        if not institute:
+            return format_response(False, "Institute not found"), 404
+
+        institute = InstituteModel(**institute)
+
+        faculty_data = data.get("faculties", [])
+        faculties = []
+        for faculty in faculty_data:
+            faculties.append(InstituteFacultyModel(**faculty))
+
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
+        coordinates = [longitude, latitude]
+        location = GeoPointModel(coordinates=coordinates)
+
+        institute.update(
+            name=data.get("name", institute.name),
+            managing_authority=data.get(
+                "managing_authority", institute.managing_authority
+            ),
+            location=location,
+            description=data.get("description", institute.description),
+            faculties=faculties,
+            tcf_rating=data.get("tcf_rating", institute.tcf_rating),
+            updated_at=datetime.now(timezone.utc),
+            updated_by=user_id,
+        )
+
+        institute_collection.update_one(
+            {"_id": ObjectId(institute_id)}, {"$set": institute.to_bson()}
+        )
+        logger.info(f"Institute updated successfully: {institute.name}")
+        return format_response(True, "Institute updated successfully"), 200
+
+    except Exception as e:
+        logger.exception(f"Error updating institute: {e}")
+        return format_response(False, "Internal server error"), 500
+
+
+@jwt_required()
+def delete_institute(institute_id):
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+        user_id = ObjectId(user_id)
+        jwt_claims = get_jwt()
+        if not check_if_admin(jwt_claims):
+            return format_response(False, "Permission denied"), 403
+
+        institute_collection = mongo.db.Institute
+        institute = institute_collection.find_one(
+            {"_id": ObjectId(institute_id), "is_deleted": False}
+        )
+        if not institute:
+            return format_response(False, "Institute not found"), 404
+
+        institute_collection.update_one(
+            {"_id": ObjectId(institute_id)},
+            {
+                "$set": {
+                    "is_deleted": True,
+                    "updated_at": datetime.now(timezone.utc),
+                    "updated_by": user_id,
+                }
+            },
+        )
+        logger.info(f"Institute deleted successfully: {institute.name}")
+        return format_response(True, "Institute deleted successfully"), 200
+
+    except Exception as e:
+        logger.exception(f"Error deleting institute: {e}")
         return format_response(False, "Internal server error"), 500

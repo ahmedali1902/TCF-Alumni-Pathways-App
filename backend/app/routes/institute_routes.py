@@ -12,3 +12,9 @@ institute_bp.route("/<string:institute_id>/rating", methods=["POST"])(
     institute_controller.rate_institute
 )
 institute_bp.route("", methods=["POST"])(institute_controller.add_institute)
+institute_bp.route("/<string:institute_id>", methods=["PUT"])(
+    institute_controller.update_institute
+)
+institute_bp.route("/<string:institute_id>", methods=["DELETE"])(
+    institute_controller.delete_institute
+)
