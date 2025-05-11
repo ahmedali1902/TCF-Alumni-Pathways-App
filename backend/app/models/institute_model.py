@@ -42,10 +42,10 @@ class GeoPointModel(BaseModel):
 
 class InstituteModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    name: str = Field(None, min_length=1, max_length=50)
+    name: str = Field(None, min_length=1, max_length=256)
     managing_authority: ManagingAuthority = Field(default=ManagingAuthority.PUBLIC)
     location: GeoPointModel = Field(...)
-    description: Optional[str] = Field("", max_length=500)
+    description: Optional[str] = Field("", max_length=1024)
     faculties: list[InstituteFacultyModel] = Field(default_factory=list)
     user_ratings: list[InstituteUserRatingModel] = Field(default_factory=list)
     tcf_rating: float = Field(0.0, ge=0, le=5)
