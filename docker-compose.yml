@@ -9,10 +9,10 @@ services:
       - tcf-alumni-pathways-network
   frontend:
     build:
-      context: ./frontend/
+      context: ./frontend-admin/
     ports:
       - "80:80"
-    env_file: frontend/.env
+    env_file: frontend-admin/.env
     depends_on:
       - backend
     networks:
