@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir gunicorn && pythom -m pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn && python -m pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
