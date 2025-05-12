@@ -221,8 +221,8 @@ def add_institute():
             created_by=user_id,
             updated_by=user_id,
         )
-
-        mongo.db.Institute.insert_one(institute.to_bson())
+        institute_collection = mongo.db.Institute
+        institute_collection.insert_one(institute.to_bson())
         logger.info(f"Institute added successfully: {institute.name}")
         return format_response(True, "Institute added successfully"), 201
 
@@ -266,14 +266,12 @@ def update_institute(institute_id):
         location = GeoPointModel(coordinates=coordinates)
 
         institute.update(
-            name=data.get("name", institute.name),
-            managing_authority=data.get(
-                "managing_authority", institute.managing_authority
-            ),
+            name=data.get("name"),
+            managing_authority=data.get("managing_authority"),
             location=location,
-            description=data.get("description", institute.description),
+            description=data.get("description"),
             faculties=faculties,
-            tcf_rating=data.get("tcf_rating", institute.tcf_rating),
+            tcf_rating=data.get("tcf_rating"),
             updated_by=user_id,
         )
 
@@ -305,6 +303,8 @@ def delete_institute(institute_id):
         )
         if not institute:
             return format_response(False, "Institute not found"), 404
+        
+        institute = InstituteModel(**institute)
 
         institute_collection.update_one(
             {"_id": ObjectId(institute_id)},

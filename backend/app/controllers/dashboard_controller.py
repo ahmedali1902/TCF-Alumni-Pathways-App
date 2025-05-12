@@ -153,6 +153,13 @@ def get_institutes():
                         {"$sort": {"updated_at": -1}},
                         {"$skip": skip},
                         {"$limit": limit},
+                        {
+                            "$project": {
+                                "id": {"$toString": "$_id"},
+                                "_id": 0,
+                                "name": 1
+                            },
+                        }
                     ],
                 }
             },
