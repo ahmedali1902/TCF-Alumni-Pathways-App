@@ -30,8 +30,9 @@ const Sidebar = () => {
                     <Container>
                         <Nav className="flex-column">
                             <Nav.Link as={NavLink} to="/" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-gauge me-2" />Dashboard</Nav.Link>
-                            <Nav.Link as={NavLink} to="/admin/user" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-user me-2" />User</Nav.Link>
-                            <Nav.Link as={NavLink} to="/admin/story" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-book me-2" />Story</Nav.Link>
+                            <Nav.Link as={NavLink} to="/users" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-user me-2" />Users</Nav.Link>
+                            <Nav.Link as={NavLink} to="/institutes" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-building-columns me-2" />Institutes</Nav.Link>
+                            <Nav.Link as={NavLink} to="/resources" className={(navData) => (navData.isActive ? "active" : "")} onClick={() => setShowSidebar(false)}><i className="fa-solid fa-book me-2" />Resources</Nav.Link>
                             {user ? (
                                 <Button variant="danger" onClick={logoutHandler}>Logout</Button>
                             ) : (

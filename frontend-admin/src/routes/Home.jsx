@@ -20,10 +20,14 @@ const Home = () => {
     const fetchDashboardData = async () => {
         try {
             setMessage("Loading dashboard data...");
-            // const response = await axios.get(`${API_BASE_URL}/admin/dashboard`, { withCredentials: true });
-            // const data = response.data;
-            // setDashboardData(data);\
-            setDashboardData({});
+            const token = localStorage.getItem("authToken");
+            const response = await axios.get(`${API_BASE_URL}/dashboard`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = response.data.data
+            setDashboardData(data);
             setMessage("");
         } catch (error) {
             console.error(error);
@@ -50,7 +54,7 @@ const Home = () => {
                     ) : (
                         <>
                             <Col xs={10} md={6} lg={3} className="my-2">
-                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/admin/user")}>
+                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/users")}>
                                     <i className="fa-solid fa-user fa-4x" style={{ color: "rgba(224, 54, 54, 0.8)" }} />
                                     <div className="d-flex flex-column justify-content-center">
                                         <h3 className="text-blue-900 fw-semibold">Users</h3>
@@ -59,24 +63,24 @@ const Home = () => {
                                 </div>
                             </Col>
                             <Col xs={10} md={6} lg={3} className="my-2">
-                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/admin/story")}>
-                                    <i className="fa-solid fa-book fa-4x" style={{ color: "rgba(0, 123, 224, 0.8)" }} />
+                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/institutes")}>
+                                    <i className="fa-solid fa-building-columns fa-4x" style={{ color: "rgba(0, 123, 224, 0.8)" }} />
                                     <div className="d-flex flex-column justify-content-center">
-                                        <h3 className="text-blue-900 fw-semibold">Stories</h3>
-                                        <h1 className="text-blue-900 fw-bold">{dashboardData?.story_count || 0}</h1>
+                                        <h3 className="text-blue-900 fw-semibold">Institutes</h3>
+                                        <h1 className="text-blue-900 fw-bold">{dashboardData?.institute_count || 0}</h1>
                                     </div>
                                 </div>
                             </Col>
                             <Col xs={10} md={6} lg={3} className="my-2">
-                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/admin/feedback")}>
-                                    <i className="fa-solid fa-comment fa-4x" style={{ color: "rgba(247, 153, 0, 0.8)" }} />
+                                <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/resources")}>
+                                    <i className="fa-solid fa-book fa-4x" style={{ color: "rgba(247, 153, 0, 0.8)" }} />
                                     <div className="d-flex flex-column justify-content-center">
-                                        <h3 className="text-blue-900 fw-semibold">Feedbacks</h3>
-                                        <h1 className="text-blue-900 fw-bold">{dashboardData?.feedback_count || 0}</h1>
+                                        <h3 className="text-blue-900 fw-semibold">Resources</h3>
+                                        <h1 className="text-blue-900 fw-bold">{dashboardData?.resource_count || 0}</h1>
                                     </div>
                                 </div>
                             </Col>
-                            <Col xs={10} md={6} lg={3} className="my-2">
+                            {/* <Col xs={10} md={6} lg={3} className="my-2">
                                 <div className="d-flex justify-content-around align-items-center bg-light p-3 rounded-3 h-100" onClick={() => navigate("/admin/contact")}>
                                     <i className="fa-solid fa-phone fa-4x" style={{ color: "rgba(20, 191, 150, 0.8)" }} />
                                     <div className="d-flex flex-column justify-content-center">
@@ -84,7 +88,7 @@ const Home = () => {
                                         <h1 className="text-blue-900 fw-bold">{dashboardData?.contact_count || 0}</h1>
                                     </div>
                                 </div>
-                            </Col>
+                            </Col> */}
                         </>
                     )}
                 </Row>

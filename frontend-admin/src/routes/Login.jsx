@@ -50,7 +50,7 @@ const Login = () => {
             setTimeout(() => {
                 navigate("/");
                 window.location.reload();
-            }, 2000);
+            }, 10000);
         }
     }, [isLogged, error]);
 

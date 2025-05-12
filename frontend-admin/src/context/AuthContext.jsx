@@ -30,10 +30,10 @@ export const AuthProvider = ({ children }) => {
         }
         try {
             const response = await axios.post(`${API_BASE_URL}/auth/admin/login`, { email, password });
-            const { token, user_id } = response.data.data;
-
+            const token = response.data.data.token;
+            const id = response.data.data.user_id
             localStorage.setItem("authToken", token);
-            setUser({ id: user_id, email });
+            setUser({ "id": id, "email": email, "token": token });
         }
         catch (err) {
             console.error("Login failed:", err);
