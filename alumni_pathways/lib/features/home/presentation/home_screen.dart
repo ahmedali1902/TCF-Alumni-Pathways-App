@@ -1,4 +1,5 @@
 import 'package:alumni_pathways/features/home/presentation/resources_screen.dart';
+import 'package:alumni_pathways/features/institute_search/presentation/institute_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/colors.dart';
@@ -203,6 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
           theme: theme,
           onTap: () {
             // Handle "Where to apply?" action
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const InstituteSearchScreen(),
+              ),
+            );
           },
         ),
       ],
