@@ -160,17 +160,15 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
     setState(() {
       _distance = prefs.getInt('search_distance') ?? 10;
       _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
-      _selectedGender = prefs.getString('search_gender') ?? '1';
+      _selectedGender =
+          prefs.getString('search_gender') ?? '3'; // Default to 'Coeducation'
       _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
     });
   }
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(
-      'search_distance',
-      _distance,
-    ); // Convert km to meters
+    await prefs.setInt('search_distance', _distance); // Convert km to meters
     await prefs.setDouble('search_min_rating', _minRating);
     if (_selectedGender != null) {
       await prefs.setString('search_gender', _selectedGender!);

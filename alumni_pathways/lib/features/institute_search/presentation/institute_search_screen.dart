@@ -28,6 +28,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
   bool _isLocationServiceEnabled = true;
   double? _latitude;
   double? _longitude;
+  int _gender = Gender.coeducation.value; // Default
   int _searchRadius = 10000; // Default 10km
 
   List<String> _favoriteInstitutes = [];
@@ -44,7 +45,15 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
 
     try {
       final List<Institute> fetchedInstitutes = await _instituteSearchRepository
-          .searchInstitutes(_longitude!, _latitude!, _searchRadius * 1000);
+          .searchInstitutes(
+            _longitude!,
+            _latitude!,
+            _searchRadius * 1000,
+            _gender,
+          );
+      fetchedInstitutes.sort(
+        (a, b) => a.approxDistance.compareTo(b.approxDistance),
+      );
       setState(() {
         institutes.addAll(fetchedInstitutes);
       });
@@ -70,9 +79,10 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
 
   Future<void> _initSearch() async {
     try {
-      // Get search radius from shared preferences
+      // Get search radius and gender from shared preferences
       final prefs = await SharedPreferences.getInstance();
       _searchRadius = prefs.getInt('search_distance') ?? 10000;
+      _gender = prefs.getInt('gender') ?? Gender.coeducation.value;
 
       // Check and request location permissions
       await _checkLocationPermission();
@@ -175,6 +185,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 child: Transform.scale(
                   scale: 1.0,
                   child: TCard(
+                    maxLines: 2,
                     height: 90,
                     leftIcon: CircleAvatar(
                       backgroundColor: TAppColors.primary.withOpacity(0.2),
@@ -190,14 +201,16 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            maxLines: 2,
                             institute.name,
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            ManagingAuthority.fromValue(
-                              institute.managingAuthority,
-                            ).toString(),
+                            // ManagingAuthority.fromValue(
+                            //   institute.managingAuthority,
+                            // ).toString(),
+                            '${(institute.approxDistance / 1000).toStringAsFixed(2)} Km — ${ManagingAuthority.fromValue(institute.managingAuthority).toString()}',
                             style: Theme.of(
                               context,
                             ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -244,7 +257,9 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                             );
                           })
                           .catchError((error) {
-                            debugPrint('Error fetching institute details: $error');
+                            debugPrint(
+                              'Error fetching institute details: $error',
+                            );
                           });
                     },
                   ),
@@ -313,13 +328,23 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TAppColors.primary,
+                foregroundColor: TAppColors.darkAccent,
+              ),
               onPressed: () async {
                 await Geolocator.openAppSettings();
                 await _retryLocation();
               },
               child: const Text("Open Settings"),
             ),
-            TextButton(onPressed: _retryLocation, child: const Text("Retry")),
+            TextButton(
+              onPressed: _retryLocation,
+              child: const Text(
+                "Retry",
+                style: TextStyle(color: TAppColors.primary),
+              ),
+            ),
           ],
         ),
       ),
@@ -346,11 +371,22 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TAppColors.primary,
+                foregroundColor: TAppColors.darkAccent,
+              ),
               onPressed: () async {
                 await Geolocator.openLocationSettings();
                 await _retryLocation();
               },
               child: const Text("Open Settings"),
+            ),
+            TextButton(
+              onPressed: _retryLocation,
+              child: const Text(
+                "Retry",
+                style: TextStyle(color: TAppColors.primary),
+              ),
             ),
           ],
         ),
@@ -386,7 +422,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "You can change your search settings and preferences from Settings Screen",
+                    "You can change your default search preferences from Settings screen (Default Distance: ~10KM).",
                     style: TextStyle(color: Colors.blue, fontSize: 12),
                   ),
                 ),

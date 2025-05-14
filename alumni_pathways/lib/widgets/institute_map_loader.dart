@@ -164,8 +164,8 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                         ),
                         onTap:
                             () => _openGoogleMaps(
-                              institute.location.coordinates[0],
                               institute.location.coordinates[1],
+                              institute.location.coordinates[0],
                             ),
                       ),
                       const SizedBox(height: 20),
@@ -323,8 +323,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                   const SizedBox(width: 16),
                   _buildInfoItem(
                     LucideIcons.user,
-                    Gender.fromValue(
-                      faculty.gender).toString(),
+                    Gender.fromValue(faculty.gender).toString(),
                   ),
                 ],
               ),

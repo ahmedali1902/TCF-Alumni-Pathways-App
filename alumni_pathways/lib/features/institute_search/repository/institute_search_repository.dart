@@ -13,6 +13,7 @@ class InstituteSearchRepository {
     double longitude,
     double latitude,
     int distance,
+    int gender
   ) async {
     try {
       final response = await _apiHandlerService.get(
@@ -22,12 +23,14 @@ class InstituteSearchRepository {
           'longitude': longitude.toStringAsFixed(10),
           'latitude': latitude.toStringAsFixed(10),
           'distance_radius': distance.toString(),
+          'gender': gender.toString()
         },
       );
       debugPrint({
         'longitude': longitude.toStringAsFixed(10),
         'latitude': latitude.toStringAsFixed(10),
         'distance_radius': distance.toString(),
+        'gender': gender.toString()
       }.toString());
       if (response['data']['data'] is List) {
         final List<dynamic> dataList = response['data']['data'];
