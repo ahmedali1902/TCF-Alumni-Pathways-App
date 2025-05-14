@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alumni_pathways/config/theme.dart';
+import 'package:alumni_pathways/core/constants/colors.dart';
 import 'package:alumni_pathways/widgets/bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -28,7 +29,6 @@ void main() async {
       runApp(const ErrorApp());
     }
   } catch (e) {
-    print(e);
     runApp(const ErrorApp());
   }
 }
@@ -56,8 +56,7 @@ Future<bool> checkAndHandleAuthentication() async {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'device_id': deviceId}),
     );
-    print(response.statusCode);
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       final responseData = jsonDecode(response.body);
 
       // Save token and user ID
@@ -73,7 +72,6 @@ Future<bool> checkAndHandleAuthentication() async {
       return false;
     }
   } catch (e) {
-    print(e);
     return false;
   }
 }
@@ -107,6 +105,14 @@ class ErrorApp extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => exit(0),
                   child: const Text('Exit App'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TAppColors.primary,
+                    foregroundColor: TAppColors.darkAccent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                  ),
                 ),
               ],
             ),

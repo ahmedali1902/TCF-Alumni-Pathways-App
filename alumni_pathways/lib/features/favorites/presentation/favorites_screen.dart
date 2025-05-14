@@ -54,7 +54,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           final institute = await _repository.getInstituteById(id);
           loadedInstitutes.add(institute);
         } catch (e) {
-          print('Error loading institute $id: $e');
+          debugPrint('Error loading institute $id: $e');
         }
       }
 
@@ -63,7 +63,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading favorites: $e');
+      debugPrint('Error loading favorites: $e');
       setState(() {
         _isLoading = false;
       });
@@ -93,7 +93,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         ),
       );
     } catch (e) {
-      print('Error removing favorite: $e');
+      debugPrint('Error removing favorite: $e');
     }
   }
 

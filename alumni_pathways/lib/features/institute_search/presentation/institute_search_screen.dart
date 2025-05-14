@@ -49,7 +49,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
         institutes.addAll(fetchedInstitutes);
       });
     } catch (e) {
-      print('Error fetching institutes: $e');
+      debugPrint('Error fetching institutes: $e');
     }
   }
 
@@ -81,7 +81,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
         await _fetchInstitutes();
       }
     } catch (e) {
-      print('Initialization error: $e');
+      debugPrint('Initialization error: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -127,7 +127,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
         _locationDenied = false;
       });
     } catch (e) {
-      print('Error getting location: $e');
+      debugPrint('Error getting location: $e');
       setState(() {
         _locationDenied = true;
       });
@@ -244,7 +244,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                             );
                           })
                           .catchError((error) {
-                            print('Error fetching institute details: $error');
+                            debugPrint('Error fetching institute details: $error');
                           });
                     },
                   ),

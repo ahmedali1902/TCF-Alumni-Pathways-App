@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/services/http_service.dart';
 import '../domain/institute_details.dart';
@@ -22,11 +24,11 @@ class InstituteSearchRepository {
           'distance_radius': distance.toString(),
         },
       );
-      print({
+      debugPrint({
         'longitude': longitude.toStringAsFixed(10),
         'latitude': latitude.toStringAsFixed(10),
         'distance_radius': distance.toString(),
-      });
+      }.toString());
       if (response['data']['data'] is List) {
         final List<dynamic> dataList = response['data']['data'];
         return dataList.map((e) => Institute.fromJson(e)).toList();
