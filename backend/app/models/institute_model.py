@@ -20,19 +20,11 @@ class Gender(IntEnum):
     COEDUCATION = 3
 
 
-class InstituteUserRatingModel(BaseModel):
-    id: PydanticObjectId = Field(default_factory=ObjectId)
-    rating: float = Field(None, ge=0, le=5)
-    is_deleted: bool = Field(default=False)
-    rated_by: PydanticObjectId = None
-
-
 class InstituteFacultyModel(BaseModel):
     id: PydanticObjectId = Field(default_factory=ObjectId)
     name: str = Field(None, min_length=1, max_length=50)
     average_result_percentage_required: Optional[float] = Field(None, ge=0, le=100)
     gender: Gender = Field(default=Gender.COEDUCATION)
-    is_deleted: bool = Field(default=False)
 
 
 class GeoPointModel(BaseModel):
@@ -47,15 +39,13 @@ class InstituteModel(BaseModel):
     location: GeoPointModel = Field(...)
     description: Optional[str] = Field("", max_length=1024)
     faculties: list[InstituteFacultyModel] = Field(default_factory=list)
-    user_ratings: list[InstituteUserRatingModel] = Field(default_factory=list)
     tcf_rating: float = Field(0.0, ge=0, le=5)
+    approx_distance: Optional[float] = Field(None, ge=0)
     is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     created_by: PydanticObjectId = None
     updated_by: PydanticObjectId = None
-
-    average_user_rating: Optional[float] = Field(None, ge=0, le=5)
 
     def to_json(self):
         return jsonable_encoder(self, by_alias=True, exclude_none=True)
