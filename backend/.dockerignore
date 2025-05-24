@@ -1,4 +1,5 @@
-venvvenv/
+venv/
+misc/
 .env
 
 *.pyc
