@@ -47,9 +47,7 @@ def get_resources():
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             resources = result[1]["paginatedResults"]
-            resources = [
-                ResourceModel(**resource).to_json() for resource in resources
-            ]
+            resources = [ResourceModel(**resource).to_json() for resource in resources]
             total_pages = math.ceil(total_count / limit)
         else:
             total_count = 0
@@ -83,7 +81,7 @@ def get_resource_by_id(resource_id):
 
         if not resource_data:
             return format_response(False, "Resource not found"), 404
-        
+
         resource = ResourceModel(**resource_data).to_json()
         return format_response(True, "Resource fetched successfully", resource), 200
 
@@ -157,7 +155,7 @@ def update_resource(resource_id):
         )
         if not resource:
             return format_response(False, "Resource not found"), 404
-        
+
         resource = ResourceModel(**resource)
 
         resource.update(
