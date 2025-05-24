@@ -1,6 +1,5 @@
 import logging
 import math
-from datetime import datetime, timezone
 from random import randint
 
 from bson import ObjectId
@@ -252,15 +251,13 @@ def delete_institute(institute_id):
 
         institute = InstituteModel(**institute)
 
+        institute.update(
+            is_deleted=True,
+            updated_by=user_id,
+        )
+
         INSTITUTE_COLLECTION.update_one(
-            {"_id": ObjectId(institute_id)},
-            {
-                "$set": {
-                    "is_deleted": True,
-                    "updated_at": datetime.now(timezone.utc),
-                    "updated_by": user_id,
-                }
-            },
+            {"_id": ObjectId(institute_id)}, {"$set": institute.to_bson()}
         )
         logger.info(f"Institute deleted successfully: {institute.name}")
         return format_response(True, "Institute deleted successfully"), 200

@@ -169,8 +169,7 @@ def update_resource(resource_id):
         )
 
         RESOURCE_COLLECTION.update_one(
-            {"_id": ObjectId(resource_id)},
-            {"$set": resource.to_bson()},
+            {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
         )
 
         logger.info(f"Resource updated successfully: {resource.title}")
@@ -198,12 +197,18 @@ def delete_resource(resource_id):
         if not resource:
             return format_response(False, "Resource not found"), 404
 
-        RESOURCE_COLLECTION.update_one(
-            {"_id": ObjectId(resource_id)},
-            {"$set": {"is_deleted": True, "updated_by": user_id}},
+        resource = ResourceModel(**resource)
+
+        resource.update(
+            is_deleted=True,
+            updated_by=user_id,
         )
 
-        logger.info(f"Resource deleted successfully: {resource['title']}")
+        RESOURCE_COLLECTION.update_one(
+            {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
+        )
+
+        logger.info(f"Resource deleted successfully: {resource.title}")
         return format_response(True, "Resource deleted successfully"), 200
 
     except Exception as e:
