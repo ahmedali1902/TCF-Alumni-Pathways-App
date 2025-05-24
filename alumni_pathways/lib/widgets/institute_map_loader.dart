@@ -1,3 +1,5 @@
+import 'package:alumni_pathways/core/constants/enum.dart';
+import 'package:alumni_pathways/features/institute_search/domain/institute_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -7,7 +9,7 @@ import '../../../core/constants/colors.dart';
 import '../../../widgets/card.dart';
 
 class InstituteMapLoader extends StatefulWidget {
-  final Map<String, dynamic> institute;
+  final InstituteDetails institute;
 
   const InstituteMapLoader({super.key, required this.institute});
 
@@ -36,8 +38,8 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
     final institute = widget.institute;
     final location = Point(
       coordinates: Position(
-        institute['longitude'] ?? 0.0,
-        institute['latitude'] ?? 0.0,
+        institute.location.coordinates[0] ?? 0.0,
+        institute.location.coordinates[1] ?? 0.0,
       ),
     );
 
@@ -48,7 +50,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          institute['name'] ?? 'Institute Details',
+          institute.name ?? 'Institute Details',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -110,7 +112,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                         children: [
                           Expanded(
                             child: Text(
-                              institute['name'] ?? '',
+                              institute.name ?? '',
                               style: Theme.of(
                                 context,
                               ).textTheme.headlineSmall?.copyWith(
@@ -119,12 +121,14 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                               ),
                             ),
                           ),
-                          _buildRatingStars(_calculateAverageRating(institute)),
+                          _buildRatingStars(institute.averageUserRating),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _getManagingAuthority(institute['managingAuthority']),
+                        ManagingAuthority.fromValue(
+                          institute.managingAuthority,
+                        ).toString(),
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -139,7 +143,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        institute['description'] ?? 'No description available',
+                        institute.description ?? 'No description available',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 20),
@@ -160,8 +164,8 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                         ),
                         onTap:
                             () => _openGoogleMaps(
-                              institute['latitude'],
-                              institute['longitude'],
+                              institute.location.coordinates[1],
+                              institute.location.coordinates[0],
                             ),
                       ),
                       const SizedBox(height: 20),
@@ -173,7 +177,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ..._buildFacultyCards(institute['faculties'] ?? []),
+                      ..._buildFacultyCards(institute.faculties ?? []),
                     ],
                   ),
                 ),
@@ -201,8 +205,8 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
     final pointAnnotationOptions = PointAnnotationOptions(
       geometry: Point(
         coordinates: Position(
-          institute['longitude'] ?? 0.0,
-          institute['latitude'] ?? 0.0,
+          institute.location.coordinates[0] ?? 0.0,
+          institute.location.coordinates[1] ?? 0.0,
         ),
       ),
       image: imageData,
@@ -262,7 +266,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
     }
   }
 
-  List<Widget> _buildFacultyCards(List<dynamic> faculties) {
+  List<Widget> _buildFacultyCards(List<Faculty> faculties) {
     if (faculties.isEmpty) {
       return [
         const Text(
@@ -290,7 +294,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                faculty['name'] ?? 'Unnamed Faculty',
+                faculty.name ?? 'Unnamed Faculty',
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -300,12 +304,12 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                 children: [
                   _buildInfoItem(
                     LucideIcons.barChart2,
-                    'Admission: ${faculty['performanceAdmissionCriteria']?.toStringAsFixed(1) ?? 'N/A'}%',
+                    'Admission: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
                   ),
                   const SizedBox(width: 16),
                   _buildInfoItem(
                     LucideIcons.award,
-                    'Results: ${faculty['performanceAverageResult']?.toStringAsFixed(1) ?? 'N/A'}%',
+                    'Results: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
                   ),
                 ],
               ),
@@ -314,14 +318,12 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                 children: [
                   _buildInfoItem(
                     LucideIcons.star,
-                    'Rating: ${_calculateFacultyRating(faculty['ratings'] ?? []).toStringAsFixed(1)}',
+                    'Rating: ${4.23.toStringAsFixed(1)}',
                   ),
                   const SizedBox(width: 16),
                   _buildInfoItem(
-                    faculty['gender'] == 0
-                        ? LucideIcons.user
-                        : LucideIcons.user,
-                    faculty['gender'] == 0 ? 'Male' : 'Female',
+                    LucideIcons.user,
+                    Gender.fromValue(faculty.gender).toString(),
                   ),
                 ],
               ),

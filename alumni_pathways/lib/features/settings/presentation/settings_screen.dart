@@ -160,14 +160,15 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
     setState(() {
       _distance = prefs.getInt('search_distance') ?? 10;
       _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
-      _selectedGender = prefs.getString('search_gender') ?? '1';
+      _selectedGender =
+          prefs.getString('search_gender') ?? '3'; // Default to 'Coeducation'
       _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
     });
   }
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('search_distance', _distance);
+    await prefs.setInt('search_distance', _distance); // Convert km to meters
     await prefs.setDouble('search_min_rating', _minRating);
     if (_selectedGender != null) {
       await prefs.setString('search_gender', _selectedGender!);
@@ -489,7 +490,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  hintText: 'Enter institute name',
+                  hintText: 'e.g Habib University',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
@@ -525,9 +526,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
                 validator:
                     (value) =>
-                        value?.isEmpty ?? true
-                            ? 'Please enter institute name'
-                            : null,
+                        value?.isEmpty ?? true ? 'e.g Habib University' : null,
               ),
               const SizedBox(height: 20),
 
@@ -539,7 +538,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _programController,
                 decoration: InputDecoration(
-                  hintText: 'Enter program name',
+                  hintText: 'e.g BS Computer Science, BBA, etc',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
@@ -576,7 +575,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 validator:
                     (value) =>
                         value?.isEmpty ?? true
-                            ? 'Please enter program name'
+                            ? 'e.g BS Computer Science, BBA, etc'
                             : null,
               ),
               const SizedBox(height: 20),
@@ -589,7 +588,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
-                  hintText: 'Enter location',
+                  hintText: 'e.g Gulistan-e-Johar, near Farhan Biryani',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
@@ -625,7 +624,59 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
                 validator:
                     (value) =>
-                        value?.isEmpty ?? true ? 'Please enter location' : null,
+                        value?.isEmpty ?? true
+                            ? 'e.g Gulistan-e-Johar, near Farhan Biryani'
+                            : null,
+              ),
+              const SizedBox(height: 20),
+
+              const Text(
+                'Maps Link',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _programController,
+                decoration: InputDecoration(
+                  hintText: 'e.g https://goo.gl/maps/xyz',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Active border color
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                    ), // Enabled border color
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: TAppColors.primary,
+                      width: 2,
+                    ), // Focused border color
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                    ), // Error border color
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.red,
+                      width: 2,
+                    ), // Focused error border
+                  ),
+                ),
+                validator:
+                    (value) =>
+                        value?.isEmpty ?? true
+                            ? 'e.g https://goo.gl/maps/xyz'
+                            : null,
               ),
               const Spacer(),
               ElevatedButton(

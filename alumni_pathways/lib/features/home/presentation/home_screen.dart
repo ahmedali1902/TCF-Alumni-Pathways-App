@@ -1,4 +1,5 @@
 import 'package:alumni_pathways/features/home/presentation/resources_screen.dart';
+import 'package:alumni_pathways/features/institute_search/presentation/institute_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/colors.dart';
@@ -13,7 +14,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  StudentEducation _selectedEducation = StudentEducation.none;
+  StudentEducation _selectedEducation = StudentEducation.matric;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Initialize any necessary data or state here
+  //   setState(() {
+  //     _selectedEducation = StudentEducation.matric;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,48 +51,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Welcome, User 👋",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 10),
+              // const SizedBox(height: 10),
 
-              // Container for the "Choose one" section with absolute positioned back button
-              SizedBox(
-                height: 48, // Fixed height to prevent layout shift
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Centered "Choose one" text
-                    const Center(
-                      child: Text(
-                        "Choose one",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    // Back button positioned absolutely to the left
-                    if (_selectedEducation != StudentEducation.none)
-                      Positioned(
-                        left: 0,
-                        child: IconButton(
-                          icon: const Icon(Icons.chevron_left),
-                          onPressed: () {
-                            setState(() {
-                              _selectedEducation = StudentEducation.none;
-                            });
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
+              // // Container for the "Choose one" section with absolute positioned back button
+              // SizedBox(
+              //   height: 48, // Fixed height to prevent layout shift
+              //   child: Stack(
+              //     alignment: Alignment.center,
+              //     children: [
+              //       // Centered "Choose one" text
+              //       const Center(
+              //         child: Text(
+              //           "Choose one",
+              //           style: TextStyle(
+              //             fontSize: 22,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       ),
+              //       // Back button positioned absolutely to the left
+              //       // if (_selectedEducation != StudentEducation.none)
+              //       //   Positioned(
+              //       //     left: 0,
+              //       //     child: IconButton(
+              //       //       icon: const Icon(Icons.chevron_left),
+              //       //       onPressed: () {
+              //       //         setState(() {
+              //       //           _selectedEducation = StudentEducation.none;
+              //       //         });
+              //       //       },
+              //       //       padding: EdgeInsets.zero,
+              //       //       constraints: const BoxConstraints(),
+              //       //     ),
+              //       //   ),
+              //     ],
+              //   ),
+              // ),
+              const SizedBox(height: 20),
 
               // Show different options based on selection
-              _selectedEducation == StudentEducation.none
-                  ? _buildInitialOptions(theme)
-                  : _buildSelectedOptions(theme),
+              // _selectedEducation == StudentEducation.none
+              //     ? _buildInitialOptions(theme)
+              //     : _buildSelectedOptions(theme),
+              _buildSelectedOptions(theme),
             ],
           ),
         ),
@@ -203,6 +214,12 @@ class _HomeScreenState extends State<HomeScreen> {
           theme: theme,
           onTap: () {
             // Handle "Where to apply?" action
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const InstituteSearchScreen(),
+              ),
+            );
           },
         ),
       ],

@@ -11,6 +11,7 @@ class TCard extends StatelessWidget {
   final double height;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
+  final int maxLines; // New parameter for max lines
 
   const TCard({
     super.key,
@@ -23,17 +24,39 @@ class TCard extends StatelessWidget {
     this.height = 80,
     this.padding,
     this.onTap,
+    this.maxLines = 2, // Default to 2 lines
   });
 
   Future<void> _launchUrl() async {
-    if (openLink != null && await canLaunchUrl(Uri.parse(openLink!))) {
-      await launchUrl(
-        Uri.parse(openLink!),
-        mode: LaunchMode.externalApplication,
-      );
-    } else {
-      debugPrint("Could not launch URL: $openLink");
+    if (openLink != null) {
+      try {
+        final uri = Uri.parse(openLink!);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      } catch (e) {
+        debugPrint("Could not launch URL: $e");
+      }
     }
+  }
+
+  Widget _buildTextWidgetWithOverflow(Widget originalWidget) {
+    if (originalWidget is Text) {
+      return Text(
+        originalWidget.data ?? '',
+        style: originalWidget.style,
+        maxLines: maxLines,
+        overflow: TextOverflow.ellipsis,
+        textAlign: originalWidget.textAlign,
+        strutStyle: originalWidget.strutStyle,
+        textDirection: originalWidget.textDirection,
+        locale: originalWidget.locale,
+        softWrap: originalWidget.softWrap,
+        textScaleFactor: originalWidget.textScaleFactor,
+        semanticsLabel: originalWidget.semanticsLabel,
+      );
+    }
+    return originalWidget;
   }
 
   @override
@@ -81,7 +104,7 @@ class TCard extends StatelessWidget {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: textWidget,
+                        child: _buildTextWidgetWithOverflow(textWidget),
                       ),
                     ),
                     if (showRightIcon && rightIcon != null)
@@ -90,7 +113,7 @@ class TCard extends StatelessWidget {
                         onPressed: onRightIconPressed,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
-                        splashRadius: 20, // Custom splash radius for icon
+                        splashRadius: 20,
                       ),
                   ],
                 ),

@@ -13,30 +13,46 @@ class TBottomNavigationBar extends StatefulWidget {
 
 class _TBottomNavigationBarState extends State<TBottomNavigationBar> {
   int _selectedIndex = 0;
-  late final List<Widget> _screens;
+  final PageController _pageController = PageController();
 
   @override
-  void initState() {
-    super.initState();
-    _screens = [
-      const HomeScreen(key: ValueKey('Home')),
-      const NotificationsScreen(key: ValueKey('Notifications')),
-      const FavoritesScreen(key: ValueKey('Favorites')),
-      const SettingsScreen(key: ValueKey('Settings')),
-    ];
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
-    if (_selectedIndex == index) return; // Prevent redundant rebuilds
+    // If tapping the same tab, scroll to top or refresh if needed
+    if (_selectedIndex == index) {
+      // You could add refresh logic here if needed
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: PageView(
+        controller: _pageController,
+        physics:
+            const NeverScrollableScrollPhysics(), // Disable swiping between pages
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: const [
+          HomeScreen(key: ValueKey('Home')),
+          NotificationsScreen(key: ValueKey('Notifications')),
+          FavoritesScreen(key: ValueKey('Favorites')),
+          SettingsScreen(key: ValueKey('Settings')),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
