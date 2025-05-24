@@ -153,13 +153,6 @@ def get_institutes():
                         {"$sort": {"updated_at": -1}},
                         {"$skip": skip},
                         {"$limit": limit},
-                        {
-                            "$project": {
-                                "id": {"$toString": "$_id"},
-                                "_id": 0,
-                                "name": 1
-                            },
-                        }
                     ],
                 }
             },
@@ -191,28 +184,4 @@ def get_institutes():
 
     except Exception as e:
         logger.exception(f"Error fetching institutes: {e}")
-        return format_response(False, f"Internal server error"), 500
-
-
-@jwt_required()
-def get_institute_by_id(institute_id):
-    try:
-        user_id = get_jwt_identity()
-        if not user_id:
-            return format_response(False, "User ID is required"), 400
-        user_id = ObjectId(user_id)
-        jwt_claims = get_jwt()
-        if not check_if_admin(jwt_claims):
-            return format_response(False, "Permission denied"), 403
-
-        institute = mongo.db.Institute.find_one(
-            {"_id": ObjectId(institute_id), "is_deleted": False}
-        )
-        if not institute:
-            return format_response(False, "Institute not found"), 404
-
-        return format_response(True, "Institute fetched successfully", institute), 200
-
-    except Exception as e:
-        logger.exception(f"Error fetching institute by ID: {e}")
         return format_response(False, f"Internal server error"), 500

@@ -40,7 +40,7 @@ def get_institutes():
             )
         if min_rating < 0 or min_rating > 5:
             return format_response(False, "Minimum rating must be between 0 and 5"), 400
-        
+
         try:
             gender = int(gender) if gender else None
         except ValueError:
@@ -57,7 +57,7 @@ def get_institutes():
                     },
                     "distanceField": "approx_distance",
                     "maxDistance": distance_radius,
-                    "spherical": True
+                    "spherical": True,
                 }
             },
             {
@@ -69,26 +69,22 @@ def get_institutes():
         ]
 
         if gender:
-            pipeline.append({
-                "$match": {
-                    "faculties": {
-                        "$elemMatch": {
-                            "gender": gender
-                        }
-                    }
-                }
-            })
+            pipeline.append(
+                {"$match": {"faculties": {"$elemMatch": {"gender": gender}}}}
+            )
 
-        pipeline.append({
-            "$facet": {
-                "paginatedResults": [
-                    {"$sort": {"approx_distance": 1}},
-                    {"$skip": skip},
-                    {"$limit": limit},
-                ],
-                "totalCount": [{"$count": "count"}],
+        pipeline.append(
+            {
+                "$facet": {
+                    "paginatedResults": [
+                        {"$sort": {"approx_distance": 1}},
+                        {"$skip": skip},
+                        {"$limit": limit},
+                    ],
+                    "totalCount": [{"$count": "count"}],
+                }
             }
-        })
+        )
 
         result = list(INSTITUTE_COLLECTION.aggregate(pipeline))
         if result and result[0]["totalCount"]:
