@@ -11,6 +11,7 @@ from ..helpers.response_helper import format_response
 from ..models.resource_model import ResourceModel
 
 logger = logging.getLogger(__name__)
+RESOURCE_COLLECTION = mongo.db.Resource
 
 
 @jwt_required()
@@ -37,22 +38,18 @@ def get_resources():
                         {"$sort": {"updated_at": -1}},
                         {"$skip": skip},
                         {"$limit": limit},
-                        {
-                            "$project": {
-                                "title": 1,
-                                "content": 1,
-                                "updated_at": 1,
-                            }
-                        },
                     ],
                 }
             },
         ]
 
-        result = list(mongo.db.Resource.aggregate(pipeline))
+        result = list(RESOURCE_COLLECTION.aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             resources = result[1]["paginatedResults"]
+            resources = [
+                ResourceModel(**resource).to_json() for resource in resources
+            ]
             total_pages = math.ceil(total_count / limit)
         else:
             total_count = 0
@@ -80,22 +77,14 @@ def get_resource_by_id(resource_id):
         if not resource_id:
             return format_response(False, "Resource ID is required"), 400
 
-        pipeline = [
-            {"$match": {"_id": ObjectId(resource_id), "is_deleted": False}},
-            {
-                "$project": {
-                    "title": 1,
-                    "content": 1,
-                    "updated_at": 1,
-                }
-            },
-        ]
+        resource_data = RESOURCE_COLLECTION.find_one(
+            {"_id": ObjectId(resource_id), "is_deleted": False}
+        )
 
-        result = list(mongo.db.Resource.aggregate(pipeline))
-        if not result:
+        if not resource_data:
             return format_response(False, "Resource not found"), 404
-
-        resource = result[0]
+        
+        resource = ResourceModel(**resource_data).to_json()
         return format_response(True, "Resource fetched successfully", resource), 200
 
     except Exception as e:
@@ -116,12 +105,14 @@ def add_resource():
 
         data = request.get_json()
         if not data:
-            return format_response(False, "Invalid input"), 400
+            return format_response(False, "Missing data"), 400
 
         title = data.get("title")
         content = data.get("content")
         education_level = data.get("education_level")
         category = data.get("category")
+        link = data.get("link", None)
+        image_url = data.get("image_url", None)
 
         if not title or not content or not education_level or not category:
             return format_response(False, "All fields are required"), 400
@@ -130,11 +121,13 @@ def add_resource():
             title=title,
             content=content,
             education_level=education_level,
+            link=link,
+            image_url=image_url,
             category=category,
             created_by=user_id,
             updated_by=user_id,
         )
-        mongo.db.Resource.insert_one(resource.to_bson())
+        RESOURCE_COLLECTION.insert_one(resource.to_bson())
 
         logger.info(f"Resource added successfully: {resource.title}")
         return format_response(True, "Resource added successfully"), 201
@@ -157,33 +150,27 @@ def update_resource(resource_id):
 
         data = request.get_json()
         if not data:
-            return format_response(False, "Invalid input"), 400
+            return format_response(False, "Missing data"), 400
 
-        title = data.get("title")
-        content = data.get("content")
-        education_level = data.get("education_level")
-        category = data.get("category")
-
-        if not title or not content or not education_level or not category:
-            return format_response(False, "All fields are required"), 400
-
-        resource_collection = mongo.db.Resource
-        resource = resource_collection.find_one(
+        resource = RESOURCE_COLLECTION.find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
             return format_response(False, "Resource not found"), 404
-
+        
         resource = ResourceModel(**resource)
+
         resource.update(
-            title=title,
-            content=content,
-            education_level=education_level,
-            category=category,
+            title=data.get("title"),
+            content=data.get("content"),
+            education_level=data.get("education_level"),
+            category=data.get("category"),
+            link=data.get("link", None),
+            image_url=data.get("image_url", None),
             updated_by=user_id,
         )
 
-        resource_collection.update_one(
+        RESOURCE_COLLECTION.update_one(
             {"_id": ObjectId(resource_id)},
             {"$set": resource.to_bson()},
         )
@@ -207,14 +194,13 @@ def delete_resource(resource_id):
         if not check_if_admin(jwt_claims):
             return format_response(False, "Permission denied"), 403
 
-        resource_collection = mongo.db.Resource
-        resource = resource_collection.find_one(
+        resource = RESOURCE_COLLECTION.find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
             return format_response(False, "Resource not found"), 404
 
-        resource_collection.update_one(
+        RESOURCE_COLLECTION.update_one(
             {"_id": ObjectId(resource_id)},
             {"$set": {"is_deleted": True, "updated_by": user_id}},
         )
