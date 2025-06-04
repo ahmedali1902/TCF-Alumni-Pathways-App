@@ -27,7 +27,7 @@ def get_institutes():
         distance_radius = int(request.args.get("distance_radius", 10000))
         user_longitude = float(request.args.get("longitude"))
         user_latitude = float(request.args.get("latitude"))
-        min_rating = float(request.args.get("min_rating", 0))
+        min_tcf_rating = float(request.args.get("min_tcf_rating", 0))
         gender = request.args.get("gender")
 
         if user_longitude is None or user_latitude is None:
@@ -37,7 +37,7 @@ def get_institutes():
                 format_response(False, "Distance radius must be a positive number"),
                 400,
             )
-        if min_rating < 0 or min_rating > 5:
+        if min_tcf_rating < 0 or min_tcf_rating > 5:
             return format_response(False, "Minimum rating must be between 0 and 5"), 400
 
         try:
@@ -61,7 +61,7 @@ def get_institutes():
             },
             {
                 "$match": {
-                    "tcf_rating": {"$gte": min_rating},
+                    "tcf_rating": {"$gte": min_tcf_rating},
                     "is_deleted": False,
                 }
             },
