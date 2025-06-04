@@ -23,7 +23,6 @@ class ResourceModel(BaseModel):
     title: str = Field(None, min_length=1, max_length=50)
     content: str = Field(None, min_length=1, max_length=500)
     link: Optional[str] = Field(None, max_length=500)
-    image_url: Optional[str] = Field(None, max_length=500)
     education_level: EducationLevel = Field(default=EducationLevel.MATRICULATION)
     category: Category = Field(default=Category.GENERAL)
     is_deleted: bool = Field(default=False)
