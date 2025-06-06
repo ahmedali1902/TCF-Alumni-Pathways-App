@@ -110,7 +110,6 @@ def add_resource():
         education_level = data.get("education_level")
         category = data.get("category")
         link = data.get("link", None)
-        image_url = data.get("image_url", None)
 
         if not title or not content or not education_level or not category:
             return format_response(False, "All fields are required"), 400
@@ -120,7 +119,6 @@ def add_resource():
             content=content,
             education_level=education_level,
             link=link,
-            image_url=image_url,
             category=category,
             created_by=user_id,
             updated_by=user_id,
@@ -164,7 +162,6 @@ def update_resource(resource_id):
             education_level=data.get("education_level"),
             category=data.get("category"),
             link=data.get("link", None),
-            image_url=data.get("image_url", None),
             updated_by=user_id,
         )
 
