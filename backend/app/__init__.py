@@ -4,7 +4,6 @@ from flask import Flask
 
 from .config import config_by_name
 from .extensions import bcrypt, cors, jwt, mongo
-from .routes import register_routes
 
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("pymongo").setLevel(logging.WARNING)
@@ -22,7 +21,7 @@ def create_app(env_name):
 
     with app.app_context():
         from flask import Blueprint
-
+        from .routes import register_routes
         api_bp = Blueprint("api", __name__, url_prefix="/api")
         register_routes(api_bp)
         app.register_blueprint(api_bp)
