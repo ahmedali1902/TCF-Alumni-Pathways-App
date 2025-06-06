@@ -22,7 +22,7 @@ class Gender(IntEnum):
 
 class InstituteFacultyModel(BaseModel):
     id: PydanticObjectId = Field(default_factory=ObjectId)
-    name: str = Field(None, min_length=1, max_length=50)
+    name: str = Field(None)
     average_result_percentage_required: Optional[float] = Field(None, ge=0, le=100)
     gender: Gender = Field(default=Gender.COEDUCATION)
 
@@ -34,10 +34,10 @@ class GeoPointModel(BaseModel):
 
 class InstituteModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    name: str = Field(None, min_length=1, max_length=256)
+    name: str = Field(None)
     managing_authority: ManagingAuthority = Field(default=ManagingAuthority.PUBLIC)
     location: GeoPointModel = Field(...)
-    description: Optional[str] = Field("", max_length=1024)
+    description: Optional[str] = Field("")
     faculties: list[InstituteFacultyModel] = Field(default_factory=list)
     tcf_rating: float = Field(0.0, ge=0, le=5)
     approx_distance: Optional[float] = Field(None, ge=0)

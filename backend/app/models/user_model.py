@@ -17,8 +17,8 @@ class UserModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
     email: Optional[EmailStr] = None
     password_hash: Optional[str] = None
-    name: Optional[str] = Field(None, min_length=1, max_length=50)
-    device_id: Optional[str] = Field(None, min_length=1, max_length=50)
+    name: Optional[str] = Field(None)
+    device_id: Optional[str] = Field(None)
     role: UserRole = Field(default=UserRole.USER)
     last_login: Optional[datetime] = None
     is_deleted: bool = Field(default=False)

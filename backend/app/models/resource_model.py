@@ -20,9 +20,9 @@ class Category(IntEnum):
 
 class ResourceModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    title: str = Field(None, min_length=1, max_length=50)
-    content: str = Field(None, min_length=1, max_length=500)
-    link: Optional[str] = Field(None, max_length=500)
+    title: str = Field(None)
+    content: str = Field(None)
+    link: Optional[str] = Field(None)
     education_level: EducationLevel = Field(default=EducationLevel.MATRICULATION)
     category: Category = Field(default=Category.GENERAL)
     is_deleted: bool = Field(default=False)

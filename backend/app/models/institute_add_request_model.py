@@ -9,10 +9,10 @@ from .objectid import PydanticObjectId
 
 class InstituteAddRequestModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    institute_name: str = Field(None, min_length=1, max_length=100)
-    faculty_name: str = Field(None, min_length=1, max_length=100)
-    institute_address: str = Field(None, min_length=1, max_length=500)
-    institute_map_link: Optional[str] = Field(None, max_length=500)
+    institute_name: str = Field(None)
+    faculty_name: str = Field(None)
+    institute_address: str = Field(None)
+    institute_map_link: Optional[str] = Field(None)
     processed: bool = Field(default=False)
     is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

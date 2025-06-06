@@ -17,13 +17,13 @@ class ReasonType(IntEnum):
 
 class AppFeedbackModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    user_name: Optional[str] = Field(None, min_length=1, max_length=100)
+    user_name: Optional[str] = Field(None)
     reason_type: ReasonType = Field(default=ReasonType.GENERAL)
-    reason_if_other: str = Field(default="", min_length=1, max_length=100)
+    reason_if_other: str = Field(default="")
     experience_rating: int = Field(default=0, ge=0, le=5)
     is_tcf_alumni: bool = Field(default=False)
-    whatsapp_number: Optional[str] = Field(None, min_length=10, max_length=15)
-    feedback_text: Optional[str] = Field(None, min_length=1, max_length=500)
+    whatsapp_number: Optional[str] = Field(None)
+    feedback_text: Optional[str] = Field(None)
     processed: bool = Field(default=False)
     is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
