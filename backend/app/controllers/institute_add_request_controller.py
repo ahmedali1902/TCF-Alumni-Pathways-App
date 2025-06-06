@@ -131,15 +131,24 @@ def create_institute_add_request():
         data = request.get_json()
         if not data:
             return format_response(False, "Missing data"), 400
-        
+
         institute_name = data.get("institute_name")
-        institute_details = data.get("institute_details")
-        if not institute_name or not institute_details:
-            return format_response(False, "Institute name and details are required"), 400
+        faculty_name = data.get("faculty_name")
+        institute_address = data.get("institute_address")
+        institute_map_link = data.get("institute_map_link", "")
+        if not institute_name or not institute_address or not faculty_name:
+            return (
+                format_response(
+                    False, "Institute name, faculty name, and address are required"
+                ),
+                400,
+            )
 
         institute_add_request = InstituteAddRequestModel(
             institute_name=institute_name,
-            institute_details=institute_details,
+            faculty_name=faculty_name,
+            institute_address=institute_address,
+            institute_map_link=institute_map_link,
             created_by=user_id,
             updated_by=user_id,
         )
