@@ -116,9 +116,11 @@ def update_admin_password():
         confirm_password = data.get("confirm_password")
 
         if not old_password or not new_password or not confirm_password:
+            logger.warning("All password fields are required for update.")
             return format_response(False, "All password fields are required", None), 400
 
         if new_password != confirm_password:
+            logger.warning("New passwords do not match.")
             return format_response(False, "New passwords do not match", None), 400
 
         user_id = get_jwt_identity()
@@ -126,11 +128,13 @@ def update_admin_password():
         user_data = user_collection.find_one({"_id": user_id, "is_deleted": False})
 
         if not user_data:
+            logger.warning(f"User not found for ID: {user_id}")
             return format_response(False, "User not found", None), 404
 
         user = UserModel(**user_data)
 
         if not check_password(old_password, user.password_hash):
+            logger.warning(f"Old password is incorrect for user: {str(user.id)}")
             return format_response(False, "Old password is incorrect", None), 401
 
         user.update(password_hash=hash_password(new_password))
@@ -153,6 +157,7 @@ def reset_admin_password():
         admin_secret = data.get("admin_secret")
 
         if not email or not new_password or not admin_secret:
+            logger.warning("Missing required fields for password reset.")
             return (
                 format_response(
                     False, "Email, new password, and admin secret are required", None
@@ -161,14 +166,15 @@ def reset_admin_password():
             )
 
         if admin_secret != ADMIN_SECRET:
-            logger.warning("Missing or invalid admin secret.")
-            return format_response(False, "Missing or invalid admin secret", None), 401
+            logger.warning("Invalid admin secret.")
+            return format_response(False, "Invalid admin secret", None), 401
 
         user_collection = mongo.db.User
         user_data = user_collection.find_one({"email": email, "is_deleted": False})
 
         if not user_data or user_data.get("role") != UserRole.ADMIN:
-            return format_response(False, "Admin not found", None), 404
+            logger.warning(f"Admin user with email {email} not found.")
+            return format_response(False, f"Admin user will email {email} not found", None), 404
 
         user = UserModel(**user_data)
         user.update(password_hash=hash_password(new_password))
