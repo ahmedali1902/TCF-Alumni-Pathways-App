@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Blueprint, Flask
 
 from .config import config_by_name
 from .extensions import bcrypt, cors, jwt, mongo
@@ -20,8 +20,8 @@ def create_app(env_name):
     mongo.init_app(app)
 
     with app.app_context():
-        from flask import Blueprint
         from .routes import register_routes
+
         api_bp = Blueprint("api", __name__, url_prefix="/api")
         register_routes(api_bp)
         app.register_blueprint(api_bp)
