@@ -174,7 +174,12 @@ def reset_admin_password():
 
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             logger.warning(f"Admin user with email {email} not found.")
-            return format_response(False, f"Admin user will email {email} not found", None), 404
+            return (
+                format_response(
+                    False, f"Admin user will email {email} not found", None
+                ),
+                404,
+            )
 
         user = UserModel(**user_data)
         user.update(password_hash=hash_password(new_password))
