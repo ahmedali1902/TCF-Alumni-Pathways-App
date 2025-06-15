@@ -46,7 +46,7 @@ def get_institute_add_requests():
         ]
 
         if not show_processed:
-            pipeline[0]["$match"]["is_processed"] = False
+            pipeline[0]["$match"]["processed"] = False
 
         result = list(INSTITUTE_ADD_REQUEST_COLLECTION.aggregate(pipeline))
         if result and result[0]["totalCount"]:
@@ -59,7 +59,7 @@ def get_institute_add_requests():
             total_pages = math.ceil(total_count / limit)
         else:
             total_count = 0
-            institutes = []
+            institute_add_requests = []
             total_pages = 0
 
         response = {
@@ -67,7 +67,7 @@ def get_institute_add_requests():
             "total_pages": total_pages,
             "page": page,
             "limit": limit,
-            "data": institutes,
+            "data": institute_add_requests,
         }
 
         return (
