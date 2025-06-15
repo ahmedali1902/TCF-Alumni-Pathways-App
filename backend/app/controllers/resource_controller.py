@@ -46,7 +46,7 @@ def get_resources():
         result = list(RESOURCE_COLLECTION.aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
-            resources = result[1]["paginatedResults"]
+            resources = result[0]["paginatedResults"]
             resources = [ResourceModel(**resource).to_json() for resource in resources]
             total_pages = math.ceil(total_count / limit)
         else:
