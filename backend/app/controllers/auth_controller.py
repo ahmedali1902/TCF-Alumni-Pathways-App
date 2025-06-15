@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timezone
 
 import jwt
+from bson import ObjectId
 from flask import request
 from flask_jwt_extended import (
     get_jwt,
@@ -125,7 +126,9 @@ def update_admin_password():
 
         user_id = get_jwt_identity()
         user_collection = mongo.db.User
-        user_data = user_collection.find_one({"_id": user_id, "is_deleted": False})
+        user_data = user_collection.find_one(
+            {"_id": ObjectId(user_id), "is_deleted": False}
+        )
 
         if not user_data:
             logger.warning(f"User not found for ID: {user_id}")
