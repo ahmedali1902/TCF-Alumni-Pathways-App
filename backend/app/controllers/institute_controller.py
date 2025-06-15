@@ -176,8 +176,25 @@ def add_institute():
         return format_response(True, "Institute added successfully"), 201
 
     except DuplicateKeyError as e:
-        logger.warning(f"Duplicate location error when adding institute: {e}")
-        return format_response(False, "An institute with this location already exists"), 409
+        # Check if there's a soft-deleted institute at this location
+        existing_institute = INSTITUTE_COLLECTION.find_one({
+            "location": location.dict(),
+            "is_deleted": True
+        })
+        
+        if existing_institute:
+            # Hard delete the soft-deleted institute and create the new one
+            INSTITUTE_COLLECTION.delete_one({"_id": existing_institute["_id"]})
+            logger.info(f"Removed soft-deleted institute at same location: {existing_institute.get('name', 'Unknown')}")
+            
+            # Now insert the new institute
+            INSTITUTE_COLLECTION.insert_one(institute.to_bson())
+            logger.info(f"Institute added successfully after removing soft-deleted duplicate: {institute.name}")
+            return format_response(True, "Institute added successfully"), 201
+        else:
+            # There's an active institute at this location
+            logger.warning(f"Duplicate location error when adding institute: {e}")
+            return format_response(False, "An institute with this location already exists"), 409
     except Exception as e:
         logger.exception(f"Error adding institute: {e}")
         return format_response(False, "Internal server error"), 500
@@ -233,8 +250,28 @@ def update_institute(institute_id):
         return format_response(True, "Institute updated successfully"), 200
 
     except DuplicateKeyError as e:
-        logger.warning(f"Duplicate location error when updating institute: {e}")
-        return format_response(False, "An institute with this location already exists"), 409
+        # Check if there's a soft-deleted institute at this location
+        existing_institute = INSTITUTE_COLLECTION.find_one({
+            "location": location.dict(),
+            "is_deleted": True,
+            "_id": {"$ne": ObjectId(institute_id)}  # Exclude the current institute being updated
+        })
+        
+        if existing_institute:
+            # Hard delete the soft-deleted institute and update the current one
+            INSTITUTE_COLLECTION.delete_one({"_id": existing_institute["_id"]})
+            logger.info(f"Removed soft-deleted institute at same location: {existing_institute.get('name', 'Unknown')}")
+            
+            # Now update the institute
+            INSTITUTE_COLLECTION.update_one(
+                {"_id": ObjectId(institute_id)}, {"$set": institute.to_bson()}
+            )
+            logger.info(f"Institute updated successfully after removing soft-deleted duplicate: {institute.name}")
+            return format_response(True, "Institute updated successfully"), 200
+        else:
+            # There's an active institute at this location
+            logger.warning(f"Duplicate location error when updating institute: {e}")
+            return format_response(False, "An institute with this location already exists"), 409
     except Exception as e:
         logger.exception(f"Error updating institute: {e}")
         return format_response(False, "Internal server error"), 500
