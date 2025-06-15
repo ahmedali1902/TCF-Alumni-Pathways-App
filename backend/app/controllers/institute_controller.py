@@ -5,6 +5,7 @@ from random import randint
 from bson import ObjectId
 from flask import request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+from pymongo.errors import DuplicateKeyError
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
@@ -57,6 +58,7 @@ def get_institutes():
                     "distanceField": "approx_distance",
                     "maxDistance": distance_radius,
                     "spherical": True,
+                    "query": {"is_deleted": False},
                 }
             },
             {
@@ -173,6 +175,9 @@ def add_institute():
         logger.info(f"Institute added successfully: {institute.name}")
         return format_response(True, "Institute added successfully"), 201
 
+    except DuplicateKeyError as e:
+        logger.warning(f"Duplicate location error when adding institute: {e}")
+        return format_response(False, "An institute with this location already exists"), 409
     except Exception as e:
         logger.exception(f"Error adding institute: {e}")
         return format_response(False, "Internal server error"), 500
@@ -227,6 +232,9 @@ def update_institute(institute_id):
         logger.info(f"Institute updated successfully: {institute.name}")
         return format_response(True, "Institute updated successfully"), 200
 
+    except DuplicateKeyError as e:
+        logger.warning(f"Duplicate location error when updating institute: {e}")
+        return format_response(False, "An institute with this location already exists"), 409
     except Exception as e:
         logger.exception(f"Error updating institute: {e}")
         return format_response(False, "Internal server error"), 500
