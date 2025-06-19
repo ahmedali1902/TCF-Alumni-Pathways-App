@@ -8,7 +8,7 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
-from ..models.resource_model import ResourceModel
+from ..models.resource_model import Category, EducationLevel, ResourceModel
 
 logger = logging.getLogger(__name__)
 RESOURCE_COLLECTION = mongo.db.Resource
@@ -17,31 +17,98 @@ RESOURCE_COLLECTION = mongo.db.Resource
 @jwt_required()
 def get_resources():
     try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+
+        jwt_claims = get_jwt()
+        is_admin = check_if_admin(jwt_claims)
+
         page = int(request.args.get("page", 1))
         limit = int(request.args.get("limit", 10))
-        education_level = request.args.get("education_level", 1)
-        category = request.args.get("category", 1)
         skip = (page - 1) * limit
 
-        pipeline = [
-            {
-                "$match": {
-                    "education_level": int(education_level),
-                    "category": int(category),
-                    "is_deleted": False,
-                }
-            },
-            {
-                "$facet": {
-                    "totalCount": [{"$count": "count"}],
-                    "paginatedResults": [
-                        {"$sort": {"updated_at": -1}},
-                        {"$skip": skip},
-                        {"$limit": limit},
-                    ],
-                }
-            },
-        ]
+        if is_admin:
+            # Admin logic - search and filter based approach
+            search = request.args.get("search", "")
+            education_level = request.args.get("education_level")
+            category = request.args.get("category")
+
+            match_criteria = {"is_deleted": False}
+
+            # Add search functionality
+            if search:
+                match_criteria["$or"] = [
+                    {"title": {"$regex": search, "$options": "i"}},
+                    {"content": {"$regex": search, "$options": "i"}},
+                ]
+
+            # Add filter by education level (enum)
+            if education_level:
+                try:
+                    education_level_enum = EducationLevel(int(education_level))
+                    match_criteria["education_level"] = education_level_enum
+                except (ValueError, TypeError):
+                    return (
+                        format_response(
+                            False,
+                            "Invalid education level value. Use 1 for MATRICULATION, 2 for INTERMEDIATE",
+                        ),
+                        400,
+                    )
+
+            # Add filter by category (enum)
+            if category:
+                try:
+                    category_enum = Category(int(category))
+                    match_criteria["category"] = category_enum
+                except (ValueError, TypeError):
+                    return (
+                        format_response(
+                            False,
+                            "Invalid category value. Use 1 for GENERAL, 2 for SCHOLARSHIP",
+                        ),
+                        400,
+                    )
+
+            pipeline = [
+                {"$match": match_criteria},
+                {
+                    "$facet": {
+                        "totalCount": [{"$count": "count"}],
+                        "paginatedResults": [
+                            {"$sort": {"updated_at": -1}},
+                            {"$skip": skip},
+                            {"$limit": limit},
+                        ],
+                    }
+                },
+            ]
+
+        else:
+            # Anonymous user logic - required category and education level
+            education_level = request.args.get("education_level", 1)
+            category = request.args.get("category", 1)
+
+            pipeline = [
+                {
+                    "$match": {
+                        "education_level": int(education_level),
+                        "category": int(category),
+                        "is_deleted": False,
+                    }
+                },
+                {
+                    "$facet": {
+                        "totalCount": [{"$count": "count"}],
+                        "paginatedResults": [
+                            {"$sort": {"updated_at": -1}},
+                            {"$skip": skip},
+                            {"$limit": limit},
+                        ],
+                    }
+                },
+            ]
 
         result = list(RESOURCE_COLLECTION.aggregate(pipeline))
         if result and result[0]["totalCount"]:
