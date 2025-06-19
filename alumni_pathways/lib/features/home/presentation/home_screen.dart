@@ -4,7 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/colors.dart';
 
-enum StudentEducation { none, matric, intermediate }
+enum StudentEducation {
+  none(1),
+  matric(2),
+  intermediate(3);
+
+  final int value;
+  const StudentEducation(this.value);
+}
+
+enum ResourceCategory {
+  forms(1),
+  video(2);
+
+  final int value;
+  const ResourceCategory(this.value);
+}
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // Welcome Text
               const Text(
-                "Welcome, User 👋",
+                "Welcome 👋",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               // const SizedBox(height: 10),
@@ -163,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ResourcesScreen()),
+              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value - 1,category: ResourceCategory.forms.value)),
             );
           },
         ),
@@ -188,7 +204,10 @@ class _HomeScreenState extends State<HomeScreen> {
           color2: TAppColors.primary.withOpacity(0.7),
           theme: theme,
           onTap: () {
-            // Handle "Where to apply?" action
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value -1,category: ResourceCategory.video.value)),
+            );
           },
         ),
         const SizedBox(height: 15),

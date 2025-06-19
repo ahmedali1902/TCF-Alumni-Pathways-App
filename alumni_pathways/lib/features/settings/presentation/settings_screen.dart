@@ -4,8 +4,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/colors.dart';
+import '../../../core/constants/enum.dart';
+import '../../../core/services/http_service.dart';
 import '../../../widgets/card.dart';
-import 'package:flutter/gestures.dart'; // Important for gesture recognizer
+import 'package:flutter/gestures.dart';
+
+import '../../home/repository/home_repository.dart';
+import '../domain/institute_request_model.dart';
+import '../repository/settings_repository.dart'; // Important for gesture recognizer
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -146,7 +152,7 @@ class SearchSettingsScreen extends StatefulWidget {
 class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
   int _distance = 10;
   double _minRating = 3.0;
-  String? _selectedGender;
+  int? _selectedGender;
   int _admissionCriteria = 50;
 
   @override
@@ -161,17 +167,17 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
       _distance = prefs.getInt('search_distance') ?? 10;
       _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
       _selectedGender =
-          prefs.getString('search_gender') ?? '3'; // Default to 'Coeducation'
+          prefs.getInt('search_gender') ?? Gender.coeducation.value; // Default to 'Coeducation'
       _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
     });
   }
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('search_distance', _distance); // Convert km to meters
+    await prefs.setInt('search_distance', _distance);
     await prefs.setDouble('search_min_rating', _minRating);
     if (_selectedGender != null) {
-      await prefs.setString('search_gender', _selectedGender!);
+      await prefs.setInt('search_gender', _selectedGender!);
     }
     await prefs.setInt('search_admission_criteria', _admissionCriteria);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -275,7 +281,7 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
           'Gender Preference',
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        DropdownButtonFormField<String>(
+        DropdownButtonFormField<int>(
           value: _selectedGender,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
@@ -315,10 +321,10 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
               ), // Focused error border
             ),
           ),
-          items: const [
-            DropdownMenuItem(value: '1', child: Text('Male Only')),
-            DropdownMenuItem(value: '2', child: Text('Female Only')),
-            DropdownMenuItem(value: '3', child: Text('Coeducation')),
+          items: [
+            DropdownMenuItem(value: Gender.maleOnly.value, child: Text(Gender.maleOnly.toString())),
+            DropdownMenuItem(value: Gender.femaleOnly.value, child: Text(Gender.femaleOnly.toString())),
+            DropdownMenuItem(value: Gender.coeducation.value, child: Text(Gender.coeducation.toString()))
           ],
           onChanged: (value) => setState(() => _selectedGender = value),
           hint: const Text('Select gender'),
@@ -438,25 +444,41 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final _nameController = TextEditingController();
   final _programController = TextEditingController();
   final _locationController = TextEditingController();
+  final _mapLinkController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _programController.dispose();
     _locationController.dispose();
+    _mapLinkController.dispose();
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Institute request submitted successfully'),
-        ),
+      final request = InstituteRequest(
+        instituteName: _nameController.text.trim(),
+        facultyName: _programController.text.trim(),
+        instituteAddress: _locationController.text.trim(),
+        instituteMapLink: _mapLinkController.text.trim(),
       );
+
+      try {
+        await SettingsRepository(ApiHandlerService()).addInstituteFeedback(request);
+        if (!mounted) return;
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Institute request submitted successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit request: $e')),
+        );
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -636,7 +658,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _programController,
+                controller: _mapLinkController,
                 decoration: InputDecoration(
                   hintText: 'e.g https://goo.gl/maps/xyz',
                   border: OutlineInputBorder(

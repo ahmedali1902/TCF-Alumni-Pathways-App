@@ -121,7 +121,7 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                               ),
                             ),
                           ),
-                          _buildRatingStars(institute.averageUserRating),
+                          _buildRatingStars(institute.tcfRating),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -300,19 +300,19 @@ class _InstituteMapLoaderState extends State<InstituteMapLoader> {
                 ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildInfoItem(
-                    LucideIcons.barChart2,
-                    'Admission: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
-                  ),
-                  const SizedBox(width: 16),
-                  _buildInfoItem(
-                    LucideIcons.award,
-                    'Results: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     _buildInfoItem(
+              //       LucideIcons.barChart2,
+              //       'Admission: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
+              //     ),
+              //     const SizedBox(width: 16),
+              //     _buildInfoItem(
+              //       LucideIcons.award,
+              //       'Results: ${faculty.averageResultPercentageRequired?.toStringAsFixed(1) ?? 'N/A'}%',
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 8),
               Row(
                 children: [

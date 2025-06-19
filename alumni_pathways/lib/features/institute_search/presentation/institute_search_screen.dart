@@ -29,7 +29,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
   double? _latitude;
   double? _longitude;
   int _gender = Gender.coeducation.value; // Default
-  int _searchRadius = 10000; // Default 10km
+  int _searchRadius = 10; // Default 10km
 
   List<String> _favoriteInstitutes = [];
 
@@ -81,9 +81,8 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
     try {
       // Get search radius and gender from shared preferences
       final prefs = await SharedPreferences.getInstance();
-      _searchRadius = prefs.getInt('search_distance') ?? 10000;
-      _gender = prefs.getInt('gender') ?? Gender.coeducation.value;
-
+      _searchRadius = prefs.getInt('search_distance') ?? 10;
+      _gender = prefs.getInt('search_gender') ?? Gender.coeducation.value;
       // Check and request location permissions
       await _checkLocationPermission();
 

@@ -1,62 +1,70 @@
+import 'package:alumni_pathways/core/services/http_service.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/colors.dart';
 import '../../../widgets/card.dart';
+import '../domain/resources_model.dart';
+import '../repository/home_repository.dart';
 
-class ResourcesScreen extends StatelessWidget {
-  const ResourcesScreen({super.key});
+enum ResourceCategory {
+  forms(1),
+  video(2);
+
+  final int value;
+  const ResourceCategory(this.value);
+}
+
+class ResourcesScreen extends StatefulWidget {
+  final int educationLevel;
+  final int category;
+
+  const ResourcesScreen({
+    super.key,
+    required this.educationLevel,
+    required this.category,
+  });
+
+  @override
+  State<ResourcesScreen> createState() => _ResourcesScreenState();
+}
+
+class _ResourcesScreenState extends State<ResourcesScreen> {
+  List<Resource> resources = [];
+  final HomeRepository homeRepository = HomeRepository(ApiHandlerService());
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getResources();
+  }
+
+  Future<void> getResources() async {
+    try {
+      final result = await homeRepository.getResources(
+        widget.educationLevel,
+        widget.category,
+      );
+      setState(() {
+        resources = result;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load resources: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final resources = [
-      {
-        'title': 'Scholarship Application Guide',
-        'icon': LucideIcons.fileText,
-        'description': 'Step-by-step guide to applying for scholarships',
-        'link': 'https://example.com/scholarship-guide',
-      },
-      {
-        'title': 'Career Pathways Handbook',
-        'icon': LucideIcons.bookOpen,
-        'description': 'Explore different career options after graduation',
-        'link': 'https://example.com/career-handbook',
-      },
-      {
-        'title': 'University Preparation',
-        'icon': LucideIcons.graduationCap,
-        'description': 'Tips for university applications and tests',
-        'link': 'https://example.com/university-prep',
-      },
-      {
-        'title': 'Internship Opportunities',
-        'icon': LucideIcons.briefcase,
-        'description': 'Find internships that match your skills and interests',
-        'link': 'https://example.com/internships',
-      },
-      {
-        'title': 'Resume Building Workshop',
-        'icon': LucideIcons.fileText,
-        'description': 'Learn how to create a standout resume',
-        'link': 'https://example.com/resume-workshop',
-      },
-      {
-        'title': 'Interview Preparation Tips',
-        'icon': LucideIcons.mic,
-        'description': 'Get ready for your next job interview',
-        'link': 'https://example.com/interview-tips',
-      },
-      {
-        'title': 'TCF Alumni Pathways Whatsapp Group',
-        'icon': LucideIcons.messageSquare,
-        'description': 'Join our community for support and networking',
-        'link': 'https://example.com/whatsapp-group',
-      },
-    ];
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft), // Using chevron left icon
+          icon: const Icon(LucideIcons.chevronLeft),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
@@ -68,49 +76,53 @@ class ResourcesScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children:
-                resources.map((resource) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: TCard(
-                      height: 90,
-                      leftIcon: CircleAvatar(
-                        backgroundColor: TAppColors.primary.withOpacity(0.2),
-                        child: Icon(
-                          resource['icon'] as IconData,
-                          color: TAppColors.primary,
-                        ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : resources.isEmpty
+          ? const Center(child: Text("No resources available."))
+          : SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: resources.map((resource) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: TCard(
+                height: 130,
+                leftIcon: CircleAvatar(
+                  backgroundColor: TAppColors.primary.withOpacity(0.2),
+                  child: Icon(
+                    widget.category == ResourceCategory.video.value ? LucideIcons.bookOpen : LucideIcons.globe,
+                    color: TAppColors.primary,
+                  ),
+                ),
+                textWidget: SizedBox(
+                  height: 120,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        resource.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      textWidget: SizedBox(
-                        height: 70, // Fixed height for vertical centering
-                        child: Column(
-                          mainAxisAlignment:
-                              MainAxisAlignment.center, // Vertical center
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              resource['title'] as String,
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              resource['description'] as String,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: Colors.grey),
-                            ),
-                          ],
-                        ),
+                      const SizedBox(height: 4),
+                      Text(
+                        resource.content ?? '',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: Colors.grey),
                       ),
-                      openLink: resource['link'] as String,
-                    ),
-                  );
-                }).toList(),
-          ),
+                    ],
+                  ),
+                ),
+                openLink: resource.link,
+              ),
+            );
+          }).toList(),
         ),
       ),
     );

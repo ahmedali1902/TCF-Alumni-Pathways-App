@@ -1,16 +1,16 @@
 class Faculty {
   final String id;
   final String name;
-  final double averageResultPercentageRequired;
+  // final double averageResultPercentageRequired;
   final int gender;
-  final bool isDeleted;
+  // final bool isDeleted;
 
   Faculty({
     required this.id,
     required this.name,
-    required this.averageResultPercentageRequired,
+    // required this.averageResultPercentageRequired,
     required this.gender,
-    required this.isDeleted,
+    // required this.isDeleted,
   });
 
   factory Faculty.fromJson(Map<String, dynamic> json) {
@@ -18,12 +18,12 @@ class Faculty {
       id: json['id'],
       name: json['name'],
       // averageResultPercentageRequired: (json['average_result_percentage_required'] as num).toDouble(),
-      averageResultPercentageRequired:
-          json['average_result_percentage_required'] != null
-              ? (json['average_result_percentage_required'] as num).toDouble()
-              : 0.0,
+      // averageResultPercentageRequired:
+      //     json['average_result_percentage_required'] != null
+      //         ? (json['average_result_percentage_required'] as num).toDouble()
+      //         : 0.0,
       gender: json['gender'],
-      isDeleted: json['is_deleted'],
+      // isDeleted: json['is_deleted'],
     );
   }
 }
@@ -83,7 +83,7 @@ class InstituteDetails {
       faculties: List<Faculty>.from(
         json['faculties'].map((x) => Faculty.fromJson(x)),
       ),
-      userRatings: List<dynamic>.from(json['user_ratings']),
+      userRatings: json['user_ratings'] == null ? [] : List<dynamic>.from(json['user_ratings']),
       tcfRating: (json['tcf_rating'] as num).toDouble(),
       isDeleted: json['is_deleted'],
       createdAt: DateTime.parse(json['created_at']),
