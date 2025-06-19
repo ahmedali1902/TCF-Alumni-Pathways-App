@@ -157,7 +157,9 @@ def create_institute_add_request():
             updated_by=user_id,
         )
 
-        get_institute_add_request_collection().insert_one(institute_add_request.to_bson())
+        get_institute_add_request_collection().insert_one(
+            institute_add_request.to_bson()
+        )
         logger.info(
             f"Institute add request created successfully: {institute_add_request.institute_name}"
         )

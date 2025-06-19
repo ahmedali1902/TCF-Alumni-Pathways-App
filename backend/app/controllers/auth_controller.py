@@ -5,12 +5,8 @@ from datetime import datetime, timezone
 import jwt
 from bson import ObjectId
 from flask import request
-from flask_jwt_extended import (
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-    verify_jwt_in_request,
-)
+from flask_jwt_extended import (get_jwt, get_jwt_identity, jwt_required,
+                                verify_jwt_in_request)
 from flask_jwt_extended.exceptions import JWTExtendedException
 
 from ..extensions import mongo
@@ -178,9 +174,7 @@ def reset_admin_password():
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             logger.warning(f"Admin user with email {email} not found.")
             return (
-                format_response(
-                    False, "Invalid credentials", None
-                ),
+                format_response(False, "Invalid credentials", None),
                 404,
             )
 

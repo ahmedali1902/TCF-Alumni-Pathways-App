@@ -232,7 +232,7 @@ def update_resource(resource_id):
         content = data.get("content")
         education_level = data.get("education_level")
         category = data.get("category")
-        
+
         if not title or not content or not education_level or not category:
             return format_response(False, "All required fields must be provided"), 400
 

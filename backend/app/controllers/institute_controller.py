@@ -10,13 +10,9 @@ from pymongo.errors import DuplicateKeyError
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
-from ..models.institute_model import (
-    Gender,
-    GeoPointModel,
-    InstituteFacultyModel,
-    InstituteModel,
-    ManagingAuthority,
-)
+from ..models.institute_model import (Gender, GeoPointModel,
+                                      InstituteFacultyModel, InstituteModel,
+                                      ManagingAuthority)
 
 logger = logging.getLogger(__name__)
 
@@ -261,7 +257,7 @@ def add_institute():
             created_by=user_id,
             updated_by=user_id,
         )
-        
+
         get_institute_collection().insert_one(institute.to_bson())
         logger.info(f"Institute added successfully: {institute.name}")
         return format_response(True, "Institute added successfully"), 201
