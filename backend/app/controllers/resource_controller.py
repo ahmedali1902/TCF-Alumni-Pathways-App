@@ -11,7 +11,11 @@ from ..helpers.response_helper import format_response
 from ..models.resource_model import Category, EducationLevel, ResourceModel
 
 logger = logging.getLogger(__name__)
-RESOURCE_COLLECTION = mongo.db.Resource
+
+
+def get_resource_collection():
+    """Get resource collection - ensures mongo is initialized"""
+    return mongo.db.Resource
 
 
 @jwt_required()
@@ -110,7 +114,7 @@ def get_resources():
                 },
             ]
 
-        result = list(RESOURCE_COLLECTION.aggregate(pipeline))
+        result = list(get_resource_collection().aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             resources = result[0]["paginatedResults"]
@@ -142,7 +146,7 @@ def get_resource_by_id(resource_id):
         if not resource_id:
             return format_response(False, "Resource ID is required"), 400
 
-        resource_data = RESOURCE_COLLECTION.find_one(
+        resource_data = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
 
@@ -190,7 +194,7 @@ def add_resource():
             created_by=user_id,
             updated_by=user_id,
         )
-        RESOURCE_COLLECTION.insert_one(resource.to_bson())
+        get_resource_collection().insert_one(resource.to_bson())
 
         logger.info(f"Resource added successfully: {resource.title}")
         return format_response(True, "Resource added successfully"), 201
@@ -215,7 +219,7 @@ def update_resource(resource_id):
         if not data:
             return format_response(False, "Missing data"), 400
 
-        resource = RESOURCE_COLLECTION.find_one(
+        resource = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
@@ -241,7 +245,7 @@ def update_resource(resource_id):
             updated_by=user_id,
         )
 
-        RESOURCE_COLLECTION.update_one(
+        get_resource_collection().update_one(
             {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
         )
 
@@ -264,7 +268,7 @@ def delete_resource(resource_id):
         if not check_if_admin(jwt_claims):
             return format_response(False, "Permission denied"), 403
 
-        resource = RESOURCE_COLLECTION.find_one(
+        resource = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
@@ -277,7 +281,7 @@ def delete_resource(resource_id):
             updated_by=user_id,
         )
 
-        RESOURCE_COLLECTION.update_one(
+        get_resource_collection().update_one(
             {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
         )
 
