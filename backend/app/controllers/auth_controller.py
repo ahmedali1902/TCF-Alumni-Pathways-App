@@ -179,7 +179,7 @@ def reset_admin_password():
             logger.warning(f"Admin user with email {email} not found.")
             return (
                 format_response(
-                    False, f"Admin user will email {email} not found", None
+                    False, "Invalid credentials", None
                 ),
                 404,
             )
