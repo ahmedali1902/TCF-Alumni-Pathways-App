@@ -10,7 +10,10 @@ from ..helpers.response_helper import format_response
 from ..models.notification_model import NotificationModel
 
 logger = logging.getLogger(__name__)
-NOTIFICATION_COLLECTION = mongo.db.Notification
+
+def get_notification_collection():
+    """Get notification collection - ensures mongo is initialized"""
+    return mongo.db.Notification
 
 
 class NotificationCreateSchema(BaseModel):
@@ -61,7 +64,7 @@ class NotificationDeleteSchema(BaseModel):
 def get_notifications():
     """Get all notifications - Available to all authenticated users"""
     try:
-        notifications_data = list(NOTIFICATION_COLLECTION.find({"is_deleted": False}).sort("updated_at", -1))
+        notifications_data = list(get_notification_collection().find({"is_deleted": False}).sort("updated_at", -1))
         
         notifications = [NotificationModel(**notification).to_json() for notification in notifications_data]
         
@@ -89,7 +92,7 @@ def get_notification_by_id(notification_id):
         except Exception:
             return format_response(False, "Invalid notification ID format"), 400
 
-        notification_data = NOTIFICATION_COLLECTION.find_one(
+        notification_data = get_notification_collection().find_one(
             {"_id": ObjectId(notification_id), "is_deleted": False}
         )
 
@@ -146,7 +149,7 @@ def add_notification():
             updated_by=user_id,
         )
         
-        NOTIFICATION_COLLECTION.insert_one(notification.to_bson())
+        get_notification_collection().insert_one(notification.to_bson())
 
         logger.info(f"Notification created successfully: {notification.title}")
         return format_response(True, "Notification created successfully"), 201
@@ -200,7 +203,7 @@ def update_notification(notification_id):
             return format_response(False, f"Validation error: {', '.join(error_messages)}"), 400
 
         # Check if notification exists
-        notification_data = NOTIFICATION_COLLECTION.find_one(
+        notification_data = get_notification_collection().find_one(
             {"_id": ObjectId(notification_id), "is_deleted": False}
         )
         if not notification_data:
@@ -214,7 +217,7 @@ def update_notification(notification_id):
             updated_by=user_id,
         )
 
-        NOTIFICATION_COLLECTION.update_one(
+        get_notification_collection().update_one(
             {"_id": ObjectId(notification_id)}, 
             {"$set": notification.to_bson()}
         )
@@ -271,7 +274,7 @@ def delete_notification(notification_id):
             return format_response(False, f"Validation error: {', '.join(error_messages)}"), 400
 
         # Check if notification exists
-        notification_data = NOTIFICATION_COLLECTION.find_one(
+        notification_data = get_notification_collection().find_one(
             {"_id": ObjectId(notification_id), "is_deleted": False}
         )
         if not notification_data:
@@ -284,7 +287,7 @@ def delete_notification(notification_id):
             updated_by=user_id,
         )
 
-        NOTIFICATION_COLLECTION.update_one(
+        get_notification_collection().update_one(
             {"_id": ObjectId(notification_id)}, 
             {"$set": notification.to_bson()}
         )
