@@ -56,7 +56,8 @@ const Home = () => {
             count: dashboardData?.users?.total_users || 0,
             subtitle: `Admin: ${dashboardData?.users?.admin_users || 0} | Anonymous: ${dashboardData?.users?.anonymous_users || 0}`,
             icon: "fa-solid fa-users",
-            color: "success",
+            color: "emerald",
+            colorValue: "#10b981",
             route: "/users",
             description: "Manage admin and anonymous users"
         },
@@ -65,7 +66,8 @@ const Home = () => {
             count: dashboardData?.institutes?.total || 0,
             subtitle: "Educational institutions",
             icon: "fa-solid fa-building-columns",
-            color: "primary",
+            color: "blue",
+            colorValue: "#3b82f6",
             route: "/institutes",
             description: "Manage educational institutes"
         },
@@ -74,7 +76,8 @@ const Home = () => {
             count: dashboardData?.resources?.total || 0,
             subtitle: "Learning materials",
             icon: "fa-solid fa-book-open",
-            color: "warning",
+            color: "amber",
+            colorValue: "#f59e0b",
             route: "/resources",
             description: "Manage educational resources"
         },
@@ -83,7 +86,8 @@ const Home = () => {
             count: dashboardData?.institute_requests?.total || 0,
             subtitle: `Pending: ${dashboardData?.institute_requests?.pending || 0}`,
             icon: "fa-solid fa-clipboard-list",
-            color: "info",
+            color: "cyan",
+            colorValue: "#06b6d4",
             route: "/institute-requests",
             description: "Institute addition requests"
         },
@@ -92,7 +96,8 @@ const Home = () => {
             count: dashboardData?.app_feedback?.total || 0,
             subtitle: `Unprocessed: ${dashboardData?.app_feedback?.unprocessed || 0}`,
             icon: "fa-solid fa-comments",
-            color: "secondary",
+            color: "purple",
+            colorValue: "#8b5cf6",
             route: "/feedback",
             description: "User feedback and suggestions"
         },
@@ -101,7 +106,8 @@ const Home = () => {
             count: dashboardData?.notifications?.total || 0,
             subtitle: "App notifications",
             icon: "fa-solid fa-bell",
-            color: "danger",
+            color: "rose",
+            colorValue: "#f43f5e",
             route: "/notifications",
             description: "Manage app notifications"
         }
@@ -187,19 +193,49 @@ const Home = () => {
                     {dashboardCards.map((card, index) => (
                         <Col key={index} xs={12} md={6} lg={4}>
                             <div 
-                                className={`dashboard-card ${card.color} h-100 p-4`}
+                                className="dashboard-card h-100 p-4"
                                 onClick={() => navigate(card.route)}
                                 style={{ 
                                     minHeight: '140px',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '20px'
+                                    gap: '20px',
+                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    borderRadius: '16px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                    border: `2px solid ${card.colorValue}15`,
+                                    boxShadow: `0 4px 12px ${card.colorValue}20, 0 2px 4px rgba(0, 0, 0, 0.1)`,
+                                    backdropFilter: 'blur(10px)'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                    e.currentTarget.style.boxShadow = `0 8px 25px ${card.colorValue}30, 0 4px 8px rgba(0, 0, 0, 0.15)`;
+                                    e.currentTarget.style.borderColor = `${card.colorValue}40`;
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = `0 4px 12px ${card.colorValue}20, 0 2px 4px rgba(0, 0, 0, 0.1)`;
+                                    e.currentTarget.style.borderColor = `${card.colorValue}15`;
                                 }}
                             >
-                                <div className={`dashboard-card-icon ${card.color}`} style={{ flexShrink: 0 }}>
+                                <div 
+                                    className="dashboard-card-icon" 
+                                    style={{ 
+                                        flexShrink: 0,
+                                        width: '60px',
+                                        height: '60px',
+                                        borderRadius: '16px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        background: `linear-gradient(135deg, ${card.colorValue}, ${card.colorValue}80)`,
+                                        boxShadow: `0 4px 12px ${card.colorValue}40`
+                                    }}
+                                >
                                     <i className={card.icon} style={{ 
                                         fontSize: '28px', 
-                                        color: `var(--${card.color}-color)` 
+                                        color: 'white' 
                                     }} />
                                 </div>
 
@@ -216,7 +252,7 @@ const Home = () => {
                                         <div style={{ 
                                             fontSize: '1.8rem', 
                                             fontWeight: '700',
-                                            color: 'var(--gray-800)',
+                                            color: card.colorValue,
                                             lineHeight: '1'
                                         }}>
                                             {card.count.toLocaleString()}
@@ -246,7 +282,7 @@ const Home = () => {
                                         <div style={{
                                             display: 'inline-flex',
                                             alignItems: 'center',
-                                            color: `var(--${card.color}-color)`,
+                                            color: card.colorValue,
                                             fontSize: '0.8rem',
                                             fontWeight: '500'
                                         }}>

@@ -31,13 +31,20 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post(`${API_BASE_URL}/auth/admin/login`, { email, password });
             const token = response.data.data.token;
-            const id = response.data.data.user_id
+            const userData = response.data.data.user || {};
+            const id = response.data.data.user_id || userData.id;
+            
             localStorage.setItem("authToken", token);
-            setUser({ "id": id, "email": email, "token": token });
+            setUser({ 
+                "id": id, 
+                "email": email, 
+                "name": userData.name || userData.email || email,
+                "token": token 
+            });
         }
         catch (err) {
             console.error("Login failed:", err);
-            setError(err.response?.message || "An error occurred");
+            setError(err.response?.data?.message || err.response?.message || "An error occurred");
         }
         finally {
             setIsLoading(false);
@@ -73,8 +80,15 @@ export const AuthProvider = ({ children }) => {
                     },
                 });
 
-                const { id, email } = response.data;
-                setUser({ id, email });
+                const userData = response.data.data || response.data;
+                const { id, email, name } = userData;
+                
+                setUser({ 
+                    id, 
+                    email, 
+                    name: name || email || 'Admin User',
+                    token 
+                });
             } catch (err) {
                 console.error("Token verification failed:", err);
                 localStorage.removeItem("authToken");

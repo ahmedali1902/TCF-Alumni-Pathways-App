@@ -59,6 +59,12 @@ const Sidebar = () => {
             icon: "fa-solid fa-comments",
             label: "App Feedback",
             exact: false
+        },
+        {
+            path: "/notifications",
+            icon: "fa-solid fa-bell",
+            label: "Notifications",
+            exact: false
         }
     ];
 
