@@ -54,12 +54,12 @@ const Home = () => {
         {
             title: "Users",
             count: dashboardData?.users?.total_users || 0,
-            subtitle: `Admin: ${dashboardData?.users?.admin_users || 0} | Anonymous: ${dashboardData?.users?.anonymous_users || 0}`,
+            subtitle: `Admin: ${dashboardData?.users?.admin_users || 0} | App Users: ${dashboardData?.users?.anonymous_users || 0}`,
             icon: "fa-solid fa-users",
             color: "emerald",
             colorValue: "#10b981",
             route: "/users",
-            description: "Manage admin and anonymous users"
+            description: "Manage admin and mobile app users"
         },
         {
             title: "Institutes",

@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import Sidebar from '../components/Sidebar';
+import { useAuth } from "../context/AuthContext";
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
+import Badge from 'react-bootstrap/Badge';
+import Spinner from 'react-bootstrap/Spinner';
+
 const UserView = () => {
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [actionLoading, setActionLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState('');
 
   const fetchUser = async () => {
     try {
       setLoading(true);
+      setMessage("Loading user data...");
       const token = localStorage.getItem('authToken');
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/${id}`, {
         headers: {
@@ -22,25 +37,22 @@ const UserView = () => {
 
       const data = await response.json();
       if (data.success) {
-        setUser(data.data);
+        setUserData(data.data);
+        setMessage("");
       } else {
-        setError(data.message || 'Failed to fetch user');
+        setMessage(data.message || 'Failed to fetch user');
       }
     } catch (err) {
-      setError('Failed to fetch user details');
+      setMessage('Failed to fetch user details');
       console.error('Error fetching user:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteUser = async () => {
-    if (!window.confirm('Are you sure you want to delete this user? This action will mark the user as deleted.')) {
-      return;
-    }
-
+  const handleDelete = async () => {
     try {
-      setActionLoading(true);
+      setDeleteMessage("Deleting user...");
       const token = localStorage.getItem('authToken');
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/${id}`, {
         method: 'DELETE',
@@ -52,240 +64,376 @@ const UserView = () => {
 
       const data = await response.json();
       if (data.success) {
-        alert('User deleted successfully');
-        // Refresh user data to show updated status
-        await fetchUser();
+        setDeleteMessage('User deleted successfully!');
+        setTimeout(() => {
+          navigate('/users');
+        }, 2000);
       } else {
-        alert(data.message || 'Failed to delete user');
+        setDeleteMessage('Error: ' + (data.message || 'Failed to delete user'));
       }
     } catch (err) {
-      alert('Failed to delete user');
+      setDeleteMessage('Error deleting user: ' + err.message);
       console.error('Error deleting user:', err);
-    } finally {
-      setActionLoading(false);
     }
   };
-
-
 
   const getRoleLabel = (role) => {
     switch (role) {
       case 1:
         return 'Admin';
       case 2:
-        return 'User';
+        return 'App User';
       default:
         return 'Unknown';
     }
   };
 
-  const getRoleBadgeClass = (role) => {
+  const getRoleBadgeColor = (role) => {
     switch (role) {
       case 1:
-        return 'badge bg-danger';
+        return 'danger';
       case 2:
-        return 'badge bg-success';
+        return 'success';
       default:
-        return 'badge bg-secondary';
+        return 'secondary';
     }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleString(undefined, {
       year: 'numeric',
-      month: 'short',
+      month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZoneName: 'short'
     });
   };
 
   useEffect(() => {
-    fetchUser();
-  }, [id]);
+    if (!user) {
+      setMessage("Please login first!");
+      setLoading(false);
+    } else {
+      fetchUser();
+    }
+  }, [user, id]);
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container-fluid">
-        <div className="alert alert-danger" role="alert">
-          <strong>Error:</strong> {error}
-        </div>
-        <button onClick={() => navigate('/users')} className="btn btn-secondary">
-          <i className="fas fa-arrow-left me-2"></i>Back to Users
-        </button>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="container-fluid">
-        <div className="alert alert-warning" role="alert">
-          User not found
-        </div>
-        <button onClick={() => navigate('/users')} className="btn btn-secondary">
-          <i className="fas fa-arrow-left me-2"></i>Back to Users
-        </button>
-      </div>
+      <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
+        <Sidebar />
+        <Container className="text-center" style={{ marginTop: '100px' }}>
+          <Spinner animation="border" variant="primary" />
+          <h4 className="mt-3" style={{ color: 'white' }}>Loading user details...</h4>
+        </Container>
+      </Container>
     );
   }
 
   return (
-    <div className="container-fluid">
-      {/* Header */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center">
-            <h1 className="text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-              User Details
-            </h1>
-            <div>
-              <button 
-                onClick={() => navigate('/')} 
-                className="btn btn-outline-light me-2"
+    <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
+      <Sidebar />
+      <Container style={{ marginTop: '100px', paddingBottom: '40px' }}>
+        {/* Header Section */}
+        <div className="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <h1 style={{ 
+              fontSize: '2rem', 
+              fontWeight: '700',
+              color: 'white',
+              marginBottom: '8px',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                         }}>
+               <i className="fa-solid fa-user me-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }} />
+               {userData?.role === 1 ? (userData?.name || userData?.email || 'Admin User') : 'App User Details'}
+             </h1>
+            <p style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '1rem',
+              margin: 0,
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
+            }}>
+              View and manage user details
+            </p>
+          </div>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="info" 
+              onClick={() => navigate('/users')} 
+              className="btn-modern d-flex align-items-center"
+            >
+              <i className="fa-solid fa-arrow-left me-2" />Back to Users
+            </Button>
+            {userData && (
+              <Button 
+                variant="danger" 
+                onClick={() => setShowDeleteModal(true)}
+                className="btn-modern d-flex align-items-center"
               >
-                <i className="fas fa-tachometer-alt me-2"></i>Dashboard
-              </button>
-              <button 
-                onClick={() => navigate('/users')} 
-                className="btn btn-outline-light"
-              >
-                <i className="fas fa-arrow-left me-2"></i>Back to Users
-              </button>
-            </div>
+                <i className="fa-solid fa-trash me-2" />Delete
+              </Button>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* User Information Card */}
-      <div className="row">
-        <div className="col-12">
-          <div className="modern-card">
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">
-                <i className="fas fa-user me-2"></i>User Information
-              </h5>
-              <div>
-                <button
-                  onClick={handleDeleteUser}
-                  disabled={actionLoading}
-                  className="btn btn-danger btn-sm"
-                >
-                  {actionLoading ? (
-                    <span className="spinner-border spinner-border-sm me-1" role="status"></span>
-                  ) : (
-                    <i className="fas fa-trash me-1"></i>
-                  )}
-                  Delete User
-                </button>
-              </div>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-6">
-                  <table className="table table-borderless">
-                    <tbody>
-                      <tr>
-                        <td className="fw-bold text-muted">User ID:</td>
-                        <td>
-                          <code className="text-dark">{user._id}</code>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Name:</td>
-                        <td>{user.name || 'N/A'}</td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Email:</td>
-                        <td>
-                          <i className="fas fa-envelope me-2"></i>
-                          {user.email}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Role:</td>
-                        <td>
-                          <span className={getRoleBadgeClass(user.role)}>
-                            {getRoleLabel(user.role)}
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Status:</td>
-                        <td>
-                          <span className="badge bg-success">
-                            <i className="fas fa-check me-1"></i>Active
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        {message && (
+          <Alert variant={message.includes('successfully') ? 'success' : 'danger'} className="mb-4">
+            {message}
+          </Alert>
+        )}
+
+        {userData && (
+          <Row className="g-4">
+            <Col lg={8}>
+              {/* User Information Card */}
+              <div className="modern-card">
+                <div className="card-header">
+                  <h4>
+                    <i className="fa-solid fa-user me-2" style={{ color: 'var(--primary-color)' }} />
+                    User Information
+                  </h4>
                 </div>
-                <div className="col-md-6">
-                  <table className="table table-borderless">
-                    <tbody>
-                      <tr>
-                        <td className="fw-bold text-muted">Device ID:</td>
-                        <td>
-                          {user.device_id ? (
-                            <code className="text-dark">
-                              {user.device_id.length > 20 
-                                ? `${user.device_id.substring(0, 20)}...` 
-                                : user.device_id
-                              }
-                            </code>
-                          ) : (
-                            'N/A'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Last Login:</td>
-                        <td>
-                          {user.last_login ? (
-                            <>
-                              <i className="fas fa-clock me-2"></i>
-                              {formatDate(user.last_login)}
-                            </>
-                          ) : (
-                            'Never'
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Created:</td>
-                        <td>
-                          <i className="fas fa-calendar-plus me-2"></i>
-                          {formatDate(user.created_at)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="fw-bold text-muted">Updated:</td>
-                        <td>
-                          <i className="fas fa-calendar-edit me-2"></i>
-                          {formatDate(user.updated_at)}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="card-body">
+                  <Row className="g-4">
+                    {/* Basic Info Section */}
+                    <Col xs={12}>
+                      <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--primary-color)', paddingBottom: '8px' }}>
+                        <i className="fa-solid fa-info-circle me-2" style={{ color: 'var(--primary-color)' }} />
+                        Basic Information
+                      </h6>
+                      <Row className="g-3">
+                                                 {userData.role === 1 ? (
+                           <>
+                             <Col md={6}>
+                               <div className="mb-3">
+                                 <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Name</label>
+                                 <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                   {userData.name || 'Not provided'}
+                                 </div>
+                               </div>
+                             </Col>
+                             <Col md={6}>
+                               <div className="mb-3">
+                                 <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Email</label>
+                                 <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                   <i className="fa-solid fa-envelope me-2" style={{ color: 'var(--gray-500)' }} />
+                                   {userData.email}
+                                 </div>
+                               </div>
+                             </Col>
+                           </>
+                         ) : (
+                           <Col md={12}>
+                             <div className="mb-3">
+                               <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>User Type</label>
+                               <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                 <i className="fa-solid fa-mobile-alt me-2" style={{ color: 'var(--gray-500)' }} />
+                                 <span style={{ color: 'var(--gray-700)' }}>Mobile App User</span>
+                                 <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: '4px', fontStyle: 'italic' }}>
+                                   This user accesses the app without registration
+                                 </div>
+                               </div>
+                             </div>
+                           </Col>
+                         )}
+                        <Col md={6}>
+                          <div className="mb-3">
+                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Role</label>
+                            <div style={{ marginTop: '8px' }}>
+                              <Badge 
+                                bg={getRoleBadgeColor(userData.role)}
+                                style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                              >
+                                <i className="fa-solid fa-user-tag me-1" />
+                                {getRoleLabel(userData.role)}
+                              </Badge>
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md={6}>
+                          <div className="mb-3">
+                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Status</label>
+                            <div style={{ marginTop: '8px' }}>
+                              <Badge 
+                                bg="success"
+                                style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                              >
+                                <i className="fa-solid fa-check me-1" />
+                                Active
+                              </Badge>
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+
+                    {/* Device Information Section */}
+                    <Col xs={12}>
+                      <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--info-color)', paddingBottom: '8px' }}>
+                        <i className="fa-solid fa-mobile-alt me-2" style={{ color: 'var(--info-color)' }} />
+                        Device Information
+                      </h6>
+                      <Row className="g-3">
+                        <Col md={12}>
+                          <div className="mb-3">
+                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Device ID</label>
+                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                              {userData.device_id ? (
+                                <code style={{ 
+                                  fontSize: '0.85rem',
+                                  color: 'var(--gray-600)',
+                                  backgroundColor: 'var(--gray-100)',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px'
+                                }}>
+                                  {userData.device_id}
+                                </code>
+                              ) : (
+                                <span style={{ color: 'var(--gray-500)', fontStyle: 'italic' }}>No device ID available</span>
+                              )}
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md={12}>
+                          <div className="mb-3">
+                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Last Login</label>
+                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                              {userData.last_login ? (
+                                <>
+                                  <i className="fa-solid fa-clock me-2" style={{ color: 'var(--gray-500)' }} />
+                                  {formatDate(userData.last_login)}
+                                </>
+                              ) : (
+                                <span style={{ color: 'var(--gray-500)', fontStyle: 'italic' }}>Never logged in</span>
+                              )}
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Col>
+
+            {/* User Metadata */}
+            <Col lg={4}>
+              <div className="modern-card">
+                <div className="card-header">
+                  <h5>
+                    <i className="fa-solid fa-clock me-2" style={{ color: 'var(--info-color)' }} />
+                    Metadata
+                  </h5>
+                </div>
+                <div className="card-body">
+                  <div className="mb-3">
+                    <label style={{ 
+                      fontWeight: '600', 
+                      color: 'var(--gray-700)', 
+                      marginBottom: '4px',
+                      display: 'block',
+                      fontSize: '0.9rem'
+                    }}>
+                      User ID
+                    </label>
+                    <div style={{ 
+                      fontSize: '0.85rem',
+                      color: 'var(--gray-600)',
+                      fontFamily: 'monospace',
+                      backgroundColor: 'var(--gray-100)',
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      wordBreak: 'break-all'
+                    }}>
+                      {userData._id}
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label style={{ 
+                      fontWeight: '600', 
+                      color: 'var(--gray-700)', 
+                      marginBottom: '4px',
+                      display: 'block',
+                      fontSize: '0.9rem'
+                    }}>
+                      Created At
+                    </label>
+                    <div style={{ 
+                      fontSize: '0.85rem',
+                      color: 'var(--gray-600)'
+                    }}>
+                      <i className="fa-solid fa-calendar-plus me-2" style={{ color: 'var(--gray-500)' }} />
+                      {formatDate(userData.created_at)}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ 
+                      fontWeight: '600', 
+                      color: 'var(--gray-700)', 
+                      marginBottom: '4px',
+                      display: 'block',
+                      fontSize: '0.9rem'
+                    }}>
+                      Last Updated
+                    </label>
+                    <div style={{ 
+                      fontSize: '0.85rem',
+                      color: 'var(--gray-600)'
+                    }}>
+                      <i className="fa-solid fa-calendar-edit me-2" style={{ color: 'var(--gray-500)' }} />
+                      {formatDate(userData.updated_at)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+          <Modal.Header closeButton style={{ borderBottom: '1px solid var(--gray-200)' }}>
+            <Modal.Title style={{ color: 'var(--gray-800)', fontWeight: '600' }}>
+              <i className="fa-solid fa-exclamation-triangle me-2" style={{ color: 'var(--danger-color)' }} />
+              Delete User
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ padding: '24px' }}>
+            {deleteMessage ? (
+              <Alert variant={deleteMessage.includes('successfully') ? 'success' : 'danger'}>
+                {deleteMessage}
+              </Alert>
+            ) : (
+                             <div style={{ color: 'var(--gray-700)' }}>
+                 Are you sure you want to delete this <strong>{userData?.role === 1 ? 'admin user' : 'app user'}</strong>? This action will mark the user as deleted.
+               </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer style={{ borderTop: '1px solid var(--gray-200)', padding: '16px 24px' }}>
+            <Button 
+              variant="outline-secondary" 
+              onClick={() => setShowDeleteModal(false)}
+              className="btn-modern"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              onClick={handleDelete} 
+              disabled={deleteMessage.includes('Deleting')}
+              className="btn-modern"
+              style={{ background: 'var(--danger-gradient)' }}
+            >
+              {deleteMessage.includes('Deleting') ? 'Deleting...' : 'Delete User'}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </Container>
+    </Container>
   );
 };
 

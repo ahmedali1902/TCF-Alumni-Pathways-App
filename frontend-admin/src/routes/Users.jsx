@@ -38,12 +38,12 @@ const Users = () => {
     const ROLE_OPTIONS = [
         { value: "", label: "All Users" },
         { value: "1", label: "Admin Users" },
-        { value: "2", label: "Anonymous Users" }
+        { value: "2", label: "App Users" }
     ];
 
     const ROLE_LABELS = {
         1: "Admin",
-        2: "Anonymous User"
+        2: "App User"
     };
 
     const getUsers = async (currentPage, perPage, appliedFilters = filters) => {
@@ -206,7 +206,7 @@ const Users = () => {
                             margin: 0,
                             textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                         }}>
-                            View and monitor admin users and anonymous users
+                            View and monitor admin users and mobile app users
                         </p>
                     </div>
                     <div className="d-flex gap-2">
@@ -348,14 +348,27 @@ const Users = () => {
                                             <td style={{ padding: '16px' }}>
                                                 <div>
                                                     <div style={{ fontWeight: '600', color: 'var(--gray-800)', marginBottom: '4px' }}>
-                                                        {userData.name || 'No Name'}
+                                                        {userData.role === 1 ? (
+                                                            userData.name || userData.email || 'Admin User'
+                                                        ) : (
+                                                            <span style={{ color: 'var(--gray-600)' }}>
+                                                                <i className="fa-solid fa-mobile-alt me-2" style={{ color: 'var(--gray-400)' }} />
+                                                                App User
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
-                                                        {userData.email || 'No Email'}
+                                                        {userData.role === 1 ? (
+                                                            userData.email || 'No email provided'
+                                                        ) : (
+                                                            <span style={{ fontStyle: 'italic', color: 'var(--gray-500)' }}>
+                                                                Device-based user
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                    {userData.id && (
+                                                    {(userData.id || userData._id) && (
                                                         <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>
-                                                            ID: {userData.id}
+                                                            ID: {userData.id || userData._id}
                                                         </div>
                                                     )}
                                                 </div>
@@ -402,15 +415,18 @@ const Users = () => {
                                                     >
                                                         <i className="fa-solid fa-eye" />
                                                     </Button>
-                                                    <Button
-                                                        variant="danger"
-                                                        size="sm"
-                                                        onClick={() => handleDeleteUser(userData._id || userData.id, userData.name || userData.email)}
-                                                        className="btn-modern"
-                                                        style={{ fontSize: '0.75rem' }}
-                                                    >
-                                                        <i className="fa-solid fa-trash" />
-                                                    </Button>
+                                                                                                            <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            onClick={() => handleDeleteUser(
+                                                                userData._id || userData.id, 
+                                                                userData.role === 1 ? (userData.name || userData.email || 'Admin User') : 'App User'
+                                                            )}
+                                                            className="btn-modern"
+                                                            style={{ fontSize: '0.75rem' }}
+                                                        >
+                                                            <i className="fa-solid fa-trash" />
+                                                        </Button>
                                                 </div>
                                             </td>
                                         </tr>
