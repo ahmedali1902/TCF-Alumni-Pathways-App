@@ -12,8 +12,8 @@ const UserView = () => {
   const fetchUser = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}`, {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -41,8 +41,8 @@ const UserView = () => {
 
     try {
       setActionLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}`, {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -66,37 +66,7 @@ const UserView = () => {
     }
   };
 
-  const handleRestoreUser = async () => {
-    if (!window.confirm('Are you sure you want to restore this user?')) {
-      return;
-    }
 
-    try {
-      setActionLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${id}/restore`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert('User restored successfully');
-        // Refresh user data to show updated status
-        await fetchUser();
-      } else {
-        alert(data.message || 'Failed to restore user');
-      }
-    } catch (err) {
-      alert('Failed to restore user');
-      console.error('Error restoring user:', err);
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
   const getRoleLabel = (role) => {
     switch (role) {
@@ -207,33 +177,18 @@ const UserView = () => {
                 <i className="fas fa-user me-2"></i>User Information
               </h5>
               <div>
-                {user.is_deleted ? (
-                  <button
-                    onClick={handleRestoreUser}
-                    disabled={actionLoading}
-                    className="btn btn-success btn-sm me-2"
-                  >
-                    {actionLoading ? (
-                      <span className="spinner-border spinner-border-sm me-1" role="status"></span>
-                    ) : (
-                      <i className="fas fa-undo me-1"></i>
-                    )}
-                    Restore User
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleDeleteUser}
-                    disabled={actionLoading}
-                    className="btn btn-danger btn-sm"
-                  >
-                    {actionLoading ? (
-                      <span className="spinner-border spinner-border-sm me-1" role="status"></span>
-                    ) : (
-                      <i className="fas fa-trash me-1"></i>
-                    )}
-                    Delete User
-                  </button>
-                )}
+                <button
+                  onClick={handleDeleteUser}
+                  disabled={actionLoading}
+                  className="btn btn-danger btn-sm"
+                >
+                  {actionLoading ? (
+                    <span className="spinner-border spinner-border-sm me-1" role="status"></span>
+                  ) : (
+                    <i className="fas fa-trash me-1"></i>
+                  )}
+                  Delete User
+                </button>
               </div>
             </div>
             <div className="card-body">
@@ -269,15 +224,9 @@ const UserView = () => {
                       <tr>
                         <td className="fw-bold text-muted">Status:</td>
                         <td>
-                          {user.is_deleted ? (
-                            <span className="badge bg-danger">
-                              <i className="fas fa-times me-1"></i>Deleted
-                            </span>
-                          ) : (
-                            <span className="badge bg-success">
-                              <i className="fas fa-check me-1"></i>Active
-                            </span>
-                          )}
+                          <span className="badge bg-success">
+                            <i className="fas fa-check me-1"></i>Active
+                          </span>
                         </td>
                       </tr>
                     </tbody>

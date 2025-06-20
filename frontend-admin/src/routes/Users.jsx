@@ -31,8 +31,8 @@ const Users = () => {
         role: ""
     });
 
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
-    const token = localStorage.getItem("token");
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem("authToken");
 
     // Role options based on backend enum
     const ROLE_OPTIONS = [
@@ -65,7 +65,7 @@ const Users = () => {
                 params.role = appliedFilters.role;
             }
 
-            const response = await axios.get(`${API_BASE_URL}/api/user`, {
+            const response = await axios.get(`${API_BASE_URL}/user`, {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -162,7 +162,7 @@ const Users = () => {
         }
 
         try {
-            const response = await axios.delete(`${API_BASE_URL}/api/user/${userId}`, {
+            const response = await axios.delete(`${API_BASE_URL}/user/${userId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

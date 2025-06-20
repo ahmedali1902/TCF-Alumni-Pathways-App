@@ -183,47 +183,4 @@ def delete_user(user_id):
         return format_response(False, "Internal server error"), 500
 
 
-@jwt_required()
-def restore_user(user_id):
-    """Restore a soft-deleted user (Admin only)"""
-    try:
-        # Check if user is admin
-        jwt_claims = get_jwt()
-        if not check_if_admin(jwt_claims):
-            return format_response(False, "Admin access required"), 403
-
-        # Validate user ID format
-        if not ObjectId.is_valid(user_id):
-            return format_response(False, "Invalid user ID format"), 400
-
-        # Check if user exists
-        existing_user = get_user_collection().find_one({"_id": ObjectId(user_id)})
-        if not existing_user:
-            return format_response(False, "User not found"), 404
-
-        # Check if user is not deleted
-        if not existing_user.get("is_deleted", False):
-            return format_response(False, "User is not deleted"), 400
-
-        # Restore the user
-        result = get_user_collection().update_one(
-            {"_id": ObjectId(user_id)},
-            {
-                "$set": {
-                    "is_deleted": False,
-                    "updated_at": UserModel().updated_at
-                }
-            }
-        )
-
-        if result.modified_count == 0:
-            return format_response(False, "Failed to restore user"), 500
-
-        return format_response(True, "User restored successfully"), 200
-
-    except PyMongoError as e:
-        logger.exception(f"Database error restoring user {user_id}: {e}")
-        return format_response(False, "Database error"), 500
-    except Exception as e:
-        logger.exception(f"Error restoring user {user_id}: {e}")
-        return format_response(False, "Internal server error"), 500 
+ 

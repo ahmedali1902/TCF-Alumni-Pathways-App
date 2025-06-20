@@ -13,5 +13,4 @@ user_bp.route("/<string:user_id>", methods=["GET"])(user_controller.get_user_by_
 # Soft delete user
 user_bp.route("/<string:user_id>", methods=["DELETE"])(user_controller.delete_user)
 
-# Restore soft-deleted user
-user_bp.route("/<string:user_id>/restore", methods=["PUT"])(user_controller.restore_user) 
+ 
