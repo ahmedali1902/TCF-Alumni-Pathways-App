@@ -12,3 +12,4 @@ def register_routes(bp):
     bp.register_blueprint(institute_bp)
     bp.register_blueprint(resource_bp)
     bp.register_blueprint(admin_bp)
+    bp.register_blueprint(notification_bp)
