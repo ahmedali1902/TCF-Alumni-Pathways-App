@@ -52,6 +52,9 @@ def get_dashboard():
             {"is_deleted": False, "processed": False}
         )
 
+        # Notification counts
+        total_notifications = mongo.db.Notification.count_documents({"is_deleted": False})
+
         logger.info(f"Dashboard data retrieved successfully")
         return (
             format_response(
@@ -75,6 +78,7 @@ def get_dashboard():
                         "unprocessed": unprocessed_feedback,
                         "processed": total_feedback - unprocessed_feedback,
                     },
+                    "notifications": {"total": total_notifications},
                 },
             ),
             200,

@@ -7,6 +7,7 @@ import Home from "./routes/Home";
 import Login from "./routes/Login";
 import Institutes from "./routes/Institutes";
 import InstituteView from "./routes/InstituteView";
+import Notifications from "./routes/Notifications";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/institutes" element={<Institutes />} />
             <Route path="/institutes/:id" element={<InstituteView />} />
+            <Route path="/notifications" element={<Notifications />} />
         </Routes>
     );
 }

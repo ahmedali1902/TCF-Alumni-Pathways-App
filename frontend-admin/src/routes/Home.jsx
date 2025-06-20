@@ -95,6 +95,15 @@ const Home = () => {
             color: "secondary",
             route: "/feedback",
             description: "User feedback and suggestions"
+        },
+        {
+            title: "Notifications",
+            count: dashboardData?.notifications?.total || 0,
+            subtitle: "App notifications",
+            icon: "fa-solid fa-bell",
+            color: "danger",
+            route: "/notifications",
+            description: "Manage app notifications"
         }
     ];
 
