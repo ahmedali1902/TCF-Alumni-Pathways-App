@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 
 import Sidebar from '../components/Sidebar';
+import InstituteModal from '../components/InstituteModal';
 import { useAuth } from "../context/AuthContext";
 
 import Container from 'react-bootstrap/Container';
@@ -23,10 +24,9 @@ const InstituteView = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [instituteData, setInstituteData] = useState({});
-    const [editData, setEditData] = useState({});
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState("");
 
@@ -56,15 +56,6 @@ const InstituteView = () => {
             });
             const data = response.data.data;
             setInstituteData(data);
-            setEditData({
-                name: data.name,
-                managing_authority: data.managing_authority,
-                description: data.description || '',
-                tcf_rating: data.tcf_rating,
-                latitude: data.location?.coordinates?.[1] || 0,
-                longitude: data.location?.coordinates?.[0] || 0,
-                faculties: data.faculties || []
-            });
             setMessage("");
         } catch (error) {
             console.error(error);
@@ -74,35 +65,9 @@ const InstituteView = () => {
         }
     };
 
-    const handleUpdate = async () => {
-        try {
-            setMessage("Updating institute...");
-            const updatePayload = {
-                ...editData,
-                faculties: editData.faculties.map(faculty => ({
-                    name: faculty.name,
-                    average_result_percentage_required: faculty.average_result_percentage_required || 0,
-                    gender: faculty.gender
-                }))
-            };
-            
-            const response = await axios.put(`${API_BASE_URL}/institute/${id}`, updatePayload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (response.status === 200) {
-                setMessage("Institute updated successfully!");
-                setIsEditing(false);
-                fetchInstituteData(); // Refresh data
-                setTimeout(() => setMessage(""), 3000);
-            }
-        } catch (error) {
-            console.error(error);
-            setMessage("Error updating institute: " + (error.response?.data?.message || error.message));
-        }
+    const handleInstituteUpdated = () => {
+        // Refresh the institute data when updated
+        fetchInstituteData();
     };
 
     const handleDelete = async () => {
@@ -126,26 +91,18 @@ const InstituteView = () => {
         }
     };
 
-    const addFaculty = () => {
-        setEditData({
-            ...editData,
-            faculties: [...editData.faculties, {
-                name: '',
-                average_result_percentage_required: 0,
-                gender: 3 // Default to coeducation
-            }]
+
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
         });
-    };
-
-    const removeFaculty = (index) => {
-        const newFaculties = editData.faculties.filter((_, i) => i !== index);
-        setEditData({ ...editData, faculties: newFaculties });
-    };
-
-    const updateFaculty = (index, field, value) => {
-        const newFaculties = [...editData.faculties];
-        newFaculties[index] = { ...newFaculties[index], [field]: value };
-        setEditData({ ...editData, faculties: newFaculties });
     };
 
     useEffect(() => {
@@ -159,18 +116,18 @@ const InstituteView = () => {
 
     if (isLoading) {
         return (
-            <Container fluid className="p-0">
+            <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
                 <Sidebar />
                 <Container className="text-center" style={{ marginTop: '100px' }}>
                     <Spinner animation="border" variant="primary" />
-                    <h4 className="mt-3" style={{ color: 'var(--gray-600)' }}>Loading institute details...</h4>
+                    <h4 className="mt-3" style={{ color: 'white' }}>Loading institute details...</h4>
                 </Container>
             </Container>
         );
     }
 
     return (
-        <Container fluid className="p-0">
+        <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
             <Sidebar />
             <Container style={{ marginTop: '100px', paddingBottom: '40px' }}>
                 {/* Header Section */}
@@ -179,35 +136,36 @@ const InstituteView = () => {
                         <h1 style={{ 
                             fontSize: '2rem', 
                             fontWeight: '700',
-                            color: 'var(--gray-800)',
-                            marginBottom: '8px'
+                            color: 'white',
+                            marginBottom: '8px',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                         }}>
-                            <i className="fa-solid fa-building-columns me-3" style={{ color: 'var(--success-color)' }} />
+                            <i className="fa-solid fa-building-columns me-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }} />
                             {instituteData.name || 'Institute Details'}
                         </h1>
                         <p style={{ 
-                            color: 'var(--gray-600)', 
+                            color: 'rgba(255, 255, 255, 0.9)', 
                             fontSize: '1rem',
-                            margin: 0
+                            margin: 0,
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                         }}>
-                            {isEditing ? 'Edit institute information' : 'View and manage institute details'}
+                            View and manage institute details
                         </p>
                     </div>
                     <div className="d-flex gap-2">
                         <Button 
-                            variant="outline-primary" 
+                            variant="info" 
                             onClick={() => navigate('/institutes')} 
                             className="btn-modern d-flex align-items-center"
                         >
                             <i className="fa-solid fa-arrow-left me-2" />Back to Institutes
                         </Button>
-                        {!isEditing ? (
+                        {instituteData && Object.keys(instituteData).length > 0 && (
                             <>
                                 <Button 
                                     variant="warning" 
-                                    onClick={() => setIsEditing(true)} 
+                                    onClick={() => setShowEditModal(true)} 
                                     className="btn-modern d-flex align-items-center"
-                                    style={{ background: 'var(--warning-gradient)' }}
                                 >
                                     <i className="fa-solid fa-edit me-2" />Edit
                                 </Button>
@@ -215,38 +173,8 @@ const InstituteView = () => {
                                     variant="danger" 
                                     onClick={() => setShowDeleteModal(true)}
                                     className="btn-modern d-flex align-items-center"
-                                    style={{ background: 'var(--danger-gradient)' }}
                                 >
                                     <i className="fa-solid fa-trash me-2" />Delete
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button 
-                                    variant="success" 
-                                    onClick={handleUpdate} 
-                                    className="btn-modern d-flex align-items-center"
-                                    style={{ background: 'var(--success-gradient)' }}
-                                >
-                                    <i className="fa-solid fa-save me-2" />Save Changes
-                                </Button>
-                                <Button 
-                                    variant="outline-secondary" 
-                                    onClick={() => {
-                                        setIsEditing(false);
-                                        setEditData({
-                                            name: instituteData.name,
-                                            managing_authority: instituteData.managing_authority,
-                                            description: instituteData.description || '',
-                                            tcf_rating: instituteData.tcf_rating,
-                                            latitude: instituteData.location?.coordinates?.[1] || 0,
-                                            longitude: instituteData.location?.coordinates?.[0] || 0,
-                                            faculties: instituteData.faculties || []
-                                        });
-                                    }}
-                                    className="btn-modern d-flex align-items-center"
-                                >
-                                    <i className="fa-solid fa-times me-2" />Cancel
                                 </Button>
                             </>
                         )}
@@ -262,287 +190,253 @@ const InstituteView = () => {
                 {Object.keys(instituteData).length > 0 && (
                     <Row className="g-4">
                         <Col lg={8}>
-                            {/* Basic Information Card */}
-                            <div className="modern-card mb-4">
-                                <div className="card-header">
-                                    <h4>
-                                        <i className="fa-solid fa-info-circle me-2" style={{ color: 'var(--primary-color)' }} />
-                                        Basic Information
-                                    </h4>
-                                </div>
-                                <div className="card-body">
-                                    {!isEditing ? (
-                                        <Row className="g-3">
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Institute Name</label>
-                                                    <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
-                                                        {instituteData.name}
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Managing Authority</label>
-                                                    <div style={{ marginTop: '8px' }}>
-                                                        <Badge 
-                                                            bg={instituteData.managing_authority === 1 ? 'success' : 'primary'}
-                                                            style={{ fontSize: '0.85rem', padding: '8px 16px' }}
-                                                        >
-                                                            {MANAGING_AUTHORITY[instituteData.managing_authority]}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>TCF Rating</label>
-                                                    <div style={{ marginTop: '8px' }}>
-                                                        <Badge 
-                                                            bg="warning" 
-                                                            text="dark"
-                                                            style={{ fontSize: '0.85rem', padding: '8px 16px' }}
-                                                        >
-                                                            <i className="fa-solid fa-star me-1" />
-                                                            {instituteData.tcf_rating?.toFixed(1)} / 5.0
-                                                        </Badge>
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                            <Col md={12}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Description</label>
-                                                    <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px', minHeight: '60px' }}>
-                                                        {instituteData.description || 'No description available'}
-                                                    </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    ) : (
-                                        <Row className="g-3">
-                                            <Col md={6}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>Institute Name</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={editData.name}
-                                                        onChange={(e) => setEditData({...editData, name: e.target.value})}
-                                                        className="my-card-input"
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={6}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>Managing Authority</Form.Label>
-                                                    <Form.Select
-                                                        value={editData.managing_authority}
-                                                        onChange={(e) => setEditData({...editData, managing_authority: parseInt(e.target.value)})}
-                                                        className="my-card-input"
-                                                    >
-                                                        <option value={1}>Public</option>
-                                                        <option value={2}>Private</option>
-                                                    </Form.Select>
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={6}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>TCF Rating (0-5)</Form.Label>
-                                                    <Form.Control
-                                                        type="number"
-                                                        min="0"
-                                                        max="5"
-                                                        step="0.1"
-                                                        value={editData.tcf_rating}
-                                                        onChange={(e) => setEditData({...editData, tcf_rating: parseFloat(e.target.value)})}
-                                                        className="my-card-input"
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={12}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>Description</Form.Label>
-                                                    <Form.Control
-                                                        as="textarea"
-                                                        rows={3}
-                                                        value={editData.description}
-                                                        onChange={(e) => setEditData({...editData, description: e.target.value})}
-                                                        className="my-card-input"
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Location Card */}
+                            {/* Institute Information Card */}
                             <div className="modern-card">
                                 <div className="card-header">
                                     <h4>
-                                        <i className="fa-solid fa-map-marker-alt me-2" style={{ color: 'var(--info-color)' }} />
-                                        Location
+                                        <i className="fa-solid fa-building-columns me-2" style={{ color: 'var(--primary-color)' }} />
+                                        Institute Information
                                     </h4>
                                 </div>
                                 <div className="card-body">
-                                    {!isEditing ? (
-                                        <Row className="g-3">
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Latitude</label>
-                                                    <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
-                                                        {instituteData.location?.coordinates?.[1]}
-                                                    </div>
-                                                </div>
+                                    <Row className="g-4">
+                                            {/* Basic Info Section */}
+                                            <Col xs={12}>
+                                                <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--primary-color)', paddingBottom: '8px' }}>
+                                                    <i className="fa-solid fa-info-circle me-2" style={{ color: 'var(--primary-color)' }} />
+                                                    Basic Information
+                                                </h6>
+                                                <Row className="g-3">
+                                                    <Col md={6}>
+                                                        <div className="mb-3">
+                                                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Institute Name</label>
+                                                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                                                {instituteData.name}
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="mb-3">
+                                                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Managing Authority</label>
+                                                            <div style={{ marginTop: '8px' }}>
+                                                                <Badge 
+                                                                    bg={instituteData.managing_authority === 1 ? 'info' : 'warning'}
+                                                                    style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                                                                >
+                                                                    {MANAGING_AUTHORITY[instituteData.managing_authority]}
+                                                                </Badge>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="mb-3">
+                                                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>TCF Rating</label>
+                                                            <div style={{ marginTop: '8px' }}>
+                                                                <Badge 
+                                                                    bg="success" 
+                                                                    style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                                                                >
+                                                                    <i className="fa-solid fa-star me-1" />
+                                                                    {instituteData.tcf_rating?.toFixed(1)} / 5.0
+                                                                </Badge>
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
                                             </Col>
-                                            <Col md={6}>
-                                                <div className="mb-3">
-                                                    <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Longitude</label>
-                                                    <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
-                                                        {instituteData.location?.coordinates?.[0]}
-                                                    </div>
+
+                                            {/* Location Section */}
+                                            <Col xs={12}>
+                                                <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--info-color)', paddingBottom: '8px' }}>
+                                                    <i className="fa-solid fa-map-marker-alt me-2" style={{ color: 'var(--info-color)' }} />
+                                                    Location
+                                                </h6>
+                                                <Row className="g-3">
+                                                    <Col md={6}>
+                                                        <div className="mb-3">
+                                                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Latitude</label>
+                                                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                                                {instituteData.location?.coordinates?.[1] || 'Not specified'}
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <div className="mb-3">
+                                                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>Longitude</label>
+                                                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                                                                {instituteData.location?.coordinates?.[0] || 'Not specified'}
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+
+                                            {/* Description Section */}
+                                            <Col xs={12}>
+                                                <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--success-color)', paddingBottom: '8px' }}>
+                                                    <i className="fa-solid fa-file-text me-2" style={{ color: 'var(--success-color)' }} />
+                                                    Description
+                                                </h6>
+                                                <div style={{ padding: '16px', background: 'var(--gray-50)', borderRadius: '8px', minHeight: '80px', lineHeight: '1.6' }}>
+                                                    {instituteData.description || 'No description available'}
                                                 </div>
                                             </Col>
                                         </Row>
-                                    ) : (
-                                        <Row className="g-3">
-                                            <Col md={6}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>Latitude</Form.Label>
-                                                    <Form.Control
-                                                        type="number"
-                                                        step="any"
-                                                        value={editData.latitude}
-                                                        onChange={(e) => setEditData({...editData, latitude: parseFloat(e.target.value)})}
-                                                        className="my-card-input"
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                            <Col md={6}>
-                                                <Form.Group>
-                                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>Longitude</Form.Label>
-                                                    <Form.Control
-                                                        type="number"
-                                                        step="any"
-                                                        value={editData.longitude}
-                                                        onChange={(e) => setEditData({...editData, longitude: parseFloat(e.target.value)})}
-                                                        className="my-card-input"
-                                                    />
-                                                </Form.Group>
-                                            </Col>
-                                        </Row>
-                                    )}
                                 </div>
                             </div>
                         </Col>
 
-                        {/* Faculties Card */}
+                        {/* Faculties & Metadata */}
                         <Col lg={4}>
-                            <div className="modern-card">
-                                <div className="card-header d-flex justify-content-between align-items-center">
-                                    <h4>
+                            {/* Faculties Card */}
+                            <div className="modern-card mb-4">
+                                <div className="card-header">
+                                    <h5 className="mb-0">
                                         <i className="fa-solid fa-graduation-cap me-2" style={{ color: 'var(--warning-color)' }} />
                                         Faculties
-                                    </h4>
-                                    {isEditing && (
-                                        <Button 
-                                            variant="success" 
-                                            size="sm" 
-                                            onClick={addFaculty}
-                                            className="btn-modern"
-                                            style={{ background: 'var(--success-gradient)' }}
+                                        <Badge 
+                                            bg="secondary" 
+                                            className="ms-2"
+                                            style={{ fontSize: '0.75rem', padding: '4px 8px' }}
                                         >
-                                            <i className="fa-solid fa-plus" />
-                                        </Button>
-                                    )}
+                                            {instituteData.faculties?.length || 0}
+                                        </Badge>
+                                    </h5>
                                 </div>
                                 <div className="card-body p-0">
-                                    {(isEditing ? editData.faculties : instituteData.faculties)?.length > 0 ? (
+                                    {instituteData.faculties?.length > 0 ? (
                                         <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                                            {(isEditing ? editData.faculties : instituteData.faculties).map((faculty, index) => (
-                                                <div key={index} style={{ 
-                                                    padding: '16px', 
-                                                    borderBottom: index < (isEditing ? editData.faculties : instituteData.faculties).length - 1 ? '1px solid var(--gray-200)' : 'none' 
-                                                }}>
-                                                    {!isEditing ? (
-                                                        <>
-                                                            <div style={{ fontWeight: '600', color: 'var(--gray-800)', marginBottom: '8px' }}>
-                                                                {faculty.name}
-                                                            </div>
-                                                            <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
-                                                                <div>Required Avg: {faculty.average_result_percentage_required || 0}%</div>
-                                                                <div>Gender: {GENDER[faculty.gender]}</div>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Form.Group className="mb-2">
-                                                                <Form.Control
-                                                                    type="text"
-                                                                    placeholder="Faculty name"
-                                                                    value={faculty.name}
-                                                                    onChange={(e) => updateFaculty(index, 'name', e.target.value)}
-                                                                    className="my-card-input"
-                                                                />
-                                                            </Form.Group>
-                                                            <Row className="g-2">
-                                                                <Col>
-                                                                    <Form.Group className="mb-2">
-                                                                        <Form.Control
-                                                                            type="number"
-                                                                            placeholder="Required %"
-                                                                            min="0"
-                                                                            max="100"
-                                                                            value={faculty.average_result_percentage_required || 0}
-                                                                            onChange={(e) => updateFaculty(index, 'average_result_percentage_required', parseFloat(e.target.value))}
-                                                                            className="my-card-input"
-                                                                        />
-                                                                    </Form.Group>
-                                                                </Col>
-                                                                <Col>
-                                                                    <Form.Group className="mb-2">
-                                                                        <Form.Select
-                                                                            value={faculty.gender}
-                                                                            onChange={(e) => updateFaculty(index, 'gender', parseInt(e.target.value))}
-                                                                            className="my-card-input"
-                                                                        >
-                                                                            <option value={1}>Male Only</option>
-                                                                            <option value={2}>Female Only</option>
-                                                                            <option value={3}>Coeducation</option>
-                                                                        </Form.Select>
-                                                                    </Form.Group>
-                                                                </Col>
-                                                                <Col xs="auto">
-                                                                    <Button 
-                                                                        variant="outline-danger" 
-                                                                        size="sm" 
-                                                                        onClick={() => removeFaculty(index)}
-                                                                        className="btn-modern"
-                                                                    >
-                                                                        <i className="fa-solid fa-trash" />
-                                                                    </Button>
-                                                                </Col>
-                                                            </Row>
-                                                        </>
-                                                    )}
+                                            {instituteData.faculties.map((faculty, index) => (
+                                                <div 
+                                                    key={index} 
+                                                    style={{ 
+                                                        padding: '16px', 
+                                                        borderBottom: index < instituteData.faculties.length - 1 ? '1px solid var(--gray-200)' : 'none',
+                                                        background: index % 2 === 0 ? 'rgba(248, 250, 252, 0.5)' : 'white'
+                                                    }}
+                                                >
+                                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                                        <div style={{ 
+                                                            fontWeight: '600', 
+                                                            color: 'var(--gray-800)', 
+                                                            fontSize: '0.95rem'
+                                                        }}>
+                                                            {faculty.name}
+                                                        </div>
+                                                        <Badge 
+                                                            bg="info" 
+                                                            style={{ fontSize: '0.7rem', padding: '2px 6px' }}
+                                                        >
+                                                            #{index + 1}
+                                                        </Badge>
+                                                    </div>
+                                                    
+                                                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+                                                        <div className="mb-1">
+                                                            <i className="fa-solid fa-percentage me-1" />
+                                                            Required: <strong>{faculty.average_result_percentage_required || 0}%</strong>
+                                                        </div>
+                                                        <div>
+                                                            <Badge 
+                                                                bg={faculty.gender === 1 ? 'primary' : faculty.gender === 2 ? 'warning' : 'success'}
+                                                                style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                                                            >
+                                                                <i className="fa-solid fa-users me-1" />
+                                                                {GENDER[faculty.gender]}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
                                         <div className="text-center py-4" style={{ color: 'var(--gray-500)' }}>
-                                            <i className="fa-solid fa-graduation-cap fa-2x mb-3" style={{ color: 'var(--gray-300)' }} />
-                                            <div>No faculties available</div>
-                                            {isEditing && (
-                                                <div style={{ fontSize: '0.9rem', marginTop: '8px' }}>
-                                                    Click the + button to add faculties
-                                                </div>
-                                            )}
+                                            <i className="fa-solid fa-graduation-cap fa-2x mb-2" style={{ color: 'var(--gray-300)' }} />
+                                            <div style={{ fontSize: '0.9rem' }}>No faculties available</div>
                                         </div>
                                     )}
+                                </div>
+                            </div>
+
+                            {/* Institute Metadata */}
+                            <div className="modern-card">
+                                <div className="card-header">
+                                    <h5>
+                                        <i className="fa-solid fa-clock me-2" style={{ color: 'var(--info-color)' }} />
+                                        Metadata
+                                    </h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="mb-3">
+                                        <label style={{ 
+                                            fontWeight: '600', 
+                                            color: 'var(--gray-700)', 
+                                            marginBottom: '4px',
+                                            display: 'block',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Institute ID
+                                        </label>
+                                        <div style={{ 
+                                            fontSize: '0.85rem',
+                                            color: 'var(--gray-600)',
+                                            fontFamily: 'monospace',
+                                            backgroundColor: 'var(--gray-100)',
+                                            padding: '4px 8px',
+                                            borderRadius: '4px'
+                                        }}>
+                                            {instituteData.id}
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label style={{ 
+                                            fontWeight: '600', 
+                                            color: 'var(--gray-700)', 
+                                            marginBottom: '4px',
+                                            display: 'block',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Created At
+                                        </label>
+                                        <div style={{ 
+                                            fontSize: '0.85rem',
+                                            color: 'var(--gray-600)'
+                                        }}>
+                                            {formatDate(instituteData.created_at)}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label style={{ 
+                                            fontWeight: '600', 
+                                            color: 'var(--gray-700)', 
+                                            marginBottom: '4px',
+                                            display: 'block',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Last Updated
+                                        </label>
+                                        <div style={{ 
+                                            fontSize: '0.85rem',
+                                            color: 'var(--gray-600)'
+                                        }}>
+                                            {formatDate(instituteData.updated_at)}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </Col>
                     </Row>
                 )}
+
+                {/* Edit Institute Modal */}
+                <InstituteModal 
+                    show={showEditModal}
+                    onHide={() => setShowEditModal(false)}
+                    onSuccess={handleInstituteUpdated}
+                    institute={instituteData}
+                />
 
                 {/* Delete Confirmation Modal */}
                 <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>

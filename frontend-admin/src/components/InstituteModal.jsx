@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert, Badge } from 'react-bootstrap';
 import axios from 'axios';
 
-const InstituteModal = ({ show, onHide, onSuccess }) => {
+const InstituteModal = ({ show, onHide, onSuccess, institute = null }) => {
     const [formData, setFormData] = useState({
         name: '',
         managing_authority: 1,
@@ -17,6 +17,24 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem("authToken");
+
+    // Populate form when editing
+    useEffect(() => {
+        if (institute && show) {
+            setFormData({
+                name: institute.name || '',
+                managing_authority: institute.managing_authority || 1,
+                description: institute.description || '',
+                tcf_rating: institute.tcf_rating || 0,
+                latitude: institute.location?.coordinates?.[1] || 0,
+                longitude: institute.location?.coordinates?.[0] || 0,
+                faculties: institute.faculties || []
+            });
+        } else if (!institute && show) {
+            // Reset form for create mode
+            resetForm();
+        }
+    }, [institute, show]);
 
     const handleInputChange = (field, value) => {
         setFormData({
@@ -93,15 +111,27 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                 }))
             };
 
-            const response = await axios.post(`${API_BASE_URL}/institute`, submitData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            let response;
+            if (institute) {
+                // Update existing institute
+                response = await axios.put(`${API_BASE_URL}/institute/${institute.id}`, submitData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            } else {
+                // Create new institute
+                response = await axios.post(`${API_BASE_URL}/institute`, submitData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
 
-            if (response.status === 201) {
-                setMessage('Institute created successfully!');
+            if (response.status === 200 || response.status === 201) {
+                setMessage(institute ? 'Institute updated successfully!' : 'Institute created successfully!');
                 setTimeout(() => {
                     setMessage('');
                     resetForm();
@@ -111,7 +141,7 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
             }
         } catch (error) {
             console.error(error);
-            setMessage('Error creating institute: ' + (error.response?.data?.message || error.message));
+            setMessage(`Error ${institute ? 'updating' : 'creating'} institute: ` + (error.response?.data?.message || error.message));
         } finally {
             setIsSubmitting(false);
         }
@@ -139,8 +169,8 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
         <Modal show={show} onHide={handleClose} size="lg" centered>
             <Modal.Header closeButton style={{ borderBottom: '1px solid var(--gray-200)', background: 'var(--gray-50)' }}>
                 <Modal.Title style={{ color: 'var(--gray-800)', fontWeight: '700', fontSize: '1.25rem' }}>
-                    <i className="fa-solid fa-plus-circle me-2" style={{ color: 'var(--success-color)' }} />
-                    Add New Institute
+                    <i className={`fa-solid ${institute ? 'fa-edit' : 'fa-plus-circle'} me-2`} style={{ color: 'var(--primary-color)' }} />
+                    {institute ? 'Edit Institute' : 'Add New Institute'}
                 </Modal.Title>
             </Modal.Header>
             
@@ -153,127 +183,131 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                         </Alert>
                     )}
 
-                    {/* Basic Information Section */}
-                    <div className="mb-4">
-                        <h5 style={{ 
-                            color: 'var(--gray-800)', 
-                            fontWeight: '600', 
-                            marginBottom: '16px',
-                            paddingBottom: '8px',
-                            borderBottom: '2px solid var(--primary-color)'
-                        }}>
-                            <i className="fa-solid fa-info-circle me-2" style={{ color: 'var(--primary-color)' }} />
-                            Basic Information
-                        </h5>
-                        
-                        <Row className="g-3">
-                            <Col md={8}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Institute Name <span style={{ color: 'var(--danger-color)' }}>*</span>
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter institute name"
-                                        value={formData.name}
-                                        onChange={(e) => handleInputChange('name', e.target.value)}
-                                        required
-                                        className="my-card-input"
-                                        style={{ fontSize: '1rem' }}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Managing Authority
-                                    </Form.Label>
-                                    <Form.Select
-                                        value={formData.managing_authority}
-                                        onChange={(e) => handleInputChange('managing_authority', parseInt(e.target.value))}
-                                        className="my-card-input"
-                                    >
-                                        <option value={1}>Public</option>
-                                        <option value={2}>Private</option>
-                                    </Form.Select>
-                                </Form.Group>
-                            </Col>
-                        </Row>
+                    <Row className="g-4">
+                        {/* Basic Information Section */}
+                        <Col xs={12}>
+                            <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--primary-color)', paddingBottom: '8px' }}>
+                                <i className="fa-solid fa-info-circle me-2" style={{ color: 'var(--primary-color)' }} />
+                                Basic Information
+                            </h6>
+                            <Row className="g-3">
+                                <Col md={8}>
+                                    <Form.Group>
+                                        <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                            Institute Name <span style={{ color: 'var(--danger-color)' }}>*</span>
+                                        </Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Enter institute name"
+                                            value={formData.name}
+                                            onChange={(e) => handleInputChange('name', e.target.value)}
+                                            required
+                                            className="my-card-input"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col md={4}>
+                                    <Form.Group>
+                                        <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                            Managing Authority
+                                        </Form.Label>
+                                        <Form.Select
+                                            value={formData.managing_authority}
+                                            onChange={(e) => handleInputChange('managing_authority', parseInt(e.target.value))}
+                                            className="my-card-input"
+                                        >
+                                            <option value={1}>Public</option>
+                                            <option value={2}>Private</option>
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Col>
+                                <Col md={4}>
+                                    <Form.Group>
+                                        <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                            TCF Rating (0-5)
+                                        </Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            min="0"
+                                            max="5"
+                                            step="0.1"
+                                            placeholder="0.0"
+                                            value={formData.tcf_rating}
+                                            onChange={(e) => handleInputChange('tcf_rating', parseFloat(e.target.value) || 0)}
+                                            className="my-card-input"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        </Col>
 
-                        <Row className="g-3 mt-2">
-                            <Col md={12}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Description
-                                    </Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Enter institute description"
-                                        value={formData.description}
-                                        onChange={(e) => handleInputChange('description', e.target.value)}
-                                        className="my-card-input"
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
+                        {/* Location Section */}
+                        <Col xs={12}>
+                            <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--info-color)', paddingBottom: '8px' }}>
+                                <i className="fa-solid fa-map-marker-alt me-2" style={{ color: 'var(--info-color)' }} />
+                                Location
+                            </h6>
+                            <Row className="g-3">
+                                <Col md={6}>
+                                    <Form.Group>
+                                        <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                            Latitude
+                                        </Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            step="any"
+                                            placeholder="0.0"
+                                            value={formData.latitude}
+                                            onChange={(e) => handleInputChange('latitude', parseFloat(e.target.value) || 0)}
+                                            className="my-card-input"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col md={6}>
+                                    <Form.Group>
+                                        <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                            Longitude
+                                        </Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            step="any"
+                                            placeholder="0.0"
+                                            value={formData.longitude}
+                                            onChange={(e) => handleInputChange('longitude', parseFloat(e.target.value) || 0)}
+                                            className="my-card-input"
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        </Col>
 
-                        <Row className="g-3 mt-2">
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        TCF Rating (0-5)
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        min="0"
-                                        max="5"
-                                        step="0.1"
-                                        placeholder="0.0"
-                                        value={formData.tcf_rating}
-                                        onChange={(e) => handleInputChange('tcf_rating', parseFloat(e.target.value) || 0)}
-                                        className="my-card-input"
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Latitude
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        step="any"
-                                        placeholder="0.0"
-                                        value={formData.latitude}
-                                        onChange={(e) => handleInputChange('latitude', parseFloat(e.target.value) || 0)}
-                                        className="my-card-input"
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                                <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Longitude
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        step="any"
-                                        placeholder="0.0"
-                                        value={formData.longitude}
-                                        onChange={(e) => handleInputChange('longitude', parseFloat(e.target.value) || 0)}
-                                        className="my-card-input"
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                    </div>
+                        {/* Description Section */}
+                        <Col xs={12}>
+                            <h6 style={{ color: 'var(--gray-700)', fontWeight: '600', marginBottom: '16px', borderBottom: '2px solid var(--success-color)', paddingBottom: '8px' }}>
+                                <i className="fa-solid fa-file-text me-2" style={{ color: 'var(--success-color)' }} />
+                                Description
+                            </h6>
+                            <Form.Group>
+                                <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                    Description
+                                </Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Enter institute description"
+                                    value={formData.description}
+                                    onChange={(e) => handleInputChange('description', e.target.value)}
+                                    className="my-card-input"
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
                     {/* Faculties Section */}
-                    <div className="mb-4">
+                    <Col xs={12}>
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h5 style={{ 
-                                color: 'var(--gray-800)', 
+                            <h6 style={{ 
+                                color: 'var(--gray-700)', 
                                 fontWeight: '600', 
                                 margin: 0,
                                 paddingBottom: '8px',
@@ -281,14 +315,13 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                             }}>
                                 <i className="fa-solid fa-graduation-cap me-2" style={{ color: 'var(--warning-color)' }} />
                                 Faculties ({formData.faculties.length})
-                            </h5>
+                            </h6>
                             <Button 
-                                variant="success" 
+                                variant="primary" 
                                 size="sm" 
                                 onClick={addFaculty}
                                 className="btn-modern d-flex align-items-center"
                                 style={{ 
-                                    background: 'var(--success-gradient)',
                                     fontSize: '0.85rem',
                                     padding: '6px 12px'
                                 }}
@@ -323,7 +356,7 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                                                 Faculty #{index + 1}
                                             </Badge>
                                             <Button 
-                                                variant="outline-danger" 
+                                                variant="danger" 
                                                 size="sm" 
                                                 onClick={() => removeFaculty(index)}
                                                 className="btn-modern"
@@ -404,7 +437,7 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                                 <div style={{ fontSize: '0.9rem' }}>Click "Add Faculty" to get started</div>
                             </div>
                         )}
-                    </div>
+                    </Col>
                 </Modal.Body>
 
                 <Modal.Footer style={{ 
@@ -424,24 +457,23 @@ const InstituteModal = ({ show, onHide, onSuccess }) => {
                             Cancel
                         </Button>
                         <Button 
-                            variant="success" 
+                            variant="primary" 
                             type="submit"
                             disabled={isSubmitting}
                             className="btn-modern"
                             style={{ 
-                                background: 'var(--success-gradient)',
                                 minWidth: '120px'
                             }}
                         >
                             {isSubmitting ? (
                                 <>
                                     <i className="fa-solid fa-spinner fa-spin me-2" />
-                                    Creating...
+                                    {institute ? 'Updating...' : 'Creating...'}
                                 </>
                             ) : (
                                 <>
-                                    <i className="fa-solid fa-save me-2" />
-                                    Create Institute
+                                    <i className={`fa-solid ${institute ? 'fa-save' : 'fa-plus'} me-2`} />
+                                    {institute ? 'Update Institute' : 'Create Institute'}
                                 </>
                             )}
                         </Button>

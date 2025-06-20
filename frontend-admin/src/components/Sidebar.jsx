@@ -51,13 +51,13 @@ const Sidebar = () => {
         {
             path: "/institute-requests",
             icon: "fa-solid fa-clipboard-list",
-            label: "Institute Requests",
+            label: "Institute Add Requests",
             exact: false
         },
         {
             path: "/feedback",
             icon: "fa-solid fa-comments",
-            label: "Feedback",
+            label: "App Feedback",
             exact: false
         }
     ];
@@ -79,7 +79,7 @@ const Sidebar = () => {
                 backdrop={true} 
                 className="admin-sidebar"
             >
-                <Offcanvas.Header closeButton style={{ borderBottom: '1px solid var(--gray-200)', padding: '20px' }}>
+                <Offcanvas.Header closeButton style={{ padding: '20px' }}>
                     <Offcanvas.Title>
                         <div className="d-flex align-items-center">
                             <img src={logo} alt="TCF Logo" height="32px" className="me-2" />
@@ -93,8 +93,8 @@ const Sidebar = () => {
                     <div className="mb-4">
                         {user && (
                             <div className="p-3 rounded" style={{ 
-                                background: 'var(--gray-50)', 
-                                border: '1px solid var(--gray-200)' 
+                                background: 'rgba(0, 139, 67, 0.1)', 
+                                border: '1px solid rgba(0, 139, 67, 0.2)'
                             }}>
                                 <div className="d-flex align-items-center">
                                     <div className="me-3" style={{
@@ -106,15 +106,16 @@ const Sidebar = () => {
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         color: 'white',
-                                        fontWeight: '600'
+                                        fontWeight: '600',
+                                        boxShadow: 'var(--shadow)'
                                     }}>
                                         {user.name ? user.name.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'A')}
                                     </div>
                                     <div>
-                                        <div style={{ fontWeight: '600', color: 'var(--gray-800)', fontSize: '0.9rem' }}>
+                                        <div style={{ fontWeight: '600', color: 'var(--gray-900)', fontSize: '0.9rem' }}>
                                             {user.name ? `Welcome, ${user.name}!` : 'Welcome back!'}
                                         </div>
-                                        <div style={{ color: 'var(--gray-600)', fontSize: '0.8rem' }}>
+                                        <div style={{ color: 'var(--gray-700)', fontSize: '0.8rem' }}>
                                             {user.email}
                                         </div>
                                     </div>
@@ -139,7 +140,7 @@ const Sidebar = () => {
                         ))}
                     </Nav>
 
-                    <div className="mt-auto pt-4" style={{ borderTop: '1px solid var(--gray-200)' }}>
+                    <div className="mt-auto pt-4" style={{ borderTop: '1px solid var(--gray-300)' }}>
                         {user ? (
                             <Button 
                                 variant="danger" 
@@ -155,16 +156,12 @@ const Sidebar = () => {
                             </Button>
                         ) : (
                             <Button 
-                                variant="primary" 
+                                variant="info" 
                                 onClick={() => { 
                                     setShowSidebar(false); 
                                     navigate("/login"); 
                                 }}
                                 className="w-100 btn-modern"
-                                style={{ 
-                                    background: 'var(--primary-gradient)',
-                                    border: 'none'
-                                }}
                             >
                                 <i className="fa-solid fa-sign-in-alt me-2" />
                                 Login

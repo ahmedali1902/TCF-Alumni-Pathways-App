@@ -56,7 +56,7 @@ const Home = () => {
             count: dashboardData?.users?.total_users || 0,
             subtitle: `Admin: ${dashboardData?.users?.admin_users || 0} | Anonymous: ${dashboardData?.users?.anonymous_users || 0}`,
             icon: "fa-solid fa-users",
-            color: "primary",
+            color: "success",
             route: "/users",
             description: "Manage admin and anonymous users"
         },
@@ -65,7 +65,7 @@ const Home = () => {
             count: dashboardData?.institutes?.total || 0,
             subtitle: "Educational institutions",
             icon: "fa-solid fa-building-columns",
-            color: "success",
+            color: "primary",
             route: "/institutes",
             description: "Manage educational institutes"
         },
@@ -79,7 +79,7 @@ const Home = () => {
             description: "Manage educational resources"
         },
         {
-            title: "Add Requests",
+            title: "Institute Add Requests",
             count: dashboardData?.institute_requests?.total || 0,
             subtitle: `Pending: ${dashboardData?.institute_requests?.pending || 0}`,
             icon: "fa-solid fa-clipboard-list",
@@ -88,7 +88,7 @@ const Home = () => {
             description: "Institute addition requests"
         },
         {
-            title: "Feedback",
+            title: "App Feedback",
             count: dashboardData?.app_feedback?.total || 0,
             subtitle: `Unprocessed: ${dashboardData?.app_feedback?.unprocessed || 0}`,
             icon: "fa-solid fa-comments",
@@ -109,18 +109,18 @@ const Home = () => {
 
     if (isLoading) {
         return (
-            <Container fluid className="p-0">
+            <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
                 <Sidebar />
                 <Container className="text-center" style={{ marginTop: '100px' }}>
                     <Spinner animation="border" variant="primary" />
-                    <h4 className="mt-3" style={{ color: 'var(--gray-600)' }}>Loading dashboard...</h4>
+                    <h4 className="mt-3" style={{ color: 'white' }}>Loading dashboard...</h4>
                 </Container>
             </Container>
         );
     }
 
     return (
-        <Container fluid className="p-0">
+        <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
             <Sidebar />
             <Container style={{ marginTop: '100px', paddingBottom: '40px' }}>
                 {/* Header Section */}
@@ -128,32 +128,33 @@ const Home = () => {
                     <h1 style={{ 
                         fontSize: '2.5rem', 
                         fontWeight: '700',
-                        background: 'var(--primary-gradient)',
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        marginBottom: '16px'
+                        color: 'white',
+                        marginBottom: '16px',
+                        textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                     }}>
                         Admin Dashboard
                     </h1>
                     <p style={{ 
-                        color: 'var(--gray-600)', 
+                        color: 'rgba(255, 255, 255, 0.9)', 
                         fontSize: '1.1rem',
                         fontWeight: '400',
                         maxWidth: '600px',
-                        margin: '0 auto'
+                        margin: '0 auto',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                     }}>
-                        Welcome to TCF Alumni Pathways Admin Panel. Manage institutes, users, and resources efficiently.
+                        Welcome to <span style={{ color: 'white', fontWeight: '600' }}>TCF Alumni Pathways</span> Admin Panel. Manage institutes, users, and resources efficiently.
                     </p>
                     {user && (
                         <div className="mt-3">
                             <span style={{ 
-                                background: 'var(--gray-100)',
-                                color: 'var(--gray-700)',
+                                background: 'rgba(255, 255, 255, 0.2)',
+                                color: 'white',
                                 padding: '8px 16px',
                                 borderRadius: '20px',
                                 fontSize: '0.9rem',
-                                fontWeight: '500'
+                                fontWeight: '500',
+                                backdropFilter: 'blur(10px)',
+                                border: '1px solid rgba(255, 255, 255, 0.3)'
                             }}>
                                 <i className="fa-solid fa-user me-2" />
                                 {user.name ? `Welcome, ${user.name}` : `Logged in as: ${user.email}`}
@@ -165,36 +166,55 @@ const Home = () => {
                 {message && (
                     <Row className="justify-content-center mb-4">
                         <Col md={8}>
-                            <Alert variant={message.includes('error') ? 'danger' : 'info'} className="text-center">
+                            <Alert 
+                                variant={message.includes('error') ? 'danger' : 'info'} 
+                                className="text-center"
+                                style={{ 
+                                    cursor: message.includes('login') ? 'pointer' : 'default',
+                                    fontWeight: 'bold'
+                                }}
+                                onClick={() => message.includes('login') && navigate('/login')}
+                            >
                                 {message}
+                                {message.includes('login') && <i className="fa-solid fa-external-link-alt ms-2" />}
                             </Alert>
                         </Col>
                     </Row>
                 )}
 
                 {/* Dashboard Cards */}
-                <Row className="g-4">
+                <Row className="g-4 justify-content-center">
                     {dashboardCards.map((card, index) => (
-                        <Col key={index} xs={12} sm={6} lg={4} xl={3}>
+                        <Col key={index} xs={12} md={6} lg={4}>
                             <div 
                                 className={`dashboard-card ${card.color} h-100 p-4`}
                                 onClick={() => navigate(card.route)}
                                 style={{ 
-                                    minHeight: '200px',
+                                    minHeight: '140px',
                                     display: 'flex',
-                                    flexDirection: 'column'
+                                    alignItems: 'center',
+                                    gap: '20px'
                                 }}
                             >
-                                <div className="d-flex justify-content-between align-items-start mb-3">
-                                    <div className={`dashboard-card-icon ${card.color}`}>
-                                        <i className={card.icon} style={{ 
-                                            fontSize: '24px', 
-                                            color: `var(--${card.color}-color)` 
-                                        }} />
-                                    </div>
-                                    <div className="text-end">
+                                <div className={`dashboard-card-icon ${card.color}`} style={{ flexShrink: 0 }}>
+                                    <i className={card.icon} style={{ 
+                                        fontSize: '28px', 
+                                        color: `var(--${card.color}-color)` 
+                                    }} />
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 style={{ 
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            color: 'var(--gray-800)',
+                                            margin: 0
+                                        }}>
+                                            {card.title}
+                                        </h5>
                                         <div style={{ 
-                                            fontSize: '2rem', 
+                                            fontSize: '1.8rem', 
                                             fontWeight: '700',
                                             color: 'var(--gray-800)',
                                             lineHeight: '1'
@@ -202,48 +222,37 @@ const Home = () => {
                                             {card.count.toLocaleString()}
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="mt-auto">
-                                    <h5 style={{ 
-                                        fontSize: '1.2rem',
-                                        fontWeight: '600',
-                                        color: 'var(--gray-800)',
-                                        marginBottom: '8px'
-                                    }}>
-                                        {card.title}
-                                    </h5>
                                     
                                     {card.subtitle && (
                                         <div style={{ 
-                                            fontSize: '0.85rem',
+                                            fontSize: '0.8rem',
                                             color: 'var(--gray-600)',
                                             fontWeight: '500',
-                                            marginBottom: '8px'
+                                            marginBottom: '6px'
                                         }}>
                                             {card.subtitle}
                                         </div>
                                     )}
                                     
                                     <div style={{ 
-                                        fontSize: '0.8rem',
+                                        fontSize: '0.75rem',
                                         color: 'var(--gray-500)',
                                         fontWeight: '400'
                                     }}>
                                         {card.description}
                                     </div>
-                                </div>
 
-                                <div className="mt-3">
-                                    <div style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        color: `var(--${card.color}-color)`,
-                                        fontSize: '0.85rem',
-                                        fontWeight: '500'
-                                    }}>
-                                        <span>View Details</span>
-                                        <i className="fa-solid fa-arrow-right ms-2" style={{ fontSize: '0.75rem' }} />
+                                    <div className="mt-2">
+                                        <div style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            color: `var(--${card.color}-color)`,
+                                            fontSize: '0.8rem',
+                                            fontWeight: '500'
+                                        }}>
+                                            <span>View Details</span>
+                                            <i className="fa-solid fa-arrow-right ms-2" style={{ fontSize: '0.7rem' }} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -251,59 +260,7 @@ const Home = () => {
                     ))}
                 </Row>
 
-                {/* Quick Actions Section */}
-                <Row className="mt-5">
-                    <Col xs={12}>
-                        <div className="modern-card">
-                            <div className="card-header">
-                                <h4>
-                                    <i className="fa-solid fa-bolt me-2" style={{ color: 'var(--warning-color)' }} />
-                                    Quick Actions
-                                </h4>
-                            </div>
-                            <div className="card-body">
-                                <Row className="g-3">
-                                    <Col md={3}>
-                                        <button 
-                                            className="btn btn-modern btn-primary w-100 d-flex align-items-center justify-content-center"
-                                            onClick={() => navigate('/institutes?action=add')}
-                                        >
-                                            <i className="fa-solid fa-plus me-2" />
-                                            Add Institute
-                                        </button>
-                                    </Col>
-                                    <Col md={3}>
-                                        <button 
-                                            className="btn btn-modern btn-success w-100 d-flex align-items-center justify-content-center"
-                                            onClick={() => navigate('/resources?action=add')}
-                                        >
-                                            <i className="fa-solid fa-upload me-2" />
-                                            Add Resource
-                                        </button>
-                                    </Col>
-                                    <Col md={3}>
-                                        <button 
-                                            className="btn btn-modern btn-warning w-100 d-flex align-items-center justify-content-center"
-                                            onClick={() => navigate('/institute-requests')}
-                                        >
-                                            <i className="fa-solid fa-clock me-2" />
-                                            Pending Requests
-                                        </button>
-                                    </Col>
-                                    <Col md={3}>
-                                        <button 
-                                            className="btn btn-modern btn-danger w-100 d-flex align-items-center justify-content-center"
-                                            onClick={() => navigate('/feedback')}
-                                        >
-                                            <i className="fa-solid fa-exclamation-triangle me-2" />
-                                            Unread Feedback
-                                        </button>
-                                    </Col>
-                                </Row>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
+
             </Container>
         </Container>
     )

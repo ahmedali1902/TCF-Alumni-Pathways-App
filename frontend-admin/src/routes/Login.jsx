@@ -67,7 +67,7 @@ const Login = () => {
     return (
         <Container fluid style={{ 
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--info-color) 100%)',
+            background: 'var(--bg-main)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -77,9 +77,11 @@ const Login = () => {
                 <Row className="justify-content-center">
                     <Col xs={12} sm={10} md={8} lg={6} xl={4}>
                         <div style={{
-                            background: 'white',
+                            background: 'var(--bg-card)',
+                            backdropFilter: 'blur(10px)',
                             borderRadius: '16px',
-                            boxShadow: 'var(--shadow-lg)',
+                            boxShadow: 'var(--shadow-xl)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
                             padding: '40px',
                             textAlign: 'center'
                         }}>
@@ -182,11 +184,10 @@ const Login = () => {
 
                                 <Button
                                     type="submit"
+                                    variant="primary"
                                     disabled={isLoading}
                                     className="w-100 btn-modern"
                                     style={{ 
-                                        background: 'var(--primary-gradient)',
-                                        border: 'none',
                                         padding: '12px',
                                         fontSize: '1rem',
                                         fontWeight: '600',
