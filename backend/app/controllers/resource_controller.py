@@ -8,42 +8,113 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
-from ..models.resource_model import ResourceModel
+from ..models.resource_model import Category, EducationLevel, ResourceModel
 
 logger = logging.getLogger(__name__)
-RESOURCE_COLLECTION = mongo.db.Resource
+
+
+def get_resource_collection():
+    """Get resource collection - ensures mongo is initialized"""
+    return mongo.db.Resource
 
 
 @jwt_required()
 def get_resources():
     try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            return format_response(False, "User ID is required"), 400
+
+        jwt_claims = get_jwt()
+        is_admin = check_if_admin(jwt_claims)
+
         page = int(request.args.get("page", 1))
         limit = int(request.args.get("limit", 10))
-        education_level = request.args.get("education_level", 1)
-        category = request.args.get("category", 1)
         skip = (page - 1) * limit
 
-        pipeline = [
-            {
-                "$match": {
-                    "education_level": int(education_level),
-                    "category": int(category),
-                    "is_deleted": False,
-                }
-            },
-            {
-                "$facet": {
-                    "totalCount": [{"$count": "count"}],
-                    "paginatedResults": [
-                        {"$sort": {"updated_at": -1}},
-                        {"$skip": skip},
-                        {"$limit": limit},
-                    ],
-                }
-            },
-        ]
+        if is_admin:
+            # Admin logic - search and filter based approach
+            search = request.args.get("search", "")
+            education_level = request.args.get("education_level")
+            category = request.args.get("category")
 
-        result = list(RESOURCE_COLLECTION.aggregate(pipeline))
+            match_criteria = {"is_deleted": False}
+
+            # Add search functionality
+            if search:
+                match_criteria["$or"] = [
+                    {"title": {"$regex": search, "$options": "i"}},
+                    {"content": {"$regex": search, "$options": "i"}},
+                ]
+
+            # Add filter by education level (enum)
+            if education_level:
+                try:
+                    education_level_enum = EducationLevel(int(education_level))
+                    match_criteria["education_level"] = education_level_enum
+                except (ValueError, TypeError):
+                    return (
+                        format_response(
+                            False,
+                            "Invalid education level value. Use 1 for MATRICULATION, 2 for INTERMEDIATE",
+                        ),
+                        400,
+                    )
+
+            # Add filter by category (enum)
+            if category:
+                try:
+                    category_enum = Category(int(category))
+                    match_criteria["category"] = category_enum
+                except (ValueError, TypeError):
+                    return (
+                        format_response(
+                            False,
+                            "Invalid category value. Use 1 for GENERAL, 2 for SCHOLARSHIP",
+                        ),
+                        400,
+                    )
+
+            pipeline = [
+                {"$match": match_criteria},
+                {
+                    "$facet": {
+                        "totalCount": [{"$count": "count"}],
+                        "paginatedResults": [
+                            {"$sort": {"updated_at": -1}},
+                            {"$skip": skip},
+                            {"$limit": limit},
+                        ],
+                    }
+                },
+            ]
+
+        else:
+            # Anonymous user logic - required category and education level
+            education_level = request.args.get("education_level", 1)
+            category = request.args.get("category", 1)
+
+            pipeline = [
+                {
+                    "$match": {
+                        "education_level": int(education_level),
+                        "category": int(category),
+                        "is_deleted": False,
+                    }
+                },
+                {
+                    "$facet": {
+                        "totalCount": [{"$count": "count"}],
+                        "paginatedResults": [
+                            {"$sort": {"updated_at": -1}},
+                            {"$skip": skip},
+                            {"$limit": limit},
+                        ],
+                    }
+                },
+            ]
+
+        result = list(get_resource_collection().aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             resources = result[0]["paginatedResults"]
@@ -75,7 +146,7 @@ def get_resource_by_id(resource_id):
         if not resource_id:
             return format_response(False, "Resource ID is required"), 400
 
-        resource_data = RESOURCE_COLLECTION.find_one(
+        resource_data = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
 
@@ -123,7 +194,7 @@ def add_resource():
             created_by=user_id,
             updated_by=user_id,
         )
-        RESOURCE_COLLECTION.insert_one(resource.to_bson())
+        get_resource_collection().insert_one(resource.to_bson())
 
         logger.info(f"Resource added successfully: {resource.title}")
         return format_response(True, "Resource added successfully"), 201
@@ -148,7 +219,7 @@ def update_resource(resource_id):
         if not data:
             return format_response(False, "Missing data"), 400
 
-        resource = RESOURCE_COLLECTION.find_one(
+        resource = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
@@ -156,16 +227,25 @@ def update_resource(resource_id):
 
         resource = ResourceModel(**resource)
 
+        # Validate required fields are provided for update
+        title = data.get("title")
+        content = data.get("content")
+        education_level = data.get("education_level")
+        category = data.get("category")
+
+        if not title or not content or not education_level or not category:
+            return format_response(False, "All required fields must be provided"), 400
+
         resource.update(
-            title=data.get("title"),
-            content=data.get("content"),
-            education_level=data.get("education_level"),
-            category=data.get("category"),
+            title=title,
+            content=content,
+            education_level=education_level,
+            category=category,
             link=data.get("link", None),
             updated_by=user_id,
         )
 
-        RESOURCE_COLLECTION.update_one(
+        get_resource_collection().update_one(
             {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
         )
 
@@ -188,7 +268,7 @@ def delete_resource(resource_id):
         if not check_if_admin(jwt_claims):
             return format_response(False, "Permission denied"), 403
 
-        resource = RESOURCE_COLLECTION.find_one(
+        resource = get_resource_collection().find_one(
             {"_id": ObjectId(resource_id), "is_deleted": False}
         )
         if not resource:
@@ -201,7 +281,7 @@ def delete_resource(resource_id):
             updated_by=user_id,
         )
 
-        RESOURCE_COLLECTION.update_one(
+        get_resource_collection().update_one(
             {"_id": ObjectId(resource_id)}, {"$set": resource.to_bson()}
         )
 

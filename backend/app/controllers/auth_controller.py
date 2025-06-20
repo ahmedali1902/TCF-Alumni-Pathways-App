@@ -5,12 +5,8 @@ from datetime import datetime, timezone
 import jwt
 from bson import ObjectId
 from flask import request
-from flask_jwt_extended import (
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-    verify_jwt_in_request,
-)
+from flask_jwt_extended import (get_jwt, get_jwt_identity, jwt_required,
+                                verify_jwt_in_request)
 from flask_jwt_extended.exceptions import JWTExtendedException
 
 from ..extensions import mongo
@@ -89,7 +85,7 @@ def login_admin():
 
         user.update(last_login=datetime.now(timezone.utc))
 
-        token = create_jwt(str(user.id), UserRole.ADMIN, email=user.email)
+        token = create_jwt(str(user.id), UserRole.ADMIN, email=user.email, name=user.name)
 
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 
@@ -178,9 +174,7 @@ def reset_admin_password():
         if not user_data or user_data.get("role") != UserRole.ADMIN:
             logger.warning(f"Admin user with email {email} not found.")
             return (
-                format_response(
-                    False, f"Admin user will email {email} not found", None
-                ),
+                format_response(False, "Invalid credentials", None),
                 404,
             )
 
@@ -202,12 +196,14 @@ def verify_admin_token():
     try:
         verify_jwt_in_request()
         user_id = get_jwt_identity()
-        user_email = get_jwt()["email"]
+        jwt_claims = get_jwt()
+        user_email = jwt_claims["email"]
+        user_name = jwt_claims.get("name")
         return (
             format_response(
                 True,
                 "Admin token verified successfully",
-                {"id": user_id, "email": user_email},
+                {"id": user_id, "email": user_email, "name": user_name},
             ),
             200,
         )

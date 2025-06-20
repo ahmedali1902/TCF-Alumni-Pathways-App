@@ -11,7 +11,11 @@ from ..helpers.response_helper import format_response
 from ..models.app_feedback_model import AppFeedbackModel
 
 logger = logging.getLogger(__name__)
-APP_FEEDBACK_COLLECTION = mongo.db.AppFeedback
+
+
+def get_app_feedback_collection():
+    """Get app feedback collection - ensures mongo is initialized"""
+    return mongo.db.AppFeedback
 
 
 @jwt_required()
@@ -48,7 +52,7 @@ def get_app_feedbacks():
         if not show_processed:
             pipeline[0]["$match"]["processed"] = False
 
-        result = list(APP_FEEDBACK_COLLECTION.aggregate(pipeline))
+        result = list(get_app_feedback_collection().aggregate(pipeline))
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             app_feedbacks = result[0]["paginatedResults"]
@@ -94,7 +98,7 @@ def get_app_feedback_by_id(feedback_id):
         if not feedback_id:
             return format_response(False, "Feedback ID is required"), 400
 
-        app_feedback_data = APP_FEEDBACK_COLLECTION.find_one(
+        app_feedback_data = get_app_feedback_collection().find_one(
             {"_id": ObjectId(feedback_id), "is_deleted": False}
         )
 
@@ -158,7 +162,7 @@ def create_app_feedback():
             updated_by=user_id,
         )
 
-        APP_FEEDBACK_COLLECTION.insert_one(app_feedback.to_bson())
+        get_app_feedback_collection().insert_one(app_feedback.to_bson())
         logger.info(f"App feedback created successfully by user: {user_id}")
         return format_response(True, "App feedback created successfully"), 201
 
@@ -178,7 +182,7 @@ def toggle_processed_app_feedback(feedback_id):
         if not check_if_admin(jwt_claims):
             return format_response(False, "Permission denied"), 403
 
-        app_feedback = APP_FEEDBACK_COLLECTION.find_one(
+        app_feedback = get_app_feedback_collection().find_one(
             {"_id": ObjectId(feedback_id), "is_deleted": False}
         )
         if not app_feedback:
@@ -191,7 +195,7 @@ def toggle_processed_app_feedback(feedback_id):
             updated_by=user_id,
         )
 
-        APP_FEEDBACK_COLLECTION.update_one(
+        get_app_feedback_collection().update_one(
             {"_id": ObjectId(feedback_id)}, {"$set": app_feedback.to_bson()}
         )
         logger.info(f"App feedback updated successfully: {feedback_id}")
@@ -213,7 +217,7 @@ def delete_app_feedback(feedback_id):
         if not check_if_admin(jwt_claims):
             return format_response(False, "Permission denied"), 403
 
-        app_feedback = APP_FEEDBACK_COLLECTION.find_one(
+        app_feedback = get_app_feedback_collection().find_one(
             {"_id": ObjectId(feedback_id), "is_deleted": False}
         )
         if not app_feedback:
@@ -226,7 +230,7 @@ def delete_app_feedback(feedback_id):
             updated_by=user_id,
         )
 
-        APP_FEEDBACK_COLLECTION.update_one(
+        get_app_feedback_collection().update_one(
             {"_id": ObjectId(feedback_id)}, {"$set": app_feedback.to_bson()}
         )
         logger.info(f"App feedback deleted successfully: {feedback_id}")

@@ -19,9 +19,9 @@ def check_password(password, hashed):
     return bcrypt.check_password_hash(hashed, password)
 
 
-def create_jwt(identity, role, email=None, device_id=None):
+def create_jwt(identity, role, email=None, name=None, device_id=None):
     if role == UserRole.ADMIN:
-        claims = {"role": role, "email": email, "device_id": None}
+        claims = {"role": role, "email": email, "name": name, "device_id": None}
         return create_access_token(
             identity=identity,
             additional_claims=claims,
