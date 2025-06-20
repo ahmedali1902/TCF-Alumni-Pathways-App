@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import NotificationModal from '../components/NotificationModal';
 import { useAuth } from "../context/AuthContext";
@@ -11,13 +11,13 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Spinner from 'react-bootstrap/Spinner';
 
 const Notifications = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -153,7 +153,7 @@ const Notifications = () => {
     }, [user]);
 
     return (
-        <Container fluid className="p-0">
+        <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
             <Sidebar />
             <Container style={{ marginTop: '100px', paddingBottom: '40px' }}>
                 {/* Header Section */}
@@ -162,61 +162,68 @@ const Notifications = () => {
                         <h1 style={{
                             fontSize: '2rem',
                             fontWeight: '700',
-                            color: 'var(--gray-800)',
-                            marginBottom: '8px'
+                            color: 'white',
+                            marginBottom: '8px',
+                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                         }}>
-                            <i className="fa-solid fa-bell me-3" style={{ color: 'var(--success-color)' }} />
+                            <i className="fa-solid fa-bell me-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }} />
                             Notifications Management
                         </h1>
                         <p style={{
-                            color: 'var(--gray-600)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontSize: '1rem',
-                            margin: 0
+                            margin: 0,
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)'
                         }}>
                             Manage system notifications and announcements
                         </p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Button
-                            variant="outline-primary"
-                            onClick={() => window.history.back()}
+                        <Button 
+                            variant="info" 
+                            onClick={() => navigate('/')}
                             className="btn-modern d-flex align-items-center"
                         >
-                            <i className="fa-solid fa-arrow-left me-2" />
-                            Back
+                            <i className="fa-solid fa-home me-2" />
+                            Dashboard
                         </Button>
-                        {console.log(user)}
-                        { (
-                            <Button
-                                variant="success"
-                                onClick={() => setShowAddModal(true)}
-                                className="btn-modern d-flex align-items-center"
-                                style={{ background: 'var(--success-gradient)' }}
-                            >
-                                <i className="fa-solid fa-plus me-2" />
-                                Add Notification
-                            </Button>
-                        )}
+                        <Button
+                            variant="primary"
+                            onClick={() => setShowAddModal(true)}
+                            className="btn-modern d-flex align-items-center"
+                        >
+                            <i className="fa-solid fa-plus me-2" />
+                            Add Notification
+                        </Button>
                     </div>
                 </div>
 
                 {message && (
-                    <Alert variant={message.includes('error') ? 'danger' : 'info'} className="mb-4">
+                    <Alert 
+                        variant={message.includes('error') ? 'danger' : 'info'} 
+                        className="mb-4"
+                        style={{ 
+                            cursor: message.includes('login') ? 'pointer' : 'default',
+                            fontWeight: 'bold'
+                        }}
+                        onClick={() => message.includes('login') && navigate('/login')}
+                    >
                         {message}
+                        {message.includes('login') && <i className="fa-solid fa-external-link-alt ms-2" />}
                     </Alert>
                 )}
 
-                {/* Filter Section */}
+                {/* Enhanced Filter Section */}
                 <div className="modern-card mb-4">
                     <div className="card-header">
                         <h5>
-                            <i className="fa-solid fa-search me-2" style={{ color: 'var(--primary-color)' }} />
-                            Search Notifications
+                            <i className="fa-solid fa-filter me-2" style={{ color: 'var(--primary-color)' }} />
+                            Filters & Search
                         </h5>
                     </div>
                     <div className="card-body">
                         <Row className="g-3">
-                            <Col md={6}>
+                            <Col md={8}>
                                 <Form.Group>
                                     <Form.Label style={{ fontWeight: '500', color: 'var(--gray-700)' }}>Search</Form.Label>
                                     <Form.Control
@@ -228,7 +235,7 @@ const Notifications = () => {
                                     />
                                 </Form.Group>
                             </Col>
-                            <Col md={6} className="d-flex align-items-end">
+                            <Col md={4} className="d-flex align-items-end">
                                 <div className="d-flex gap-2 w-100">
                                     <Button
                                         variant="primary"
@@ -237,7 +244,7 @@ const Notifications = () => {
                                         disabled={isLoading}
                                     >
                                         <i className="fa-solid fa-search me-2" />
-                                        Search
+                                        Apply
                                     </Button>
                                     <Button
                                         variant="outline-secondary"
@@ -265,7 +272,7 @@ const Notifications = () => {
                         {isLoading ? (
                             <div className="text-center py-5">
                                 <Spinner animation="border" variant="primary" />
-                                <div className="mt-3" style={{ color: 'var(--gray-600)' }}>Loading notifications...</div>
+                                <div className="mt-3" style={{ color: 'var(--gray-800)' }}>Loading notifications...</div>
                             </div>
                         ) : notifications.length > 0 ? (
                             <Table responsive hover className="mb-0">
@@ -275,9 +282,7 @@ const Notifications = () => {
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Content</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Created</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Updated</th>
-                                        { (
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px', textAlign: 'center' }}>Actions</th>
-                                        )}
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px', textAlign: 'center' }}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -295,7 +300,7 @@ const Notifications = () => {
                                                 </Badge>
                                             </td>
                                             <td style={{ padding: '16px' }}>
-                                                <div style={{ color: 'var(--gray-700)', marginBottom: '4px' }}>
+                                                <div style={{ color: 'var(--gray-700)', marginBottom: '4px', fontSize: '0.85rem' }}>
                                                     {notification.content.length > 50
                                                         ? notification.content.substring(0, 50) + '...'
                                                         : notification.content
@@ -318,30 +323,28 @@ const Notifications = () => {
                                                     {formatDate(notification.updated_at)}
                                                 </div>
                                             </td>
-                                            { (
-                                                <td style={{ padding: '16px', textAlign: 'center' }}>
-                                                    <div className="d-flex justify-content-center gap-2">
-                                                        <Button
-                                                            variant="outline-primary"
-                                                            size="sm"
-                                                            onClick={() => handleEditClick(notification)}
-                                                            className="btn-modern"
-                                                            style={{ borderRadius: '6px' }}
-                                                        >
-                                                            <i className="fa-solid fa-edit" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline-danger"
-                                                            size="sm"
-                                                            onClick={() => handleDeleteClick(notification.id)}
-                                                            className="btn-modern"
-                                                            style={{ borderRadius: '6px' }}
-                                                        >
-                                                            <i className="fa-solid fa-trash" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            )}
+                                            <td style={{ padding: '16px', textAlign: 'center' }}>
+                                                <div className="d-flex justify-content-center gap-2">
+                                                    <Button
+                                                        variant="info"
+                                                        size="sm"
+                                                        onClick={() => handleEditClick(notification)}
+                                                        className="btn-modern"
+                                                        style={{ borderRadius: '6px' }}
+                                                    >
+                                                        <i className="fa-solid fa-edit" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        onClick={() => handleDeleteClick(notification.id)}
+                                                        className="btn-modern"
+                                                        style={{ borderRadius: '6px' }}
+                                                    >
+                                                        <i className="fa-solid fa-trash" />
+                                                    </Button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -352,7 +355,7 @@ const Notifications = () => {
                                     <i className="fa-solid fa-bell fa-3x mb-3" style={{ color: 'var(--gray-300)' }} />
                                     <div>No notifications found</div>
                                     <div style={{ fontSize: '0.9rem', marginTop: '8px' }}>
-                                        {'Try adjusting your search or add a new notification'}
+                                        Try adjusting your search or add a new notification
                                     </div>
                                 </div>
                             </div>
@@ -391,7 +394,6 @@ const Notifications = () => {
                             variant="danger"
                             onClick={handleDeleteConfirm}
                             className="btn-modern"
-                            style={{ background: 'var(--danger-gradient)' }}
                         >
                             Delete Notification
                         </Button>

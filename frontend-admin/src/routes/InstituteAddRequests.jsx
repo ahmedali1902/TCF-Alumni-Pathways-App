@@ -11,7 +11,6 @@ import Pagination from 'react-bootstrap/Pagination';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Spinner from 'react-bootstrap/Spinner';
@@ -123,8 +122,6 @@ const InstituteAddRequests = () => {
         }
     };
 
-
-
     const handleFilterChange = (field, value) => {
         setFilters(prev => ({
             ...prev,
@@ -201,31 +198,58 @@ const InstituteAddRequests = () => {
                             Manage and review institute addition requests
                         </p>
                     </div>
+                    <div className="d-flex gap-2">
+                        <Button 
+                            variant="info" 
+                            onClick={() => navigate('/')}
+                            className="btn-modern d-flex align-items-center"
+                        >
+                            <i className="fa-solid fa-home me-2" />
+                            Dashboard
+                        </Button>
+                    </div>
                 </div>
 
-                {/* Filter Section */}
-                <Card className="mb-4 shadow-sm border-0">
-                    <Card.Body>
+                {message && (
+                    <Alert 
+                        variant={message.includes('error') ? 'danger' : 'info'} 
+                        className="mb-4"
+                        style={{ 
+                            cursor: message.includes('login') ? 'pointer' : 'default',
+                            fontWeight: 'bold'
+                        }}
+                        onClick={() => message.includes('login') && navigate('/login')}
+                    >
+                        {message}
+                        {message.includes('login') && <i className="fa-solid fa-external-link-alt ms-2" />}
+                    </Alert>
+                )}
+                
+                {/* Enhanced Filter Section */}
+                <div className="modern-card mb-4">
+                    <div className="card-header">
+                        <h5>
+                            <i className="fa-solid fa-filter me-2" style={{ color: 'var(--primary-color)' }} />
+                            Filters & Search
+                        </h5>
+                    </div>
+                    <div className="card-body">
                         <Row className="g-3">
                             <Col md={6}>
                                 <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Search
-                                    </Form.Label>
+                                    <Form.Label style={{ fontWeight: '500', color: 'var(--gray-700)' }}>Search</Form.Label>
                                     <Form.Control
                                         type="text"
                                         placeholder="Search by institute name, faculty name, or address..."
                                         value={filters.search}
                                         onChange={(e) => handleFilterChange('search', e.target.value)}
-                                        className="form-control-modern"
+                                        className="my-card-input"
                                     />
                                 </Form.Group>
                             </Col>
                             <Col md={3}>
                                 <Form.Group>
-                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
-                                        Show Processed
-                                    </Form.Label>
+                                    <Form.Label style={{ fontWeight: '500', color: 'var(--gray-700)' }}>Show Processed</Form.Label>
                                     <Form.Check
                                         type="switch"
                                         id="show-processed-switch"
@@ -238,226 +262,225 @@ const InstituteAddRequests = () => {
                             </Col>
                             <Col md={3} className="d-flex align-items-end">
                                 <div className="d-flex gap-2 w-100">
-                                    <Button 
-                                        variant="primary" 
+                                    <Button
+                                        variant="primary"
                                         onClick={handleFilterApply}
                                         className="btn-modern flex-grow-1"
-                                        style={{ background: 'var(--primary-gradient)' }}
+                                        disabled={isLoading}
                                     >
-                                        <i className="fa-solid fa-filter me-2" />
+                                        <i className="fa-solid fa-search me-2" />
                                         Apply
                                     </Button>
-                                    <Button 
-                                        variant="outline-secondary" 
+                                    <Button
+                                        variant="outline-secondary"
                                         onClick={handleFilterClear}
                                         className="btn-modern"
+                                        disabled={isLoading}
                                     >
-                                        <i className="fa-solid fa-times me-2" />
-                                        Clear
+                                        <i className="fa-solid fa-times" />
                                     </Button>
                                 </div>
                             </Col>
                         </Row>
-                    </Card.Body>
-                </Card>
+                    </div>
+                </div>
 
-                {/* Alert Message */}
-                {message && (
-                    <Alert variant={message.includes("Error") ? "danger" : "info"} className="mb-4">
-                        <i className={`fa-solid ${message.includes("Error") ? "fa-exclamation-triangle" : "fa-info-circle"} me-2`} />
-                        {message}
-                    </Alert>
-                )}
-
-                {/* Main Content */}
-                <Card className="shadow-sm border-0">
-                    <Card.Header className="bg-white border-0 pb-0">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <h5 className="mb-0" style={{ color: 'var(--gray-800)', fontWeight: '600' }}>
-                                Institute Add Requests List
-                            </h5>
-                            <div className="d-flex align-items-center gap-3">
-                                <Form.Select 
-                                    value={perPage} 
-                                    onChange={handlePerPageChange}
-                                    style={{ width: 'auto' }}
-                                    className="form-control-modern"
-                                >
-                                    <option value={10}>10 per page</option>
-                                    <option value={25}>25 per page</option>
-                                    <option value={50}>50 per page</option>
-                                </Form.Select>
-                            </div>
+                {/* Results Section */}
+                <div className="modern-card">
+                    <div className="card-header d-flex justify-content-between align-items-center">
+                        <h5>
+                            <i className="fa-solid fa-list me-2" style={{ color: 'var(--success-color)' }} />
+                            Institute Add Requests ({requests.length})
+                        </h5>
+                        <div className="d-flex align-items-center">
+                            <Form.Label className="mb-0 me-2" style={{ fontWeight: '500', color: 'var(--gray-700)' }}>
+                                Show:
+                            </Form.Label>
+                            <Form.Select 
+                                value={perPage} 
+                                onChange={handlePerPageChange} 
+                                style={{ width: '80px' }}
+                                className="my-card-input"
+                                disabled={isLoading}
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </Form.Select>
                         </div>
-                    </Card.Header>
-                    <Card.Body className="p-0">
+                    </div>
+                    <div className="card-body p-0">
                         {isLoading ? (
                             <div className="text-center py-5">
                                 <Spinner animation="border" variant="primary" />
-                                <p className="mt-3 text-muted">Loading requests...</p>
+                                <div className="mt-3" style={{ color: 'var(--gray-800)' }}>Loading requests...</div>
                             </div>
-                        ) : requests.length === 0 ? (
-                            <div className="text-center py-5">
-                                <i className="fa-solid fa-clipboard-list text-muted" style={{ fontSize: '3rem' }} />
-                                <p className="mt-3 text-muted mb-0">No institute add requests found</p>
-                                <p className="text-muted">Try adjusting your filters or check back later.</p>
-                            </div>
-                        ) : (
-                            <div className="table-responsive">
-                                <Table className="mb-0 table-hover">
-                                    <thead style={{ background: 'var(--gray-50)', borderBottom: '2px solid var(--gray-200)' }}>
-                                        <tr>
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-700)', padding: '15px' }}>
-                                                Institute Details
-                                            </th>
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-700)', padding: '15px' }}>
-                                                Faculty Name
-                                            </th>
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-700)', padding: '15px' }}>
-                                                Status
-                                            </th>
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-700)', padding: '15px' }}>
-                                                Date
-                                            </th>
-                                            <th style={{ fontWeight: '600', color: 'var(--gray-700)', padding: '15px', textAlign: 'center' }}>
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {requests.map((request, index) => (
-                                            <tr key={request.id} style={{ borderBottom: '1px solid var(--gray-200)' }}>
-                                                <td style={{ padding: '15px' }}>
-                                                    <div>
-                                                        <div style={{ fontWeight: '600', color: 'var(--gray-900)', marginBottom: '4px' }}>
-                                                            {request.institute_name}
-                                                        </div>
-                                                        <div style={{ color: 'var(--gray-600)', fontSize: '0.9rem' }}>
-                                                            {request.institute_address}
-                                                        </div>
-                                                        {request.institute_map_link && (
-                                                            <div className="mt-1">
-                                                                <a 
-                                                                    href={request.institute_map_link} 
-                                                                    target="_blank" 
-                                                                    rel="noopener noreferrer"
-                                                                    style={{ color: 'var(--primary-color)', fontSize: '0.85rem', textDecoration: 'none' }}
-                                                                >
-                                                                    <i className="fa-solid fa-map-marker-alt me-1" />
-                                                                    View Location
-                                                                </a>
-                                                            </div>
-                                                        )}
+                        ) : requests.length > 0 ? (
+                            <Table responsive hover className="mb-0">
+                                <thead style={{ backgroundColor: 'var(--gray-50)' }}>
+                                    <tr>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Institute Details</th>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Faculty Name</th>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Status</th>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Date</th>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px', textAlign: 'center' }}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {requests.map((request) => (
+                                        <tr key={request.id} style={{ borderBottom: '1px solid var(--gray-200)' }}>
+                                            <td style={{ padding: '16px' }}>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: 'var(--gray-800)', marginBottom: '4px' }}>
+                                                        {request.institute_name}
                                                     </div>
-                                                </td>
-                                                <td style={{ padding: '15px' }}>
-                                                    <span style={{ color: 'var(--gray-700)', fontWeight: '500' }}>
-                                                        {request.faculty_name}
-                                                    </span>
-                                                </td>
-                                                <td style={{ padding: '15px' }}>
-                                                    <Badge 
-                                                        bg={request.processed ? "success" : "warning"}
-                                                        className="px-3 py-2"
-                                                        style={{ fontSize: '0.8rem' }}
+                                                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+                                                        {request.institute_address}
+                                                    </div>
+                                                    {request.institute_map_link && (
+                                                        <div className="mt-1">
+                                                            <a 
+                                                                href={request.institute_map_link} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                style={{ color: 'var(--primary-color)', fontSize: '0.8rem', textDecoration: 'none' }}
+                                                            >
+                                                                <i className="fa-solid fa-map-marker-alt me-1" />
+                                                                View Location
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '16px' }}>
+                                                <span style={{ color: 'var(--gray-700)', fontWeight: '500' }}>
+                                                    {request.faculty_name}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '16px' }}>
+                                                <Badge 
+                                                    bg={request.processed ? "success" : "warning"}
+                                                    style={{ fontSize: '0.75rem', padding: '6px 12px' }}
+                                                >
+                                                    {request.processed ? "Processed" : "Pending"}
+                                                </Badge>
+                                            </td>
+                                            <td style={{ padding: '16px' }}>
+                                                <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+                                                    {formatDate(request.created_at)}
+                                                </div>
+                                            </td>
+                                            <td style={{ padding: '16px', textAlign: 'center' }}>
+                                                <div className="d-flex justify-content-center gap-2">
+                                                    <Button
+                                                        as={Link}
+                                                        to={`/institute-requests/${request.id}`}
+                                                        variant="info"
+                                                        size="sm"
+                                                        className="btn-modern"
+                                                        style={{ borderRadius: '6px' }}
                                                     >
-                                                        {request.processed ? "Processed" : "Pending"}
-                                                    </Badge>
-                                                </td>
-                                                <td style={{ padding: '15px' }}>
-                                                    <div style={{ color: 'var(--gray-600)', fontSize: '0.9rem' }}>
-                                                        {formatDate(request.created_at)}
-                                                    </div>
-                                                </td>
-                                                <td style={{ padding: '15px', textAlign: 'center' }}>
-                                                    <div className="d-flex gap-2 justify-content-center">
-                                                        <Button
-                                                            variant="outline-info"
-                                                            size="sm"
-                                                            onClick={() => navigate(`/institute-requests/${request.id}`)}
-                                                            className="btn-action"
-                                                            title="View Details"
-                                                        >
-                                                            <i className="fa-solid fa-eye" />
-                                                        </Button>
-                                                        <Button
-                                                            variant={request.processed ? "outline-warning" : "outline-success"}
-                                                            size="sm"
-                                                            onClick={() => handleToggleProcessed(request.id)}
-                                                            className="btn-action"
-                                                            title={request.processed ? "Mark as Pending" : "Mark as Processed"}
-                                                        >
-                                                            <i className={`fa-solid ${request.processed ? "fa-undo" : "fa-check"}`} />
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline-danger"
-                                                            size="sm"
-                                                            onClick={() => handleDeleteClick(request.id)}
-                                                            className="btn-action"
-                                                            title="Delete Request"
-                                                        >
-                                                            <i className="fa-solid fa-trash" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
+                                                        <i className="fa-solid fa-eye" />
+                                                    </Button>
+                                                    <Button
+                                                        variant={request.processed ? "warning" : "success"}
+                                                        size="sm"
+                                                        onClick={() => handleToggleProcessed(request.id)}
+                                                        className="btn-modern"
+                                                        style={{ borderRadius: '6px' }}
+                                                    >
+                                                        <i className={`fa-solid ${request.processed ? "fa-undo" : "fa-check"}`} />
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        onClick={() => handleDeleteClick(request.id)}
+                                                        className="btn-modern"
+                                                        style={{ borderRadius: '6px' }}
+                                                    >
+                                                        <i className="fa-solid fa-trash" />
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        ) : (
+                            <div className="text-center py-5">
+                                <div style={{ color: 'var(--gray-500)', fontSize: '1.1rem' }}>
+                                    <i className="fa-solid fa-clipboard-list fa-3x mb-3" style={{ color: 'var(--gray-300)' }} />
+                                    <div>No institute add requests found</div>
+                                    <div style={{ fontSize: '0.9rem', marginTop: '8px' }}>
+                                        Try adjusting your filters or check back later
+                                    </div>
+                                </div>
                             </div>
                         )}
-                    </Card.Body>
-                </Card>
-
-                {/* Pagination */}
-                {!isLoading && requests.length > 0 && (
-                    <div className="d-flex justify-content-center mt-4">
-                        <Pagination className="pagination-modern">
-                            <Pagination.Prev 
-                                disabled={!hasPrev} 
-                                onClick={() => handlePageChange(currentPage - 1)}
-                            />
-                            <Pagination.Item active>{currentPage}</Pagination.Item>
-                            <Pagination.Next 
-                                disabled={!hasNext} 
-                                onClick={() => handlePageChange(currentPage + 1)}
-                            />
-                        </Pagination>
                     </div>
-                )}
-            </Container>
-
-            {/* Delete Confirmation Modal */}
-            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        <i className="fa-solid fa-exclamation-triangle text-warning me-2" />
-                        Confirm Delete
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>{deleteModalMessage}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    {deleteModalMessage.includes("successfully") || deleteModalMessage.includes("Error") ? (
-                        <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                            Close
-                        </Button>
-                    ) : (
-                        <>
-                            <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                                Cancel
-                            </Button>
-                            <Button variant="danger" onClick={handleDeleteConfirm}>
-                                <i className="fa-solid fa-trash me-2" />
-                                Delete
-                            </Button>
-                        </>
+                    
+                    {/* Pagination */}
+                    {requests.length > 0 && (
+                        <div className="card-footer d-flex justify-content-center" style={{ backgroundColor: 'var(--gray-50)', border: 'none' }}>
+                            <Pagination className="mb-0">
+                                {hasPrev && (
+                                    <Pagination.Prev 
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={isLoading}
+                                    />
+                                )}
+                                <Pagination.Item active>
+                                    {currentPage}
+                                </Pagination.Item>
+                                {hasNext && (
+                                    <Pagination.Next 
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={isLoading}
+                                    />
+                                )}
+                            </Pagination>
+                        </div>
                     )}
-                </Modal.Footer>
-            </Modal>
+                </div>
 
-
+                {/* Delete Confirmation Modal */}
+                <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                    <Modal.Header closeButton style={{ borderBottom: '1px solid var(--gray-200)' }}>
+                        <Modal.Title style={{ color: 'var(--gray-800)', fontWeight: '600' }}>
+                            <i className="fa-solid fa-exclamation-triangle me-2" style={{ color: 'var(--danger-color)' }} />
+                            Delete Request
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ padding: '24px' }}>
+                        {deleteModalMessage ? (
+                            <Alert variant={deleteModalMessage.includes('successfully') ? 'success' : 'danger'}>
+                                {deleteModalMessage}
+                            </Alert>
+                        ) : (
+                            <div style={{ color: 'var(--gray-700)' }}>
+                                Are you sure you want to delete this institute add request? This action cannot be undone.
+                            </div>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer style={{ borderTop: '1px solid var(--gray-200)', padding: '16px 24px' }}>
+                        <Button 
+                            variant="outline-secondary" 
+                            onClick={() => setShowDeleteModal(false)}
+                            className="btn-modern"
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            variant="danger" 
+                            onClick={handleDeleteConfirm}
+                            className="btn-modern"
+                        >
+                            Delete Request
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Container>
         </Container>
     );
 };
