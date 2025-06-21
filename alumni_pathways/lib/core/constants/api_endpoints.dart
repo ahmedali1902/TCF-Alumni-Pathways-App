@@ -8,4 +8,5 @@ class ApiEndpoints {
   static const String getInstituteById = '$baseUrl/institute/';
   static const String getResources = '$baseUrl/resource';
   static const String addInstituteFeedback = '$baseUrl/institute/add-request';
+  static const String getNotifications = '$baseUrl/notification';
 }
