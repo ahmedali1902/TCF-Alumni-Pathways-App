@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "845410351964",
+    "project_id": "alumni-pathways",
+    "storage_bucket": "alumni-pathways.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845410351964:android:29069afc4953d0c3c89f99",
+        "android_client_info": {
+          "package_name": "com.tcf.alumni_pathways"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsTjSBPddUXZrRttryhtK-XNNe0tw-aBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

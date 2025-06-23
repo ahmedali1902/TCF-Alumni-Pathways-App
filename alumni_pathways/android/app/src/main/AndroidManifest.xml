@@ -26,9 +26,19 @@
     <!-- For Android 10+ -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <application
-        android:label="alumni_pathways"
+        android:label="Alumni Pathways"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Add these meta-data tags for Firebase background notifications -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

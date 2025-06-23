@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:alumni_pathways/config/theme.dart';
 import 'package:alumni_pathways/core/constants/colors.dart';
+import 'package:alumni_pathways/core/services/firebase_notification_service.dart';
 import 'package:alumni_pathways/widgets/bottom_navigation_bar.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -21,6 +23,8 @@ void main() async {
     MapboxOptions.setAccessToken(dotenv.env['MAPBOX_ACCESS_TOKEN']!);
 
     // Check authentication status
+    await Firebase.initializeApp();
+    await FirebaseNotificationService().initializeFirebaseMessaging();
     final authSuccess = await checkAndHandleAuthentication();
 
     if (authSuccess) {
@@ -124,16 +128,30 @@ class ErrorApp extends StatelessWidget {
 }
 
 class AlumniPathways extends StatelessWidget {
+  // Create a global navigator key
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   const AlumniPathways({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Set the navigator key in the notification service
+    FirebaseNotificationService.navigatorKey = navigatorKey;
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: TAppTheme.lightTheme, // Default: Light Theme
       darkTheme: TAppTheme.darkTheme, // Dark Theme
       themeMode: ThemeMode.system, // Auto-switch based on system setting
-      home: const TBottomNavigationBar(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) {
+          // Extract arguments to determine initial tab
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          final initialIndex = args?['initialIndex'] ?? 0;
+          return TBottomNavigationBar(initialIndex: initialIndex);
+        }
+      }
     );
   }
 }
