@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from "../context/AuthContext";
+import { formatDateCompact } from '../utils/dateUtils';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -162,15 +163,7 @@ const InstituteAddRequests = () => {
         setCurrentPage(1);
     };
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
+
 
     return (
         <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
@@ -368,7 +361,7 @@ const InstituteAddRequests = () => {
                                             </td>
                                             <td style={{ padding: '16px' }}>
                                                 <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
-                                                    {formatDate(request.created_at)}
+                                                    {formatDateCompact(request.created_at)}
                                                 </div>
                                             </td>
                                             <td style={{ padding: '16px', textAlign: 'center' }}>

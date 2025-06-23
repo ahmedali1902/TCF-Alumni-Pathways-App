@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from "../context/AuthContext";
+import { formatDate } from '../utils/dateUtils';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -97,17 +98,7 @@ const AppFeedbackView = () => {
         }
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        return new Date(dateString).toLocaleString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZoneName: 'short'
-        });
-    };
+
 
     const renderStars = (rating) => {
         const stars = [];

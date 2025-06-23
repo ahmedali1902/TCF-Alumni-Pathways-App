@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useAuth } from "../context/AuthContext";
+import { formatDateCompact, formatLastLogin } from '../utils/dateUtils';
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -133,16 +134,7 @@ const Users = () => {
         setCurrentPage(1);
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Never';
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
+
 
     const getRoleBadgeColor = (role) => {
         switch (role) {

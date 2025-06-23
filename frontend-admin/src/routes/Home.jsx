@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { formatNumber } from '../utils/dateUtils';
 import Sidebar from '../components/Sidebar';
 
 import Container from "react-bootstrap/Container";
@@ -255,7 +256,7 @@ const Home = () => {
                                             color: card.colorValue,
                                             lineHeight: '1'
                                         }}>
-                                            {card.count.toLocaleString()}
+                                            {formatNumber(card.count)}
                                         </div>
                                     </div>
                                     
