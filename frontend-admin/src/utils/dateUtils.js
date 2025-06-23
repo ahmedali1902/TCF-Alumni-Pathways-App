@@ -3,7 +3,7 @@
  */
 
 /**
- * Format a date string to a human-readable format with timezone information
+ * Format a date string to a human-readable format in user's local timezone
  * @param {string} dateString - ISO date string from the API (assumed to be UTC+0)
  * @param {Object} options - Optional formatting options
  * @returns {string} Formatted date string
@@ -16,9 +16,7 @@ export const formatDate = (dateString, options = {}) => {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short',
-        timeZone: 'Asia/Karachi' // UTC+5 (Pakistan Standard Time)
+        minute: '2-digit'
     };
     
     const formatOptions = { ...defaultOptions, ...options.format };
@@ -32,8 +30,8 @@ export const formatDate = (dateString, options = {}) => {
             processedDateString = dateString.replace(/(\.\d{6}|\.\d{3})?$/, '') + 'Z';
         }
         
-        // Parse the UTC date and format it for UTC+5 timezone
-        return new Date(processedDateString).toLocaleString('en-US', formatOptions);
+        // Parse the UTC date and format it in user's local timezone
+        return new Date(processedDateString).toLocaleString(undefined, formatOptions);
     } catch (error) {
         console.error('Error formatting date:', error);
         return options.fallback || 'Invalid Date';
@@ -52,9 +50,7 @@ export const formatDateCompact = (dateString) => {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit',
-            timeZoneName: 'short',
-            timeZone: 'Asia/Karachi' // UTC+5 (Pakistan Standard Time)
+            minute: '2-digit'
         },
         fallback: 'N/A'
     });
@@ -67,9 +63,6 @@ export const formatDateCompact = (dateString) => {
  */
 export const formatLastLogin = (dateString) => {
     return formatDate(dateString, {
-        format: {
-            timeZone: 'Asia/Karachi' // UTC+5 (Pakistan Standard Time)
-        },
         fallback: 'Never'
     });
 };
