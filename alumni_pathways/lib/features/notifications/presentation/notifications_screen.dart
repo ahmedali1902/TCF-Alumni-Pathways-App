@@ -5,7 +5,6 @@ import '../../../widgets/card.dart';
 import '../repository/notification_repository.dart';
 import '../domain/notification_model.dart';
 import '../../../core/services/http_service.dart';
-import '../repository/notification_repository.dart';
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
   @override
@@ -131,6 +130,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildNotificationItem(AppNotification notification) {
     return TCard(
       height: 110,
+      isDateTimeCard: true, // Enable WhatsApp-style layout
       leftIcon: CircleAvatar(
         backgroundColor: TAppColors.primary.withOpacity(0.2),
         child: Icon(
@@ -139,26 +139,48 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
       ),
       textWidget: SizedBox(
-        height: 100, // Fixed height for vertical centering
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              notification.title,
-              style: Theme.of(context).textTheme.titleSmall,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${notification.content} — ${_formatTime(notification.createdAt)}',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.grey),
-            ),
-          ],
+        height: 100,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title and timestamp row
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      notification.title,
+                      style: Theme.of(context).textTheme.titleSmall,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatTime(notification.createdAt),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              // Content
+              Expanded(
+                child: Text(
+                  notification.content,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
