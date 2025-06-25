@@ -1,3 +1,5 @@
+import 'package:alumni_pathways/core/utils/datetime_util.dart';
+
 class AppNotification {
   final String id;
   final String title;
@@ -23,8 +25,8 @@ class AppNotification {
       title: json['title'],
       content: json['content'],
       isDeleted: json['is_deleted'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: DatetimeUtil.parseDateTimeWithTimezone(json['created_at']),
+      updatedAt: DatetimeUtil.parseDateTimeWithTimezone(json['updated_at']),
       createdBy: json['created_by'],
       updatedBy: json['updated_by'],
     );

@@ -5,11 +5,13 @@ import '../../../widgets/card.dart';
 import '../repository/notification_repository.dart';
 import '../domain/notification_model.dart';
 import '../../../core/services/http_service.dart';
+
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
+
 class _NotificationsScreenState extends State<NotificationsScreen> {
   // State variables for API data
   List<AppNotification> _notifications = [];
@@ -24,6 +26,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     _notificationsRepository = NotificationsRepository(ApiHandlerService());
     _fetchNotifications();
   }
+
   // Fetch notifications from API
   Future<void> _fetchNotifications() async {
     try {
@@ -43,14 +46,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
     }
   }
+
   // Pull to refresh functionality
   Future<void> _onRefresh() async {
     await _fetchNotifications();
   }
-  // Function to format time based on your requirements
+
+  // Function to format time based on current week logic
   String _formatTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
+
     if (difference.inHours < 24) {
       // Less than 24 hours: "x hours ago"
       if (difference.inMinutes < 60) {
@@ -60,23 +66,46 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         return '${difference.inMinutes} minute${difference.inMinutes != 1 ? 's' : ''} ago';
       }
       return '${difference.inHours} hour${difference.inHours != 1 ? 's' : ''} ago';
-    } else if (difference.inDays < 7) {
-      // Less than 7 days: "Weekday name + time" (e.g., "Friday 8pm")
+    } else if (_isInCurrentWeek(dateTime, now)) {
+      // Within current week: "Weekday name + time" (e.g., "Friday 8pm")
       final weekday = _getWeekdayName(dateTime.weekday);
       final hour = dateTime.hour;
       final period = hour >= 12 ? 'pm' : 'am';
-      final displayHour = hour > 12
-          ? hour - 12
-          : hour == 0
-          ? 12
-          : hour;
+      final displayHour =
+          hour > 12
+              ? hour - 12
+              : hour == 0
+              ? 12
+              : hour;
       return '$weekday $displayHour$period';
     } else {
-      // More than 7 days: Full date (e.g., "Jan 12, 2024")
+      // Outside current week: Full date (e.g., "Jan 12, 2024")
       final month = _getMonthName(dateTime.month);
       return '$month ${dateTime.day}, ${dateTime.year}';
     }
   }
+
+  // Helper function to check if a date is in the current week (Monday to Sunday)
+  bool _isInCurrentWeek(DateTime dateTime, DateTime now) {
+    // Get the start of current week (Monday)
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final startOfWeekDate = DateTime(
+      startOfWeek.year,
+      startOfWeek.month,
+      startOfWeek.day,
+    );
+
+    // Get the end of current week (Sunday)
+    final endOfWeekDate = startOfWeekDate.add(
+      Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+    );
+
+    return dateTime.isAfter(
+          startOfWeekDate.subtract(Duration(milliseconds: 1)),
+        ) &&
+        dateTime.isBefore(endOfWeekDate.add(Duration(milliseconds: 1)));
+  }
+
   String _getWeekdayName(int weekday) {
     switch (weekday) {
       case 1:
@@ -97,6 +126,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         return '';
     }
   }
+
   String _getMonthName(int month) {
     switch (month) {
       case 1:
@@ -127,64 +157,65 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         return '';
     }
   }
+
   Widget _buildNotificationItem(AppNotification notification) {
     return TCard(
-      height: 110,
+      height: 120,
       isDateTimeCard: true, // Enable WhatsApp-style layout
       leftIcon: CircleAvatar(
         backgroundColor: TAppColors.primary.withOpacity(0.2),
-        child: Icon(
-          _notificationIcon,
-          color: TAppColors.primary,
-        ),
+        child: Icon(_notificationIcon, color: TAppColors.primary),
       ),
-      textWidget: SizedBox(
-        height: 100,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title and timestamp row
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      notification.title,
-                      style: Theme.of(context).textTheme.titleSmall,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+      textWidget: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // First row: Title and Date with space between
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    notification.title,
+                    style: Theme.of(context).textTheme.titleSmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _formatTime(notification.createdAt),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              // Content
-              Expanded(
-                child: Text(
-                  notification.content,
+                ),
+                Text(
+                  _formatTime(notification.createdAt),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey,
+                    fontSize: 11,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Second row: Body content
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    notification.content,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
+
   Widget _buildContent() {
     if (_isLoading) {
       return const Center(
@@ -199,18 +230,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              LucideIcons.alertCircle,
-              size: 48,
-              color: Colors.red.shade400,
-            ),
+            Icon(LucideIcons.alertCircle, size: 48, color: Colors.red.shade400),
             const SizedBox(height: 16),
             Text(
               _errorMessage!,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.red,
-              ),
+              style: const TextStyle(fontSize: 16, color: Colors.red),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -227,11 +251,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              LucideIcons.bell,
-              size: 48,
-              color: Colors.grey.shade400,
-            ),
+            Icon(LucideIcons.bell, size: 48, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             const Text(
               "No notifications yet",
@@ -253,14 +273,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: _notifications
-                .map((notification) => _buildNotificationItem(notification))
-                .toList(),
+            children:
+                _notifications
+                    .map((notification) => _buildNotificationItem(notification))
+                    .toList(),
           ),
         ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
