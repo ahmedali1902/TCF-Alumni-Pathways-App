@@ -9,4 +9,5 @@ class ApiEndpoints {
   static const String getResources = '$baseUrl/resource';
   static const String addInstituteFeedback = '$baseUrl/institute/add-request';
   static const String getNotifications = '$baseUrl/notification';
+  static const String addAppFeedback = '$baseUrl/app-feedback';
 }

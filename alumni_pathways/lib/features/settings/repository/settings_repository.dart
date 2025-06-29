@@ -1,4 +1,5 @@
 import 'package:alumni_pathways/features/home/domain/resources_model.dart';
+import 'package:alumni_pathways/features/settings/domain/app_feedback_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/api_endpoints.dart';
@@ -16,6 +17,20 @@ class SettingsRepository {
         includeToken: true,
         endpointURI: ApiEndpoints.addInstituteFeedback,
         body: instituteRequest.toJson(),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> addAppFeedback(
+      AppFeedbackModel appFeedbackModel,
+    ) async {
+    try {
+      await _apiHandlerService.post(
+        includeToken: true,
+        endpointURI: ApiEndpoints.addAppFeedback,
+        body: appFeedbackModel.toJson(),
       );
     } catch (e) {
       rethrow;

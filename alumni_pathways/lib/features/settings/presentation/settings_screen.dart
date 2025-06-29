@@ -1,3 +1,4 @@
+import 'package:alumni_pathways/features/settings/domain/app_feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,6 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     {'title': 'Search Settings', 'icon': LucideIcons.search},
     {'title': 'Privacy Policy', 'icon': LucideIcons.shield},
     {'title': 'Institue Add Request', 'icon': LucideIcons.messageSquare},
+    {'title': 'Feedback', 'icon': LucideIcons.messageSquareDashed},
     {'title': 'About', 'icon': LucideIcons.info},
   ];
 
@@ -80,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children:
                     _settingsOptions.map((option) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 5.0),
+                        padding: const EdgeInsets.only(bottom: 3.0),
                         child: TCard(
                           height: 70,
                           leftIcon: CircleAvatar(
@@ -116,6 +118,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     case 'Privacy Policy':
                                       return const PrivacyPolicyScreen();
                                     case 'Institue Add Request':
+                                      return const InstituteAddScreen();
+                                    case 'Feedback':
                                       return const FeedbackScreen();
                                     case 'About':
                                       return const AboutScreen();
@@ -167,7 +171,8 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
       _distance = prefs.getInt('search_distance') ?? 10;
       _minRating = prefs.getDouble('search_min_rating') ?? 3.0;
       _selectedGender =
-          prefs.getInt('search_gender') ?? Gender.coeducation.value; // Default to 'Coeducation'
+          prefs.getInt('search_gender') ??
+          Gender.coeducation.value; // Default to 'Coeducation'
       _admissionCriteria = prefs.getInt('search_admission_criteria') ?? 50;
     });
   }
@@ -322,9 +327,18 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
             ),
           ),
           items: [
-            DropdownMenuItem(value: Gender.maleOnly.value, child: Text(Gender.maleOnly.toString())),
-            DropdownMenuItem(value: Gender.femaleOnly.value, child: Text(Gender.femaleOnly.toString())),
-            DropdownMenuItem(value: Gender.coeducation.value, child: Text(Gender.coeducation.toString()))
+            DropdownMenuItem(
+              value: Gender.maleOnly.value,
+              child: Text(Gender.maleOnly.toString()),
+            ),
+            DropdownMenuItem(
+              value: Gender.femaleOnly.value,
+              child: Text(Gender.femaleOnly.toString()),
+            ),
+            DropdownMenuItem(
+              value: Gender.coeducation.value,
+              child: Text(Gender.coeducation.toString()),
+            ),
           ],
           onChanged: (value) => setState(() => _selectedGender = value),
           hint: const Text('Select gender'),
@@ -432,14 +446,14 @@ class PrivacyPolicyScreen extends StatelessWidget {
   }
 }
 
-class FeedbackScreen extends StatefulWidget {
-  const FeedbackScreen({super.key});
+class InstituteAddScreen extends StatefulWidget {
+  const InstituteAddScreen({super.key});
 
   @override
-  State<FeedbackScreen> createState() => _FeedbackScreenState();
+  State<InstituteAddScreen> createState() => _InstituteAddScreenState();
 }
 
-class _FeedbackScreenState extends State<FeedbackScreen> {
+class _InstituteAddScreenState extends State<InstituteAddScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _programController = TextEditingController();
@@ -465,20 +479,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       );
 
       try {
-        await SettingsRepository(ApiHandlerService()).addInstituteFeedback(request);
+        await SettingsRepository(
+          ApiHandlerService(),
+        ).addInstituteFeedback(request);
         if (!mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Institute request submitted successfully')),
+          const SnackBar(
+            content: Text('Institute request submitted successfully'),
+          ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit request: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to submit request: $e')));
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -610,7 +627,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
-                  hintText: 'e.g Gulistan-e-Johar, near Farhan Biryani',
+                  hintText: 'e.g Near Gulistan-e-Johar, Karachi',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
@@ -647,7 +664,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 validator:
                     (value) =>
                         value?.isEmpty ?? true
-                            ? 'e.g Gulistan-e-Johar, near Farhan Biryani'
+                            ? 'e.g Near Gulistan-e-Johar, Karachi'
                             : null,
               ),
               const SizedBox(height: 20),
@@ -706,13 +723,343 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: TAppColors.primary,
                   minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: const Text(
-                  'Submit',
-                  style: TextStyle(color: Colors.white),
+                  'Submit Add Request',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FeedbackScreen extends StatefulWidget {
+  const FeedbackScreen({super.key});
+
+  @override
+  State<FeedbackScreen> createState() => _FeedbackScreenState();
+}
+
+class _FeedbackScreenState extends State<FeedbackScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _userNameController = TextEditingController();
+  final _whatsappController = TextEditingController();
+  final _feedbackController = TextEditingController();
+  final _reasonIfOtherController = TextEditingController();
+
+  int _reasonType = 1; // Default reason type
+  int _experienceRating = 0; // 0 means no rating selected
+  bool _isTcfAlumni = false;
+
+  // Reason type options
+  final List<String> _reasonOptions = [
+    'General Feedback',
+    'Complaint',
+    'Suggestion',
+    'Other'
+  ];
+
+  @override
+  void dispose() {
+    _userNameController.dispose();
+    _whatsappController.dispose();
+    _feedbackController.dispose();
+    _reasonIfOtherController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      if (_experienceRating == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your experience rating')),
+        );
+        return;
+      }
+
+      final feedback = AppFeedbackModel(
+        userName: _userNameController.text.trim(),
+        reasonType: _reasonType,
+        reasonIfOther: _reasonIfOtherController.text.trim(),
+        experienceRating: _experienceRating,
+        isTcfAlumni: _isTcfAlumni,
+        whatsappNumber: _whatsappController.text.trim(),
+        feedbackText: _feedbackController.text.trim(),
+      );
+
+      try {
+        await SettingsRepository(ApiHandlerService()).addAppFeedback(feedback);
+        if (!mounted) return;
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Feedback submitted successfully'),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit feedback: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildStarRating() {
+    return Row(
+      children: List.generate(5, (index) {
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _experienceRating = index + 1;
+            });
+          },
+          child: Icon(
+            Icons.star,
+            size: 40,
+            color: index < _experienceRating 
+                ? Colors.amber 
+                : Colors.grey.shade300,
+          ),
+        );
+      }),
+    );
+  }
+
+  InputDecoration _getInputDecoration(String hintText) {
+    return InputDecoration(
+      hintText: hintText,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: TAppColors.primary),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: TAppColors.primary),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: TAppColors.primary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.red, width: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(LucideIcons.chevronLeft),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "App Feedback",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Name
+                const Text(
+                  'Your Name',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextFormField(
+                    controller: _userNameController,
+                    decoration: _getInputDecoration('e.g John Doe'),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'Please enter your name' : null,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // WhatsApp Number
+                const Text(
+                  'WhatsApp Number',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextFormField(
+                    controller: _whatsappController,
+                    keyboardType: TextInputType.phone,
+                    decoration: _getInputDecoration('e.g +92-300-1234567'),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'Please enter your WhatsApp number' : null,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Feedback Reason Type
+                const Text(
+                  'Feedback Type',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonFormField<int>(
+                    value: _reasonType,
+                    decoration: _getInputDecoration('Select feedback type'),
+                    items: _reasonOptions.asMap().entries.map((entry) {
+                      return DropdownMenuItem<int>(
+                        value: entry.key + 1,
+                        child: Text(entry.value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _reasonType = value ?? 1;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Other Reason (if selected)
+                if (_reasonType == 4) ...[
+                  const Text(
+                    'Please specify',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextFormField(
+                      controller: _reasonIfOtherController,
+                      decoration: _getInputDecoration('Please specify your reason'),
+                      validator: (value) =>
+                          _reasonType == 5 && (value?.isEmpty ?? true)
+                              ? 'Please specify your reason'
+                              : null,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                // Experience Rating
+                const Text(
+                  'Rate Your Experience',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStarRating(),
+                      const SizedBox(height: 4),
+                      Text(
+                        _experienceRating == 0 
+                            ? 'Tap to rate your experience'
+                            : 'Rating: $_experienceRating/5',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // TCF Alumni Checkbox
+                SizedBox(
+                  width: double.infinity,
+                  child: CheckboxListTile(
+                    title: const Text(
+                      'I am a TCF Alumni',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    value: _isTcfAlumni,
+                    onChanged: (value) {
+                      setState(() {
+                        _isTcfAlumni = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: TAppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Feedback Text
+                const Text(
+                  'Your Feedback',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextFormField(
+                    controller: _feedbackController,
+                    maxLines: 5,
+                    decoration: _getInputDecoration(
+                        'Tell us about your experience, suggestions, or any issues you faced...'),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'Please enter your feedback' : null,
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TAppColors.primary,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Submit Feedback',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
