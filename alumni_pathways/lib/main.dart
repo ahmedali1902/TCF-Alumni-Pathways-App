@@ -43,6 +43,7 @@ Future<bool> checkAndHandleAuthentication() async {
   // Check if token and user ID exist
   final token = prefs.getString('token');
   final userId = prefs.getString('user_id');
+  final fcmToken = prefs.getString('fcm_token');
 
   if (token != null && userId != null) {
     return true; // User is already authenticated
@@ -58,7 +59,7 @@ Future<bool> checkAndHandleAuthentication() async {
     final response = await http.post(
       Uri.parse(ApiEndpoints.login),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'device_id': deviceId}),
+      body: jsonEncode({'device_id': deviceId, 'fcm_token': fcmToken}),
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final responseData = jsonDecode(response.body);

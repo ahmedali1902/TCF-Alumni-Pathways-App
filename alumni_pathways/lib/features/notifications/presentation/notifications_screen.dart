@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../core/constants/colors.dart';
 import '../../../widgets/card.dart';
 import '../repository/notification_repository.dart';
@@ -18,13 +20,137 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   late NotificationsRepository _notificationsRepository;
+
+  // Notification permission state
+  bool _notificationsEnabled = true;
+
   // Consistent icon for all notifications
   final IconData _notificationIcon = LucideIcons.bell;
   @override
   void initState() {
     super.initState();
     _notificationsRepository = NotificationsRepository(ApiHandlerService());
+    _checkNotificationPermissions();
     _fetchNotifications();
+  }
+
+  // Check notification permissions
+  Future<void> _checkNotificationPermissions() async {
+    try {
+      final messaging = FirebaseMessaging.instance;
+      final settings = await messaging.getNotificationSettings();
+      setState(() {
+        _notificationsEnabled =
+            settings.authorizationStatus == AuthorizationStatus.authorized;
+      });
+    } catch (e) {
+      debugPrint('Error checking notification permissions: $e');
+      setState(() {
+        _notificationsEnabled = false;
+      });
+    }
+  }
+
+  // Request notification permissions
+  Future<void> _requestNotificationPermissions() async {
+    try {
+      // Open app settings directly for the user to manually enable notifications
+      await openAppSettings();
+
+      // After returning from settings, check permissions again
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _checkNotificationPermissions();
+      });
+    } catch (e) {
+      debugPrint('Error opening app settings: $e');
+      // Fallback to Firebase permission request if opening settings fails
+      try {
+        final messaging = FirebaseMessaging.instance;
+        final settings = await messaging.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        debugPrint(
+          'Notification permission status: ${settings.authorizationStatus}',
+        );
+        setState(() {
+          _notificationsEnabled =
+              settings.authorizationStatus == AuthorizationStatus.authorized;
+        });
+      } catch (fallbackError) {
+        debugPrint('Error with fallback permission request: $fallbackError');
+      }
+    }
+  }
+
+  Widget _buildNotificationPermissionBanner() {
+    if (_notificationsEnabled) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color:
+          Theme.of(context).brightness == Brightness.dark
+              ? Colors.orange[900]?.withOpacity(0.3)
+              : Colors.orange[50],
+      child: Row(
+        children: [
+          Icon(
+            LucideIcons.bellOff,
+            size: 18,
+            color:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.orange[300]
+                    : Colors.orange[700],
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Notifications are disabled",
+                  style: TextStyle(
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.orange[300]
+                            : Colors.orange[700],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "Enable notifications to receive important updates about institutes and events.",
+                  style: TextStyle(
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.orange[400]
+                            : Colors.orange[600],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: _requestNotificationPermissions,
+            style: TextButton.styleFrom(
+              foregroundColor:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.orange[300]
+                      : Colors.orange[700],
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            ),
+            child: const Text(
+              "Settings",
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Fetch notifications from API
@@ -298,12 +424,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.refreshCw),
-            onPressed: _fetchNotifications,
+            onPressed: () {
+              _checkNotificationPermissions();
+              _fetchNotifications();
+            },
             tooltip: 'Refresh',
           ),
         ],
       ),
-      body: _buildContent(),
+      body: Column(
+        children: [
+          _buildNotificationPermissionBanner(),
+          Expanded(child: _buildContent()),
+        ],
+      ),
     );
   }
 }
