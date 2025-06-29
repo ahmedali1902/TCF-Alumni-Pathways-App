@@ -7,3 +7,5 @@ misc/
 *.pyo
 *.pyd
 __pycache__/
+
+firebase_key.json

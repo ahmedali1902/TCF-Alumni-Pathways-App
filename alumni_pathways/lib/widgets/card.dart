@@ -11,7 +11,8 @@ class TCard extends StatelessWidget {
   final double height;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
-  final int maxLines; // New parameter for max lines
+  final int maxLines;
+  final bool isDateTimeCard; // New parameter
 
   const TCard({
     super.key,
@@ -24,7 +25,8 @@ class TCard extends StatelessWidget {
     this.height = 80,
     this.padding,
     this.onTap,
-    this.maxLines = 2, // Default to 2 lines
+    this.maxLines = 2,
+    this.isDateTimeCard = false, // Default to false
   });
 
   Future<void> _launchUrl() async {
@@ -102,10 +104,12 @@ class TCard extends StatelessWidget {
                       child: leftIcon,
                     ),
                     Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: _buildTextWidgetWithOverflow(textWidget),
-                      ),
+                      child: isDateTimeCard
+                          ? textWidget // Use textWidget directly for WhatsApp-style layout
+                          : Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildTextWidgetWithOverflow(textWidget),
+                            ),
                     ),
                     if (showRightIcon && rightIcon != null)
                       IconButton(

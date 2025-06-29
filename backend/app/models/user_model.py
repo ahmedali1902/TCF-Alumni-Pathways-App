@@ -19,6 +19,7 @@ class UserModel(BaseModel):
     password_hash: Optional[str] = None
     name: Optional[str] = Field(None)
     device_id: Optional[str] = Field(None)
+    fcm_token: Optional[str] = Field(None)
     role: UserRole = Field(default=UserRole.USER)
     last_login: Optional[datetime] = None
     is_deleted: bool = Field(default=False)

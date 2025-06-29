@@ -414,15 +414,31 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.lightBlue[50],
-            child: const Row(
+            color:
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey[800]
+                    : Colors.lightBlue[50],
+            child: Row(
               children: [
-                Icon(LucideIcons.info, size: 16, color: Colors.blue),
-                SizedBox(width: 8),
+                Icon(
+                  LucideIcons.info,
+                  size: 16,
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[300]
+                          : Colors.blue,
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     "You can change your default search preferences from Settings screen (Default Distance: ~10KM).",
-                    style: TextStyle(color: Colors.blue, fontSize: 12),
+                    style: TextStyle(
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[300]
+                              : Colors.blue,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],

@@ -11,6 +11,7 @@ class NotificationModel(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
     title: str = Field(None)
     content: str = Field(None)
+    image_url: Optional[str] = Field(None, alias="image_url")
     is_deleted: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

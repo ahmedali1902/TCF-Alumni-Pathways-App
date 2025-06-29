@@ -5,15 +5,24 @@ import '../features/home/presentation/home_screen.dart';
 import '../features/notifications/presentation/notifications_screen.dart';
 
 class TBottomNavigationBar extends StatefulWidget {
-  const TBottomNavigationBar({super.key});
+  final int initialIndex;
+
+  const TBottomNavigationBar({super.key, this.initialIndex = 0});
 
   @override
   State<TBottomNavigationBar> createState() => _TBottomNavigationBarState();
 }
 
 class _TBottomNavigationBarState extends State<TBottomNavigationBar> {
-  int _selectedIndex = 0;
-  final PageController _pageController = PageController();
+  late int _selectedIndex;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
 
   @override
   void dispose() {

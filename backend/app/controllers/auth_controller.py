@@ -225,6 +225,7 @@ def login_user():
     try:
         data = request.get_json()
         device_id = data.get("device_id")
+        fcm_token = data.get("fcm_token")
 
         if not device_id:
             return format_response(False, "Device ID is required", None), 400
@@ -249,7 +250,7 @@ def login_user():
                 200,
             )
 
-        user = UserModel(device_id=device_id, role=UserRole.USER)
+        user = UserModel(device_id=device_id, role=UserRole.USER, fcm_token=fcm_token)
         inserted_user = user_collection.insert_one(user.to_bson())
         token = create_jwt(
             str(inserted_user.inserted_id), UserRole.USER, device_id=user.device_id

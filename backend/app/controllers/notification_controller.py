@@ -1,13 +1,17 @@
 import logging
+import asyncio
 from bson import ObjectId
 from flask import request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from pydantic.v1 import BaseModel, Field, ValidationError, validator
+import time  # Add this import for timestamp in FCM 
+from typing import List, Dict, Optional
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
 from ..models.notification_model import NotificationModel
+from ..helpers.fcm_helper import get_fcm_service
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +19,15 @@ def get_notification_collection():
     """Get notification collection - ensures mongo is initialized"""
     return mongo.db.Notification
 
+def get_user_collection():
+    """Get user collection - ensures mongo is initialized"""
+    return mongo.db.User
+
 
 class NotificationCreateSchema(BaseModel):
     title: str = Field(..., min_length=1, max_length=39)
     content: str = Field(..., min_length=1, max_length=150)
+    image_url: str = Field(None, max_length=200)  # Optional field for image URL
 
     @validator('title')
     def validate_title(cls, v):
@@ -31,11 +40,21 @@ class NotificationCreateSchema(BaseModel):
         if not v or not v.strip():
             raise ValueError('Content cannot be empty or whitespace only')
         return v.strip()
+
+    @validator('image_url')
+    def validate_image_url(cls, v):
+        if v and len(v) > 200:
+            raise ValueError('Image URL cannot exceed 200 characters')
+        #check https
+        if v and not v.startswith('https://'):
+            raise ValueError('Image URL must start with https://')
+        return v.strip() if v else None
 
 
 class NotificationUpdateSchema(BaseModel):
     title: str = Field(..., min_length=1, max_length=39)
     content: str = Field(..., min_length=1, max_length=150)
+    image_url: str = Field(None, max_length=200)  # Optional field for image URL
 
     @validator('title')
     def validate_title(cls, v):
@@ -48,6 +67,15 @@ class NotificationUpdateSchema(BaseModel):
         if not v or not v.strip():
             raise ValueError('Content cannot be empty or whitespace only')
         return v.strip()
+
+    @validator('image_url', pre=True, always=True)
+    def validate_image_url(cls, v):
+        if v and len(v) > 200:
+            raise ValueError('Image URL cannot exceed 200 characters')
+        # Check if the image URL starts with https://
+        if v and not v.startswith('https://'):
+            raise ValueError('Image URL must start with https://')
+        return v.strip() if v else None
 
 
 class NotificationDeleteSchema(BaseModel):
@@ -58,6 +86,97 @@ class NotificationDeleteSchema(BaseModel):
         if not isinstance(v, bool):
             raise ValueError('is_deleted must be a boolean value')
         return v
+
+
+def _get_active_user_fcm_tokens():
+    """
+    Get FCM tokens for all active users
+    
+    Returns:
+        List of FCM tokens for users where is_deleted=False and fcm_token is not null
+    """
+    try:
+        # Query users where is_deleted is False and fcm_token exists and is not null
+        users = get_user_collection().find(
+            {
+                "is_deleted": False,
+                "fcm_token": {"$ne": None, "$exists": True, "$ne": ""}
+            },
+            {"fcm_token": 1}  # Only fetch fcm_token field
+        )
+        
+        fcm_tokens = [user["fcm_token"] for user in users if user.get("fcm_token")]
+        logger.info(f"Found {len(fcm_tokens)} active users with FCM tokens")
+        return fcm_tokens
+        
+    except Exception as e:
+        logger.error(f"Error fetching user FCM tokens: {e}")
+        return []
+
+
+def _send_push_notification_sync(title: str, content: str, image_url: str = None):
+    """
+    Send push notification to all active users (SYNCHRONOUS)
+    
+    Args:
+        title: Notification title
+        content: Notification content
+        image_url: Optional image URL
+    """
+    try:
+        # Get FCM tokens for active users
+        fcm_tokens = _get_active_user_fcm_tokens()
+        if not fcm_tokens:
+            logger.info("No active users with FCM tokens found")
+            return
+        
+        # Get FCM service and send notifications
+        fcm_service = get_fcm_service()
+        
+        # Prepare data payload
+        notification_data = {
+            'notification_type': 'admin_notification',
+            'timestamp': str(int(time.time())),
+        }
+        
+        # Add image URL if provided
+        if image_url:
+            notification_data['image_url'] = image_url
+        
+        # Send in batches if there are many tokens (FCM has a limit of 500 tokens per request)
+        batch_size = 500
+        total_success = 0
+        total_failure = 0
+        all_failed_tokens = []
+        
+        for i in range(0, len(fcm_tokens), batch_size):
+            batch_tokens = fcm_tokens[i:i + batch_size]
+            
+            result = fcm_service.send_to_multiple_tokens(
+                tokens=batch_tokens,
+                title=title,
+                body=content,
+                data=notification_data
+            )
+            
+            total_success += result['success_count']
+            total_failure += result['failure_count']
+            all_failed_tokens.extend(result['failed_tokens'])
+        
+        # Log results
+        logger.info(
+            f"Push notification sent: {total_success} successful, {total_failure} failed "
+            f"out of {len(fcm_tokens)} total tokens"
+        )
+        
+        # Log failed tokens for debugging
+        if all_failed_tokens:
+            logger.warning(f"Failed FCM tokens: {len(all_failed_tokens)} tokens failed")
+            for failed_token in all_failed_tokens:
+                logger.warning(f"Failed token: {failed_token['token'][:20]}... Error: {failed_token['error']}")
+        
+    except Exception as e:
+        logger.error(f"Error sending push notifications: {e}")
 
 
 @jwt_required()
@@ -145,18 +264,33 @@ def add_notification():
         notification = NotificationModel(
             title=validated_data.title,
             content=validated_data.content,
+            image_url=validated_data.image_url,
             created_by=user_id,
             updated_by=user_id,
         )
         
+        # Save to database first
         get_notification_collection().insert_one(notification.to_bson())
+        logger.info(f"Notification created successfully in database: {notification.title}")
 
-        logger.info(f"Notification created successfully: {notification.title}")
+        # Send push notification to all active users in background
+        try:
+            _send_push_notification_sync(
+                title=notification.title,
+                content=notification.content,
+                image_url=notification.image_url
+            )
+            logger.info("Push notification dispatch initiated")
+        except Exception as fcm_error:
+            # Log FCM error but don't fail the entire operation
+            logger.error(f"Failed to initiate push notifications: {fcm_error}")
+            # Note: We still return success since the notification was created in DB
+
         return format_response(True, "Notification created successfully"), 201
 
     except Exception as e:
         logger.exception(f"Error creating notification: {e}")
-        return format_response(False, "Internal server error"), 500
+        return format_response(False, "Internal server error"), 5
 
 
 @jwt_required()
@@ -214,6 +348,7 @@ def update_notification(notification_id):
         notification.update(
             title=validated_data.title,
             content=validated_data.content,
+            image_url=validated_data.image_url,
             updated_by=user_id,
         )
 

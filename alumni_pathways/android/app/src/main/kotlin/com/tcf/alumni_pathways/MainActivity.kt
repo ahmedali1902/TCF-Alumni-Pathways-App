@@ -1,4 +1,4 @@
-package com.example.alumni_pathways
+package com.tcf.alumni_pathways
 
 import io.flutter.embedding.android.FlutterActivity
 
