@@ -56,7 +56,8 @@ const Notifications = () => {
                 const searchTerm = appliedFilters.search.toLowerCase();
                 filteredNotifications = filteredNotifications.filter(notification =>
                     notification.title.toLowerCase().includes(searchTerm) ||
-                    notification.content.toLowerCase().includes(searchTerm)
+                    notification.content.toLowerCase().includes(searchTerm) ||
+                    (notification.image_url && notification.image_url.toLowerCase().includes(searchTerm))
                 );
             }
 
@@ -172,8 +173,8 @@ const Notifications = () => {
                         </p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Button 
-                            variant="info" 
+                        <Button
+                            variant="info"
                             onClick={() => navigate('/')}
                             className="btn-modern d-flex align-items-center"
                         >
@@ -192,10 +193,10 @@ const Notifications = () => {
                 </div>
 
                 {message && (
-                    <Alert 
-                        variant={message.includes('error') ? 'danger' : 'info'} 
+                    <Alert
+                        variant={message.includes('error') ? 'danger' : 'info'}
                         className="mb-4"
-                        style={{ 
+                        style={{
                             cursor: message.includes('login') ? 'pointer' : 'default',
                             fontWeight: 'bold'
                         }}
@@ -221,7 +222,7 @@ const Notifications = () => {
                                     <Form.Label style={{ fontWeight: '500', color: 'var(--gray-700)' }}>Search</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Search by title or content"
+                                        placeholder="Search by title, content, or image URL"
                                         value={filters.search}
                                         onChange={(e) => handleFilterChange('search', e.target.value)}
                                         className="my-card-input"
@@ -273,6 +274,7 @@ const Notifications = () => {
                                     <tr>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Title</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Content</th>
+                                        <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Image URL</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Created</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px' }}>Updated</th>
                                         <th style={{ fontWeight: '600', color: 'var(--gray-800)', padding: '16px', textAlign: 'center' }}>Actions</th>
@@ -305,6 +307,28 @@ const Notifications = () => {
                                                 >
                                                     {notification.content.length}/150 chars
                                                 </Badge>
+                                            </td>
+                                            <td style={{ padding: '16px' }}>
+                                                {notification.image_url ? (
+                                                    <div>
+                                                        <div style={{ color: 'var(--gray-700)', marginBottom: '4px', fontSize: '0.85rem' }}>
+                                                            {notification.image_url.length > 30
+                                                                ? notification.image_url.substring(0, 30) + '...'
+                                                                : notification.image_url
+                                                            }
+                                                        </div>
+                                                        <Badge
+                                                            bg="success"
+                                                            style={{ fontSize: '0.7rem', padding: '4px 8px' }}
+                                                        >
+                                                            {notification.image_url.length}/200 chars
+                                                        </Badge>
+                                                    </div>
+                                                ) : (
+                                                    <div style={{ color: 'var(--gray-500)', fontSize: '0.85rem', fontStyle: 'italic' }}>
+                                                        —
+                                                    </div>
+                                                )}
                                             </td>
                                             <td style={{ padding: '16px' }}>
                                                 <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>

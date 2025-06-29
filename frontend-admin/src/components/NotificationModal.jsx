@@ -5,7 +5,8 @@ import axios from 'axios';
 const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdit = false }) => {
     const [formData, setFormData] = useState({
         title: '',
-        content: ''
+        content: '',
+        image_url: ''
     });
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,7 +19,8 @@ const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdi
         if (isEdit && notification) {
             setFormData({
                 title: notification.title || '',
-                content: notification.content || ''
+                content: notification.content || '',
+                image_url: notification.image_url || ''
             });
         } else if (!isEdit) {
             resetForm();
@@ -49,6 +51,10 @@ const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdi
             setMessage('Content must be 150 characters or less');
             return false;
         }
+        if (formData.image_url && formData.image_url.length > 200) {
+            setMessage('Image URL must be 200 characters or less');
+            return false;
+        }
 
         return true;
     };
@@ -66,7 +72,8 @@ const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdi
         try {
             const submitData = {
                 title: formData.title.trim(),
-                content: formData.content.trim()
+                content: formData.content.trim(),
+                image_url: formData.image_url.trim() || null
             };
 
             let response;
@@ -110,7 +117,8 @@ const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdi
     const resetForm = () => {
         setFormData({
             title: '',
-            content: ''
+            content: '',
+            image_url: ''
         });
         setMessage('');
     };
@@ -193,6 +201,28 @@ const NotificationModal = ({ show, onHide, onSuccess, notification = null, isEdi
                                         maxLength={150}
                                         className="my-card-input"
                                         style={{ resize: 'vertical' }}
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+
+                        <Row className="g-3 mt-2">
+                            <Col md={12}>
+                                <Form.Group>
+                                    <Form.Label style={{ fontWeight: '600', color: 'var(--gray-700)' }}>
+                                        Image URL (Optional)
+                                        <small className="text-muted ms-2">
+                                            ({formData.image_url.length}/200 characters)
+                                        </small>
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="url"
+                                        placeholder="Enter image URL (optional)"
+                                        value={formData.image_url}
+                                        onChange={(e) => handleInputChange('image_url', e.target.value)}
+                                        maxLength={200}
+                                        className="my-card-input"
+                                        style={{ fontSize: '1rem' }}
                                     />
                                 </Form.Group>
                             </Col>
