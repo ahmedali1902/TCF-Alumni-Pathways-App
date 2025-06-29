@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:alumni_pathways/core/constants/enum.dart';
+import 'package:alumni_pathways/core/widgets/loading_indicator.dart';
 import 'package:alumni_pathways/features/institute_search/domain/institute_details.dart';
 import 'package:alumni_pathways/features/institute_search/repository/institute_search_repository.dart';
+import 'package:alumni_pathways/features/settings/presentation/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +46,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
     if (_latitude == null || _longitude == null) return;
 
     try {
+      institutes.clear(); // Clear previous results
       final List<Institute> fetchedInstitutes = await _instituteSearchRepository
           .searchInstitutes(
             _longitude!,
@@ -66,6 +69,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
     setState(() {
       _isLoading = true;
       _locationDenied = false;
+      _isLocationServiceEnabled = true; // Reset this flag
       institutes.clear();
     });
     await _checkLocationPermission();
@@ -105,6 +109,11 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
         _isLocationServiceEnabled = false;
       });
       return;
+    } else {
+      setState(() {
+        _isLocationServiceEnabled =
+            true; // Make sure to set this to true when enabled
+      });
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -189,7 +198,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                     leftIcon: CircleAvatar(
                       backgroundColor: TAppColors.primary.withOpacity(0.2),
                       child: Icon(
-                        LucideIcons.mapPin,
+                        LucideIcons.graduationCap,
                         color: TAppColors.primary,
                       ),
                     ),
@@ -265,43 +274,6 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 ),
               );
             }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RotationTransition(
-            turns: const AlwaysStoppedAnimation(0.75),
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: TAppColors.primary,
-                  width: 4,
-                  style: BorderStyle.solid,
-                ),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(
-                  color: TAppColors.primary,
-                  strokeWidth: 2,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            "Finding institutes near you...",
-            style: TextStyle(color: TAppColors.primary),
-          ),
-        ],
       ),
     );
   }
@@ -413,32 +385,91 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             color:
                 Theme.of(context).brightness == Brightness.dark
-                    ? Colors.grey[800]
-                    : Colors.lightBlue[50],
+                    ? Colors.orange[900]?.withOpacity(0.3)
+                    : Colors.orange[50],
             child: Row(
               children: [
                 Icon(
-                  LucideIcons.info,
-                  size: 16,
+                  LucideIcons.settings,
+                  size: 18,
                   color:
                       Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey[300]
-                          : Colors.blue,
+                          ? Colors.orange[300]
+                          : Colors.orange[700],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Your Current Search Settings",
+                        style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.orange[300]
+                                  : Colors.orange[700],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Gender : ${Gender.fromValue(_gender)}",
+                        style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.orange[400]
+                                  : Colors.orange[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Distance : $_searchRadius km",
+                        style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.orange[400]
+                                  : Colors.orange[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    "You can change your default search preferences from Settings screen (Default Distance: ~10KM).",
-                    style: TextStyle(
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Colors.grey[300]
-                              : Colors.blue,
-                      fontSize: 12,
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const SearchSettingsScreen(),
+                    )).then((_) {
+                      // Refresh the search settings after returning
+                      setState(() {
+                        _isLoading = true;
+                        institutes.clear();
+                        _locationDenied = false;
+                        _isLocationServiceEnabled = true; // Reset this flag
+                      });
+                      _initSearch();
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.orange[300]
+                            : Colors.orange[700],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
                     ),
+                  ),
+                  child: const Text(
+                    "Change Settings",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -447,7 +478,7 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? _buildLoadingIndicator()
+                    ? TLoadingIndicator.build(message: "Finding best institutes near you...")
                     : _locationDenied
                     ? _buildLocationDeniedWidget()
                     : !_isLocationServiceEnabled

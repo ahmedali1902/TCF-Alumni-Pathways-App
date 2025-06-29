@@ -1,3 +1,4 @@
+import 'package:alumni_pathways/core/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -344,12 +345,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: TAppColors.primary,
-          strokeWidth: 4,
-        ),
-      );
+      return TLoadingIndicator.build(message: "Loading notifications...");
     }
     if (_errorMessage != null) {
       return Center(

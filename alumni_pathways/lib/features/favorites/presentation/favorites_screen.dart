@@ -1,4 +1,5 @@
 import 'package:alumni_pathways/core/constants/enum.dart';
+import 'package:alumni_pathways/core/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,12 +113,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
       body:
           _isLoading
-              ? const Center(
-                child: CircularProgressIndicator(
-                  color: TAppColors.primary,
-                  strokeWidth: 4,
-                ),
-              )
+              ? TLoadingIndicator.build(message : "Loading your favorites institutes...")
               : _favoriteInstitutes.isEmpty
               ? const Center(
                 child: Text(
@@ -133,13 +129,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 5.0),
                           child: TCard(
+                            maxLines: 2,
                             height: 90,
                             leftIcon: CircleAvatar(
                               backgroundColor: TAppColors.primary.withOpacity(
                                 0.2,
                               ),
                               child: Icon(
-                                LucideIcons.mapPin,
+                                LucideIcons.graduationCap,
                                 color: TAppColors.primary,
                               ),
                             ),
@@ -151,6 +148,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 children: [
                                   Text(
                                     institute.name,
+                                    maxLines: 2,
                                     style:
                                         Theme.of(context).textTheme.titleSmall,
                                   ),

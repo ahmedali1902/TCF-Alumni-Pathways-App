@@ -224,10 +224,17 @@ class _SearchSettingsScreenState extends State<SearchSettingsScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: TAppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: const Text(
                 'Save Settings',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

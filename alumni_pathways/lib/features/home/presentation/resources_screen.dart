@@ -1,4 +1,5 @@
 import 'package:alumni_pathways/core/services/http_service.dart';
+import 'package:alumni_pathways/core/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../core/constants/colors.dart';
@@ -77,7 +78,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         ),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? TLoadingIndicator.build(message : "Loading Resources...")
           : resources.isEmpty
           ? const Center(child: Text("No resources available."))
           : SingleChildScrollView(
