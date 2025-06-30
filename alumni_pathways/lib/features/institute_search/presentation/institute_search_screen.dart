@@ -295,7 +295,8 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
             const SizedBox(height: 10),
             const Text(
               "We need your location to find institutes nearby. "
-              "Please enable location permissions in settings.",
+              "Please enable location permissions in settings."
+              "\nApps > Search for 'Alumni Pathways' > Permissions > Location > Allow",
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -305,8 +306,19 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 foregroundColor: TAppColors.darkAccent,
               ),
               onPressed: () async {
-                if(!(await Geolocator.openAppSettings())){
-                  await openAppSettings();
+                if (!(await Geolocator.openAppSettings())) {
+                  if (!(await openAppSettings())) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Unable to open app settings. '
+                          'Please enable location permissions manually.',
+                        ),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
                 }
                 await _retryLocation();
               },
@@ -447,9 +459,12 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const SearchSettingsScreen(),
-                    )).then((_) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SearchSettingsScreen(),
+                      ),
+                    ).then((_) {
                       // Refresh the search settings after returning
                       setState(() {
                         _isLoading = true;
@@ -481,7 +496,9 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
           Expanded(
             child:
                 _isLoading
-                    ? TLoadingIndicator.build(message: "Finding best institutes near you...")
+                    ? TLoadingIndicator.build(
+                      message: "Finding best institutes near you...",
+                    )
                     : _locationDenied
                     ? _buildLocationDeniedWidget()
                     : !_isLocationServiceEnabled
