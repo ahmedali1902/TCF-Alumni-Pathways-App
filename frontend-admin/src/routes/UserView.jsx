@@ -286,6 +286,24 @@ const UserView = () => {
                               )}
                             </div>
                           </div>
+                          <div className="mb-3">
+                            <label style={{ fontWeight: '600', color: 'var(--gray-700)', fontSize: '0.9rem' }}>FCM Token</label>
+                            <div style={{ padding: '12px', background: 'var(--gray-50)', borderRadius: '8px', marginTop: '4px' }}>
+                              {userData.fcm_token ? (
+                                <code style={{
+                                  fontSize: '0.85rem',
+                                  color: 'var(--gray-600)',
+                                  backgroundColor: 'var(--gray-100)',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px'
+                                }}>
+                                  {userData.fcm_token}
+                                </code>
+                              ) : (
+                                <span style={{ color: 'var(--gray-500)', fontStyle: 'italic' }}>No FCM Token available</span>
+                              )}
+                            </div>
+                          </div>
                         </Col>
                         <Col md={12}>
                           <div className="mb-3">

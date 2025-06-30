@@ -14,6 +14,7 @@ import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
+import { formatDate } from '../utils/dateUtils';
 
 const Users = () => {
     const { user } = useAuth();
