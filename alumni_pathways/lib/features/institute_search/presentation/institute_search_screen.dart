@@ -7,6 +7,7 @@ import 'package:alumni_pathways/features/institute_search/repository/institute_s
 import 'package:alumni_pathways/features/settings/presentation/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../core/constants/colors.dart';
@@ -304,10 +305,12 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                 foregroundColor: TAppColors.darkAccent,
               ),
               onPressed: () async {
-                await Geolocator.openAppSettings();
+                if(!(await Geolocator.openAppSettings())){
+                  await openAppSettings();
+                }
                 await _retryLocation();
               },
-              child: const Text("Open Settings"),
+              child: const Text("Open Location Settings"),
             ),
             TextButton(
               onPressed: _retryLocation,
