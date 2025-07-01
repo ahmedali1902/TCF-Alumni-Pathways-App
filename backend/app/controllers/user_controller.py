@@ -53,10 +53,13 @@ def get_users():
                 role_enum = UserRole(int(role))
                 match_criteria["role"] = role_enum
             except (ValueError, TypeError):
-                return format_response(
-                    False,
-                    "Invalid role value. Use 1 for ADMIN, 2 for USER",
-                ), 400
+                return (
+                    format_response(
+                        False,
+                        "Invalid role value. Use 1 for ADMIN, 2 for USER",
+                    ),
+                    400,
+                )
 
         # Aggregation pipeline for pagination and counting
         pipeline = [
@@ -72,14 +75,14 @@ def get_users():
                             "$project": {
                                 "password_hash": 0  # Exclude password hash from results
                             }
-                        }
+                        },
                     ],
                 }
             },
         ]
 
         result = list(get_user_collection().aggregate(pipeline))
-        
+
         if result and result[0]["totalCount"]:
             total_count = result[0]["totalCount"][0]["count"]
             users = result[0]["paginatedResults"]
@@ -120,8 +123,7 @@ def get_user_by_id(user_id):
 
         # Find user by ID (exclude password hash)
         user_data = get_user_collection().find_one(
-            {"_id": ObjectId(user_id)},
-            {"password_hash": 0}
+            {"_id": ObjectId(user_id)}, {"password_hash": 0}
         )
 
         if not user_data:
@@ -163,12 +165,7 @@ def delete_user(user_id):
         # Soft delete the user
         result = get_user_collection().update_one(
             {"_id": ObjectId(user_id)},
-            {
-                "$set": {
-                    "is_deleted": True,
-                    "updated_at": UserModel().updated_at
-                }
-            }
+            {"$set": {"is_deleted": True, "updated_at": UserModel().updated_at}},
         )
 
         if result.modified_count == 0:
@@ -182,6 +179,3 @@ def delete_user(user_id):
     except Exception as e:
         logger.exception(f"Error deleting user {user_id}: {e}")
         return format_response(False, "Internal server error"), 500
-
-
- 

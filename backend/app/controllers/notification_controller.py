@@ -17,9 +17,11 @@ from ..models.notification_model import NotificationModel
 
 logger = logging.getLogger(__name__)
 
+
 def get_notification_collection():
     """Get notification collection - ensures mongo is initialized"""
     return mongo.db.Notification
+
 
 def get_user_collection():
     """Get user collection - ensures mongo is initialized"""
@@ -31,25 +33,25 @@ class NotificationCreateSchema(BaseModel):
     content: str = Field(..., min_length=1, max_length=150)
     image_url: str = Field(None, max_length=200)  # Optional field for image URL
 
-    @validator('title')
+    @validator("title")
     def validate_title(cls, v):
         if not v or not v.strip():
-            raise ValueError('Title cannot be empty or whitespace only')
+            raise ValueError("Title cannot be empty or whitespace only")
         return v.strip()
 
-    @validator('content')
+    @validator("content")
     def validate_content(cls, v):
         if not v or not v.strip():
-            raise ValueError('Content cannot be empty or whitespace only')
+            raise ValueError("Content cannot be empty or whitespace only")
         return v.strip()
 
-    @validator('image_url')
+    @validator("image_url")
     def validate_image_url(cls, v):
         if v and len(v) > 200:
-            raise ValueError('Image URL cannot exceed 200 characters')
-        #check https
-        if v and not v.startswith('https://'):
-            raise ValueError('Image URL must start with https://')
+            raise ValueError("Image URL cannot exceed 200 characters")
+        # check https
+        if v and not v.startswith("https://"):
+            raise ValueError("Image URL must start with https://")
         return v.strip() if v else None
 
 
@@ -58,42 +60,42 @@ class NotificationUpdateSchema(BaseModel):
     content: str = Field(..., min_length=1, max_length=150)
     image_url: str = Field(None, max_length=200)  # Optional field for image URL
 
-    @validator('title')
+    @validator("title")
     def validate_title(cls, v):
         if not v or not v.strip():
-            raise ValueError('Title cannot be empty or whitespace only')
+            raise ValueError("Title cannot be empty or whitespace only")
         return v.strip()
 
-    @validator('content')
+    @validator("content")
     def validate_content(cls, v):
         if not v or not v.strip():
-            raise ValueError('Content cannot be empty or whitespace only')
+            raise ValueError("Content cannot be empty or whitespace only")
         return v.strip()
 
-    @validator('image_url', pre=True, always=True)
+    @validator("image_url", pre=True, always=True)
     def validate_image_url(cls, v):
         if v and len(v) > 200:
-            raise ValueError('Image URL cannot exceed 200 characters')
+            raise ValueError("Image URL cannot exceed 200 characters")
         # Check if the image URL starts with https://
-        if v and not v.startswith('https://'):
-            raise ValueError('Image URL must start with https://')
+        if v and not v.startswith("https://"):
+            raise ValueError("Image URL must start with https://")
         return v.strip() if v else None
 
 
 class NotificationDeleteSchema(BaseModel):
     is_deleted: bool = Field(...)
 
-    @validator('is_deleted')
+    @validator("is_deleted")
     def validate_is_deleted(cls, v):
         if not isinstance(v, bool):
-            raise ValueError('is_deleted must be a boolean value')
+            raise ValueError("is_deleted must be a boolean value")
         return v
 
 
 def _get_active_user_fcm_tokens():
     """
     Get FCM tokens for all active users
-    
+
     Returns:
         List of FCM tokens for users where is_deleted=False and fcm_token is not null
     """
@@ -102,15 +104,15 @@ def _get_active_user_fcm_tokens():
         users = get_user_collection().find(
             {
                 "is_deleted": False,
-                "fcm_token": {"$ne": None, "$exists": True, "$ne": ""}
+                "fcm_token": {"$ne": None, "$exists": True, "$ne": ""},
             },
-            {"fcm_token": 1}  # Only fetch fcm_token field
+            {"fcm_token": 1},  # Only fetch fcm_token field
         )
-        
+
         fcm_tokens = [user["fcm_token"] for user in users if user.get("fcm_token")]
         logger.info(f"Found {len(fcm_tokens)} active users with FCM tokens")
         return fcm_tokens
-        
+
     except Exception as e:
         logger.error(f"Error fetching user FCM tokens: {e}")
         return []
@@ -119,7 +121,7 @@ def _get_active_user_fcm_tokens():
 def _send_push_notification_sync(title: str, content: str, image_url: str = None):
     """
     Send push notification to all active users (SYNCHRONOUS)
-    
+
     Args:
         title: Notification title
         content: Notification content
@@ -131,52 +133,51 @@ def _send_push_notification_sync(title: str, content: str, image_url: str = None
         if not fcm_tokens:
             logger.info("No active users with FCM tokens found")
             return
-        
+
         # Get FCM service and send notifications
         fcm_service = get_fcm_service()
-        
+
         # Prepare data payload
         notification_data = {
-            'notification_type': 'admin_notification',
-            'timestamp': str(int(time.time())),
+            "notification_type": "admin_notification",
+            "timestamp": str(int(time.time())),
         }
-        
+
         # Add image URL if provided
         if image_url:
-            notification_data['image_url'] = image_url
-        
+            notification_data["image_url"] = image_url
+
         # Send in batches if there are many tokens (FCM has a limit of 500 tokens per request)
         batch_size = 500
         total_success = 0
         total_failure = 0
         all_failed_tokens = []
-        
+
         for i in range(0, len(fcm_tokens), batch_size):
-            batch_tokens = fcm_tokens[i:i + batch_size]
-            
+            batch_tokens = fcm_tokens[i : i + batch_size]
+
             result = fcm_service.send_to_multiple_tokens(
-                tokens=batch_tokens,
-                title=title,
-                body=content,
-                data=notification_data
+                tokens=batch_tokens, title=title, body=content, data=notification_data
             )
-            
-            total_success += result['success_count']
-            total_failure += result['failure_count']
-            all_failed_tokens.extend(result['failed_tokens'])
-        
+
+            total_success += result["success_count"]
+            total_failure += result["failure_count"]
+            all_failed_tokens.extend(result["failed_tokens"])
+
         # Log results
         logger.info(
             f"Push notification sent: {total_success} successful, {total_failure} failed "
             f"out of {len(fcm_tokens)} total tokens"
         )
-        
+
         # Log failed tokens for debugging
         if all_failed_tokens:
             logger.warning(f"Failed FCM tokens: {len(all_failed_tokens)} tokens failed")
             for failed_token in all_failed_tokens:
-                logger.warning(f"Failed token: {failed_token['token'][:20]}... Error: {failed_token['error']}")
-        
+                logger.warning(
+                    f"Failed token: {failed_token['token'][:20]}... Error: {failed_token['error']}"
+                )
+
     except Exception as e:
         logger.error(f"Error sending push notifications: {e}")
 
@@ -207,21 +208,24 @@ def get_notifications():
                 }
             },
         ]
-        
+
         notifications_data = list(get_notification_collection().aggregate(pipeline))
-        
+
         if notifications_data and len(notifications_data) > 0:
             result = notifications_data[0]
-            
+
             # Extract total count
             if result.get("totalCount") and len(result["totalCount"]) > 0:
                 total_count = result["totalCount"][0]["count"]
             else:
                 total_count = 0
-            
+
             # Extract paginated results
             notifications_list = result.get("paginatedResults", [])
-            notifications = [NotificationModel(**notification).to_json() for notification in notifications_list]
+            notifications = [
+                NotificationModel(**notification).to_json()
+                for notification in notifications_list
+            ]
             total_pages = math.ceil(total_count / limit) if total_count > 0 else 0
         else:
             total_count = 0
@@ -236,7 +240,10 @@ def get_notifications():
             "data": notifications,
         }
 
-        return format_response(True, "Notifications fetched successfully", response), 200
+        return (
+            format_response(True, "Notifications fetched successfully", response),
+            200,
+        )
 
     except Exception as e:
         logger.exception(f"Error fetching notifications: {e}")
@@ -263,7 +270,10 @@ def get_notification_by_id(notification_id):
             return format_response(False, "Notification not found"), 404
 
         notification = NotificationModel(**notification_data).to_json()
-        return format_response(True, "Notification fetched successfully", notification), 200
+        return (
+            format_response(True, "Notification fetched successfully", notification),
+            200,
+        )
 
     except Exception as e:
         logger.exception(f"Error fetching notification: {e}")
@@ -278,7 +288,7 @@ def add_notification():
         user_id = get_jwt_identity()
         if not user_id:
             return format_response(False, "User ID is required"), 400
-        
+
         try:
             user_id = ObjectId(user_id)
         except Exception:
@@ -299,10 +309,15 @@ def add_notification():
         except ValidationError as e:
             error_messages = []
             for error in e.errors():
-                field = error['loc'][0]
-                message = error['msg']
+                field = error["loc"][0]
+                message = error["msg"]
                 error_messages.append(f"{field}: {message}")
-            return format_response(False, f"Validation error: {', '.join(error_messages)}"), 400
+            return (
+                format_response(
+                    False, f"Validation error: {', '.join(error_messages)}"
+                ),
+                400,
+            )
 
         # Create notification
         notification = NotificationModel(
@@ -312,17 +327,19 @@ def add_notification():
             created_by=user_id,
             updated_by=user_id,
         )
-        
+
         # Save to database first
         get_notification_collection().insert_one(notification.to_bson())
-        logger.info(f"Notification created successfully in database: {notification.title}")
+        logger.info(
+            f"Notification created successfully in database: {notification.title}"
+        )
 
         # Send push notification to all active users in background
         try:
             _send_push_notification_sync(
                 title=notification.title,
                 content=notification.content,
-                image_url=notification.image_url
+                image_url=notification.image_url,
             )
             logger.info("Push notification dispatch initiated")
         except Exception as fcm_error:
@@ -345,7 +362,7 @@ def update_notification(notification_id):
         user_id = get_jwt_identity()
         if not user_id:
             return format_response(False, "User ID is required"), 400
-        
+
         try:
             user_id = ObjectId(user_id)
         except Exception:
@@ -375,10 +392,15 @@ def update_notification(notification_id):
         except ValidationError as e:
             error_messages = []
             for error in e.errors():
-                field = error['loc'][0]
-                message = error['msg']
+                field = error["loc"][0]
+                message = error["msg"]
                 error_messages.append(f"{field}: {message}")
-            return format_response(False, f"Validation error: {', '.join(error_messages)}"), 400
+            return (
+                format_response(
+                    False, f"Validation error: {', '.join(error_messages)}"
+                ),
+                400,
+            )
 
         # Check if notification exists
         notification_data = get_notification_collection().find_one(
@@ -397,8 +419,7 @@ def update_notification(notification_id):
         )
 
         get_notification_collection().update_one(
-            {"_id": ObjectId(notification_id)}, 
-            {"$set": notification.to_bson()}
+            {"_id": ObjectId(notification_id)}, {"$set": notification.to_bson()}
         )
 
         logger.info(f"Notification updated successfully: {notification.title}")
@@ -417,7 +438,7 @@ def delete_notification(notification_id):
         user_id = get_jwt_identity()
         if not user_id:
             return format_response(False, "User ID is required"), 400
-        
+
         try:
             user_id = ObjectId(user_id)
         except Exception:
@@ -447,10 +468,15 @@ def delete_notification(notification_id):
         except ValidationError as e:
             error_messages = []
             for error in e.errors():
-                field = error['loc'][0]
-                message = error['msg']
+                field = error["loc"][0]
+                message = error["msg"]
                 error_messages.append(f"{field}: {message}")
-            return format_response(False, f"Validation error: {', '.join(error_messages)}"), 400
+            return (
+                format_response(
+                    False, f"Validation error: {', '.join(error_messages)}"
+                ),
+                400,
+            )
 
         # Check if notification exists
         notification_data = get_notification_collection().find_one(
@@ -467,8 +493,7 @@ def delete_notification(notification_id):
         )
 
         get_notification_collection().update_one(
-            {"_id": ObjectId(notification_id)}, 
-            {"$set": notification.to_bson()}
+            {"_id": ObjectId(notification_id)}, {"$set": notification.to_bson()}
         )
 
         status_message = "deleted" if validated_data.is_deleted else "restored"

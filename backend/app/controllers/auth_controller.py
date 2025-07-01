@@ -89,7 +89,9 @@ def login_admin():
 
         user.update(last_login=datetime.now(timezone.utc))
 
-        token = create_jwt(str(user.id), UserRole.ADMIN, email=user.email, name=user.name)
+        token = create_jwt(
+            str(user.id), UserRole.ADMIN, email=user.email, name=user.name
+        )
 
         user_collection.update_one({"_id": user.id}, {"$set": user.to_bson()})
 

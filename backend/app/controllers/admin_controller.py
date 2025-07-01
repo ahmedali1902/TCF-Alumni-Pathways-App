@@ -53,7 +53,9 @@ def get_dashboard():
         )
 
         # Notification counts
-        total_notifications = mongo.db.Notification.count_documents({"is_deleted": False})
+        total_notifications = mongo.db.Notification.count_documents(
+            {"is_deleted": False}
+        )
 
         logger.info(f"Dashboard data retrieved successfully")
         return (
