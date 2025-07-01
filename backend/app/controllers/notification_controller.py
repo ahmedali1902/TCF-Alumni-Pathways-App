@@ -202,11 +202,6 @@ def get_notifications():
                         {"$sort": {"created_at": -1}},
                         {"$skip": skip},
                         {"$limit": limit},
-                        {
-                            "$project": {
-                                "password_hash": 0  # Exclude password hash from results
-                            }
-                        }
                     ],
                 }
             },
