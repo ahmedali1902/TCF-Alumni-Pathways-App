@@ -6,6 +6,7 @@ from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from pydantic.v1 import BaseModel, Field, ValidationError, validator
 import time  # Add this import for timestamp in FCM 
 from typing import List, Dict, Optional
+import math
 
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
@@ -183,12 +184,59 @@ def _send_push_notification_sync(title: str, content: str, image_url: str = None
 def get_notifications():
     """Get all notifications - Available to all authenticated users"""
     try:
-        notifications_data = list(get_notification_collection().find({"is_deleted": False}).sort("updated_at", -1))
+        # Pagination parameters
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 10))
+        skip = (page - 1) * limit
+
+        # Build match criteria - only show active notifications
+        match_criteria = {"is_deleted": False}
+
+        # Aggregation pipeline for pagination and counting
+        pipeline = [
+            {"$match": match_criteria},
+            {
+                "$facet": {
+                    "totalCount": [{"$count": "count"}],
+                    "paginatedResults": [
+                        {"$sort": {"created_at": -1}},
+                        {"$skip": skip},
+                        {"$limit": limit},
+                        {
+                            "$project": {
+                                "password_hash": 0  # Exclude password hash from results
+                            }
+                        }
+                    ],
+                }
+            },
+        ]
         
-        notifications = [NotificationModel(**notification).to_json() for notification in notifications_data]
+        notifications_data = list(get_notification_collection().aggregate(pipeline))
         
+        if notifications_data and len(notifications_data) > 0:
+            result = notifications_data[0]
+            
+            # Extract total count
+            if result.get("totalCount") and len(result["totalCount"]) > 0:
+                total_count = result["totalCount"][0]["count"]
+            else:
+                total_count = 0
+            
+            # Extract paginated results
+            notifications_list = result.get("paginatedResults", [])
+            notifications = [NotificationModel(**notification).to_json() for notification in notifications_list]
+            total_pages = math.ceil(total_count / limit) if total_count > 0 else 0
+        else:
+            total_count = 0
+            notifications = []
+            total_pages = 0
+
         response = {
-            "total_count": len(notifications),
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "page": page,
+            "limit": limit,
             "data": notifications,
         }
 
