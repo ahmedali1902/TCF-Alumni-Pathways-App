@@ -33,6 +33,10 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
   double? _longitude;
   int _gender = Gender.coeducation.value; // Default
   int _searchRadius = 10; // Default 10km
+  int _page = 1; // Start from page 1
+  final int _limit = 10; // Items per page
+  bool _hasMoreData = true; // Track if more data is available
+  bool _isLoadingMore = false; // Track loading more state
 
   List<String> _favoriteInstitutes = [];
 
@@ -43,26 +47,52 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
     _loadFavorites();
   }
 
-  Future<void> _fetchInstitutes() async {
+  Future<void> _fetchInstitutes({bool isLoadMore = false}) async {
     if (_latitude == null || _longitude == null) return;
 
+    if (isLoadMore) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+    }
+
     try {
-      institutes.clear(); // Clear previous results
+      if (!isLoadMore) {
+        institutes.clear(); // Clear previous results only for fresh search
+        _page = 1; // Reset to first page for fresh search
+        _hasMoreData = true; // Reset pagination flag
+      } else {
+        _page++; // Increment page before making the API call for load more
+      }
+
       final List<Institute> fetchedInstitutes = await _instituteSearchRepository
           .searchInstitutes(
             _longitude!,
             _latitude!,
             _searchRadius * 1000,
             _gender,
+            _page,
+            _limit,
           );
+
+      // Check if we have more data based on response length
+      _hasMoreData = fetchedInstitutes.length == _limit;
+
       fetchedInstitutes.sort(
         (a, b) => a.approxDistance.compareTo(b.approxDistance),
       );
+
       setState(() {
         institutes.addAll(fetchedInstitutes);
       });
     } catch (e) {
       debugPrint('Error fetching institutes: $e');
+    } finally {
+      if (isLoadMore) {
+        setState(() {
+          _isLoadingMore = false;
+        });
+      }
     }
   }
 
@@ -72,6 +102,8 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
       _locationDenied = false;
       _isLocationServiceEnabled = true; // Reset this flag
       institutes.clear();
+      _page = 1; // Reset pagination
+      _hasMoreData = true;
     });
     await _checkLocationPermission();
     if (_latitude != null && _longitude != null) {
@@ -184,97 +216,134 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20.0),
       child: Column(
-        children:
-            institutes.map((institute) {
-              final index = institutes.indexOf(institute);
-              return AnimatedOpacity(
-                opacity: 1.0,
-                duration: Duration(milliseconds: 500 + (index * 100)),
-                curve: Curves.easeInOut,
-                child: Transform.scale(
-                  scale: 1.0,
-                  child: TCard(
-                    maxLines: 2,
-                    height: 90,
-                    leftIcon: CircleAvatar(
-                      backgroundColor: TAppColors.primary.withOpacity(0.2),
-                      child: Icon(
-                        LucideIcons.graduationCap,
-                        color: TAppColors.primary,
-                      ),
+        children: [
+          ...institutes.map((institute) {
+            final index = institutes.indexOf(institute);
+            return AnimatedOpacity(
+              opacity: 1.0,
+              duration: Duration(milliseconds: 500 + (index * 100)),
+              curve: Curves.easeInOut,
+              child: Transform.scale(
+                scale: 1.0,
+                child: TCard(
+                  maxLines: 2,
+                  height: 90,
+                  leftIcon: CircleAvatar(
+                    backgroundColor: TAppColors.primary.withOpacity(0.2),
+                    child: Icon(
+                      LucideIcons.graduationCap,
+                      color: TAppColors.primary,
                     ),
-                    textWidget: SizedBox(
-                      height: 70,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            maxLines: 2,
-                            institute.name,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            // ManagingAuthority.fromValue(
-                            //   institute.managingAuthority,
-                            // ).toString(),
-                            '${(institute.approxDistance / 1000).toStringAsFixed(2)} Km — ${ManagingAuthority.fromValue(institute.managingAuthority).toString()}',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                    rightIcon: Icon(
-                      _isFavorite(institute.id)
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color:
-                          _isFavorite(institute.id)
-                              ? const Color(0XFFFF5A5F)
-                              : Colors.grey,
-                    ),
-                    showRightIcon: true,
-                    onRightIconPressed: () {
-                      _toggleFavorite(institute.id);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            !_isFavorite(institute.id)
-                                ? 'Added to favorites'
-                                : 'Removed from favorites',
-                          ),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                    onTap: () {
-                      String id = institute.id;
-                      _instituteSearchRepository
-                          .getInstituteById(id)
-                          .then((instituteDetails) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => InstituteMapLoader(
-                                      institute: instituteDetails,
-                                    ),
-                              ),
-                            );
-                          })
-                          .catchError((error) {
-                            debugPrint(
-                              'Error fetching institute details: $error',
-                            );
-                          });
-                    },
                   ),
+                  textWidget: SizedBox(
+                    height: 70,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          maxLines: 2,
+                          institute.name,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          // ManagingAuthority.fromValue(
+                          //   institute.managingAuthority,
+                          // ).toString(),
+                          '${(institute.approxDistance / 1000).toStringAsFixed(2)} Km — ${ManagingAuthority.fromValue(institute.managingAuthority).toString()}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  rightIcon: Icon(
+                    _isFavorite(institute.id)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color:
+                        _isFavorite(institute.id)
+                            ? const Color(0XFFFF5A5F)
+                            : Colors.grey,
+                  ),
+                  showRightIcon: true,
+                  onRightIconPressed: () {
+                    _toggleFavorite(institute.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          !_isFavorite(institute.id)
+                              ? 'Added to favorites'
+                              : 'Removed from favorites',
+                        ),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  onTap: () {
+                    String id = institute.id;
+                    _instituteSearchRepository
+                        .getInstituteById(id)
+                        .then((instituteDetails) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => InstituteMapLoader(
+                                    institute: instituteDetails,
+                                  ),
+                            ),
+                          );
+                        })
+                        .catchError((error) {
+                          debugPrint(
+                            'Error fetching institute details: $error',
+                          );
+                        });
+                  },
                 ),
-              );
-            }).toList(),
+              ),
+            );
+          }).toList(),
+          // Load More Button
+          if (_hasMoreData && institutes.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Center(
+              child:
+                  _isLoadingMore
+                      ? TLoadingIndicator.build(
+                          message: "Loading more institutes...",
+                        )
+                      : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TAppColors.primary,
+                          foregroundColor: TAppColors.darkAccent,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () async {
+                          await _fetchInstitutes(isLoadMore: true);
+                        },
+                        child: const Text(
+                          'Load More',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ],
       ),
     );
   }
@@ -471,6 +540,8 @@ class _InstituteSearchScreenState extends State<InstituteSearchScreen> {
                         institutes.clear();
                         _locationDenied = false;
                         _isLocationServiceEnabled = true; // Reset this flag
+                        _page = 1; // Reset pagination
+                        _hasMoreData = true;
                       });
                       _initSearch();
                     });

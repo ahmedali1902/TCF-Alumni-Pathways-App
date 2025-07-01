@@ -22,6 +22,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   String? _errorMessage;
   late NotificationsRepository _notificationsRepository;
 
+  // Pagination variables
+  int _page = 1; // Start from page 1
+  final int _limit = 10; // Items per page
+  bool _hasMoreData = true; // Track if more data is available
+  bool _isLoadingMore = false; // Track loading more state
+
   // Notification permission state
   bool _notificationsEnabled = true;
 
@@ -155,28 +161,59 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   // Fetch notifications from API
-  Future<void> _fetchNotifications() async {
+  Future<void> _fetchNotifications({bool isLoadMore = false}) async {
     try {
+      if (isLoadMore) {
+        setState(() {
+          _isLoadingMore = true;
+        });
+      } else {
+        setState(() {
+          _isLoading = true;
+          _errorMessage = null;
+          _notifications.clear(); // Clear previous results only for fresh load
+          _page = 1; // Reset to first page for fresh load
+          _hasMoreData = true; // Reset pagination flag
+        });
+      }
+
+      if (isLoadMore) {
+        _page++; // Increment page before making the API call for load more
+      }
+
+      final notifications = await _notificationsRepository.getNotifications(
+        page: _page,
+        limit: _limit,
+      );
+
+      // Check if we have more data based on response length
+      _hasMoreData = notifications.length == _limit;
+
       setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-      final notifications = await _notificationsRepository.getNotifications();
-      setState(() {
-        _notifications = notifications;
-        _isLoading = false;
+        _notifications.addAll(notifications);
+        if (!isLoadMore) {
+          _isLoading = false;
+        }
       });
     } catch (e) {
       setState(() {
         _errorMessage = 'Failed to load notifications: ${e.toString()}';
-        _isLoading = false;
+        if (!isLoadMore) {
+          _isLoading = false;
+        }
       });
+    } finally {
+      if (isLoadMore) {
+        setState(() {
+          _isLoadingMore = false;
+        });
+      }
     }
   }
 
   // Pull to refresh functionality
   Future<void> _onRefresh() async {
-    await _fetchNotifications();
+    await _fetchNotifications(); // This will reset pagination automatically
   }
 
   // Function to format time based on current week logic
@@ -395,10 +432,47 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children:
-                _notifications
-                    .map((notification) => _buildNotificationItem(notification))
-                    .toList(),
+            children: [
+              ..._notifications
+                  .map((notification) => _buildNotificationItem(notification))
+                  .toList(),
+              // Load More Button
+              if (_hasMoreData && _notifications.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Center(
+                  child:
+                      _isLoadingMore
+                          ? TLoadingIndicator.build(
+                            message: "Loading more notifications...",
+                          )
+                          : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: TAppColors.primary,
+                              foregroundColor: TAppColors.darkAccent,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () async {
+                              await _fetchNotifications(isLoadMore: true);
+                            },
+                            child: const Text(
+                              'Load More',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ],
           ),
         ),
       ),
@@ -422,7 +496,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             icon: const Icon(LucideIcons.refreshCw),
             onPressed: () {
               _checkNotificationPermissions();
-              _fetchNotifications();
+              _fetchNotifications(); // This will reset pagination automatically
             },
             tooltip: 'Refresh',
           ),

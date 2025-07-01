@@ -14,8 +14,8 @@ enum StudentEducation {
 }
 
 enum ResourceCategory {
-  forms(1),
-  video(2);
+  general(1),
+  scholarship(2);
 
   final int value;
   const ResourceCategory(this.value);
@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value - 1,category: ResourceCategory.forms.value)),
+              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value - 1,category: ResourceCategory.general.value)),
             );
           },
         ),
@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value -1,category: ResourceCategory.video.value)),
+              MaterialPageRoute(builder: (context) => ResourcesScreen(educationLevel: _selectedEducation.value -1,category: ResourceCategory.scholarship.value)),
             );
           },
         ),

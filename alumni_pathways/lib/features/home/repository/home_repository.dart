@@ -9,14 +9,21 @@ class HomeRepository {
   HomeRepository(this._apiHandlerService);
   // Constructor
 
-  Future<List<Resource>> getResources(int educationLevel, int category) async {
+  Future<List<Resource>> getResources(
+    int educationLevel,
+    int category, {
+    int page = 1,
+    int limit = 10,
+  }) async {
     try {
       final response = await _apiHandlerService.get(
         includeToken: true,
         endpointURI: ApiEndpoints.getResources,
         queryParams: {
           'category': category.toString(),
-          'education_level': educationLevel.toString()
+          'education_level': educationLevel.toString(),
+          'page': page.toString(),
+          'limit': limit.toString(),
         },
       );
       if (response['data']['data'] is List) {
