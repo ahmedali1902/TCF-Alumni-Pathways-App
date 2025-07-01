@@ -1,8 +1,9 @@
 import logging
 import math
+
 from bson import ObjectId
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import get_jwt, jwt_required
 from pymongo.errors import PyMongoError
 
 from ..extensions import mongo

@@ -2,8 +2,8 @@ from .admin_routes import admin_bp
 from .app_feedback_routes import app_feedback_bp
 from .auth_routes import auth_bp
 from .institute_routes import institute_bp
-from .resource_routes import resource_bp
 from .notification_routes import notification_bp
+from .resource_routes import resource_bp
 from .user_routes import user_bp
 
 

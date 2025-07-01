@@ -5,8 +5,12 @@ from datetime import datetime, timezone
 import jwt
 from bson import ObjectId
 from flask import request
-from flask_jwt_extended import (get_jwt, get_jwt_identity, jwt_required,
-                                verify_jwt_in_request)
+from flask_jwt_extended import (
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    verify_jwt_in_request,
+)
 from flask_jwt_extended.exceptions import JWTExtendedException
 
 from ..extensions import mongo

@@ -10,9 +10,13 @@ from pymongo.errors import DuplicateKeyError
 from ..extensions import mongo
 from ..helpers.auth_helper import check_if_admin
 from ..helpers.response_helper import format_response
-from ..models.institute_model import (Gender, GeoPointModel,
-                                      InstituteFacultyModel, InstituteModel,
-                                      ManagingAuthority)
+from ..models.institute_model import (
+    Gender,
+    GeoPointModel,
+    InstituteFacultyModel,
+    InstituteModel,
+    ManagingAuthority,
+)
 
 logger = logging.getLogger(__name__)
 
