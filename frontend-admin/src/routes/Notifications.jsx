@@ -9,6 +9,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
+import Pagination from 'react-bootstrap/Pagination';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -22,6 +23,10 @@ const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+    const [hasNext, setHasNext] = useState(false);
+    const [hasPrev, setHasPrev] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -37,22 +42,36 @@ const Notifications = () => {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = localStorage.getItem("authToken");
 
-    const getNotifications = async (appliedFilters = filters) => {
+    const getNotifications = async (currentPage, perPage, appliedFilters = filters) => {
         try {
             setIsLoading(true);
             setMessage("");
 
+            // Build query parameters
+            const params = {
+                page: currentPage,
+                limit: perPage
+            };
+
+            // Add filters if they have values
+            if (appliedFilters.search) {
+                params.search = appliedFilters.search;
+            }
+
             const response = await axios.get(`${API_BASE_URL}/notification`, {
+                params,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
 
             const data = response.data.data;
-            let filteredNotifications = data.data;
 
-            // Apply client-side search filter
-            if (appliedFilters.search) {
+            // If API doesn't support server-side pagination/filtering, handle client-side
+            let filteredNotifications = data.data || data;
+
+            // Apply client-side search filter if API doesn't support it
+            if (appliedFilters.search && !params.search) {
                 const searchTerm = appliedFilters.search.toLowerCase();
                 filteredNotifications = filteredNotifications.filter(notification =>
                     notification.title.toLowerCase().includes(searchTerm) ||
@@ -62,6 +81,18 @@ const Notifications = () => {
             }
 
             setNotifications(filteredNotifications);
+
+            // Handle pagination data
+            if (data.page && data.total_pages) {
+                // Server-side pagination
+                setHasNext(data.page < data.total_pages);
+                setHasPrev(data.page > 1);
+            } else {
+                // Client-side pagination fallback
+                const totalPages = Math.ceil(filteredNotifications.length / perPage);
+                setHasNext(currentPage < totalPages);
+                setHasPrev(currentPage > 1);
+            }
         } catch (error) {
             console.error(error);
             setMessage("Error loading notifications: " + (error.response?.data?.message || error.message));
@@ -89,7 +120,7 @@ const Notifications = () => {
             setTimeout(() => {
                 setDeleteModalMessage("");
                 setShowDeleteModal(false);
-                getNotifications();
+                getNotifications(currentPage, perPage);
             }, 2000);
         } catch (error) {
             setDeleteModalMessage("Error deleting notification: " + (error.response?.data?.message || error.message));
@@ -107,12 +138,12 @@ const Notifications = () => {
 
     const handleNotificationCreated = () => {
         // Refresh the notifications list when new notification is created
-        getNotifications();
+        getNotifications(currentPage, perPage);
     };
 
     const handleNotificationUpdated = () => {
         // Refresh the notifications list when notification is updated
-        getNotifications();
+        getNotifications(currentPage, perPage);
         setEditNotification(null);
     };
 
@@ -124,7 +155,8 @@ const Notifications = () => {
     };
 
     const handleFilterApply = () => {
-        getNotifications(filters);
+        setCurrentPage(1); // Reset to first page when applying filters
+        getNotifications(1, perPage, filters);
     };
 
     const handleFilterClear = () => {
@@ -132,19 +164,27 @@ const Notifications = () => {
             search: ""
         };
         setFilters(clearedFilters);
-        getNotifications(clearedFilters);
+        setCurrentPage(1);
+        getNotifications(1, perPage, clearedFilters);
     };
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
+    const handlePerPageChange = (e) => {
+        setPerPage(e.target.value);
+        setCurrentPage(1);
+    };
 
     useEffect(() => {
         if (!user) {
             setMessage("Please login first!");
             setIsLoading(false);
         } else {
-            getNotifications();
+            getNotifications(currentPage, perPage);
         }
-    }, [user]);
+    }, [user, currentPage, perPage]);
 
     return (
         <Container fluid className="p-0" style={{ minHeight: '100vh' }}>
@@ -261,6 +301,23 @@ const Notifications = () => {
                             <i className="fa-solid fa-list me-2" style={{ color: 'var(--success-color)' }} />
                             Notifications ({notifications.length})
                         </h5>
+                        <div className="d-flex align-items-center">
+                            <Form.Label className="mb-0 me-2" style={{ fontWeight: '500', color: 'var(--gray-700)' }}>
+                                Show:
+                            </Form.Label>
+                            <Form.Select
+                                value={perPage}
+                                onChange={handlePerPageChange}
+                                style={{ width: '80px' }}
+                                className="my-card-input"
+                                disabled={isLoading}
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </Form.Select>
+                        </div>
                     </div>
                     <div className="card-body p-0">
                         {isLoading ? (
@@ -378,6 +435,29 @@ const Notifications = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Pagination */}
+                    {notifications.length > 0 && (
+                        <div className="card-footer d-flex justify-content-center" style={{ backgroundColor: 'var(--gray-50)', border: 'none' }}>
+                            <Pagination className="mb-0">
+                                {hasPrev && (
+                                    <Pagination.Prev
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={isLoading}
+                                    />
+                                )}
+                                <Pagination.Item active>
+                                    {currentPage}
+                                </Pagination.Item>
+                                {hasNext && (
+                                    <Pagination.Next
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={isLoading}
+                                    />
+                                )}
+                            </Pagination>
+                        </div>
+                    )}
                 </div>
 
                 {/* Delete Confirmation Modal */}
