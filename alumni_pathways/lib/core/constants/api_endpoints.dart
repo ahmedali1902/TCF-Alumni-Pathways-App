@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = 'http://104.248.233.145/api/';
+  static const String baseUrl = 'http://142.93.63.113/api/';
   static const String internetCheckUrl =
       'google.com'; // URL to check internet connectivity
   static const String register = '$baseUrl/register';
