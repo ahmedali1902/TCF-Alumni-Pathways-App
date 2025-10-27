@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = 'http://tcf-alumni-pathways.duckdns.org/api/';
+  static const String baseUrl = 'https://belief-pgp-interracial-demonstrate.trycloudflare.com/api/';
   static const String internetCheckUrl =
       'google.com'; // URL to check internet connectivity
   static const String register = '$baseUrl/register';
